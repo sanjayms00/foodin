@@ -1,5 +1,5 @@
 const home = (req,res)=>{
-    res.send("home")
+    res.render("public/index")
 }
 
 

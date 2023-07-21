@@ -1,0 +1,80 @@
+<!--  Header End -->
+<div class="container-fluid">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title fw-semibold mb-4 float-start">Food</h5>
+        <a href="/admin/createFood"><button type="button" class="btn btn-primary float-end">Add Food</button></a>
+        <div class="card w-100">
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table text-nowrap mb-0 align-middle">
+                <thead class="text-dark fs-4">
+                  <tr>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">Id</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">First Name</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">Last Name</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">Email Id</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">Mobile Number</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">Addresses</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">Action</h6>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% if(locals.data){ 
+                    let i = 1;
+                    data.forEach((item)=>{
+                  %>
+                  <tr>
+                      <td class="border-bottom-0">
+                        <h6 class="fw-semibold mb-0"><%= i %></h6>
+                      </td>
+                      <td class="border-bottom-0">
+                        <h6 class="fw-semibold mb-1"><%= item.firstName %></h6>
+                      </td>
+                      <td class="border-bottom-0">
+                        <h6 class="fw-semibold mb-1"><%= item.lastName %></h6>
+                      </td>
+                      <td class="border-bottom-0">
+                        <h6 class="fw-semibold mb-1"><%= item.email %></h6>
+                      </td>
+                      <td class="border-bottom-0">
+                        <h6 class="fw-semibold mb-1"><%= item.phone %></h6>
+                      </td>
+                      <td class="border-bottom-0">
+                        <h6 class="fw-semibold mb-1"><%= item.Addresses %></h6>
+                      </td>
+                      <td class="border-bottom-0">
+                        <h6 class="fw-semibold mb-1">
+                        <% if(!item.blocked){ %> 
+                          <button type="button" class="btn btn-danger">Block User</button>
+                        <% }else{ %> 
+                          <button type="button" class="btn btn-success">Unblock User</button>
+                        <% } %> 
+                        </h6>
+                      </td>
+                  </tr>
+                  <% i++ }) }else{ %>
+                      <%= "No Products Available" %>
+                  <% } %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

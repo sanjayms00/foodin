@@ -1,0 +1,71 @@
+<!--  Header End -->
+<div class="container-fluid"></div>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title fw-semibold mb-4 float-start">Create Food</h5>
+            <button type="button" onclick="history.back(-1)" class="btn btn-outline-primary float-end">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrow-back-up" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                    <path d="M9 14l-4 -4l4 -4"></path>
+                    <path d="M5 10h11a4 4 0 1 1 0 8h-1"></path>
+                </svg>
+            </button>
+            <div class="card w-100">
+            <div class="card-body p-0">
+                <form action="admin/saveFood" method="post" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-xl-6 text-dark">
+                            <div class="form-floating mb-3">
+                                <input type="file" class="form-control border-dark" name="foodImage" id="foodImage" placeholder="Select an image">
+                                <label for="foodImage">Image*</label>
+                              </div>
+                              <div class="form-floating mb-3">
+                                <input type="text" class="form-control border-dark" name="foodName" id="foodName" placeholder="Food Name">
+                                <label for="foodName">Food Name*</label>
+                              </div>
+                        </div>
+                        <div class="col-xl-6 text-dark">
+                            <div class="form-floating mb-3">
+                                <select class="form-select border-dark" id="Categories" aria-label="Food Category">
+                                  <option selected value="">Select Categories*</option>
+                                  <option value="1">One</option>
+                                </select>
+                                <label for="Categories">Categories*</label>
+                              </div>
+                              <div class="form-floating mb-3">
+                                <select class="form-select border-dark" id="foodType" aria-label="Food Type">
+                                  <option selected value="">Select Type*</option>
+                                  <option value="1">Veg</option>
+                                  <option value="1">Non Veg</option>
+                                </select>
+                                <label for="foodType">Type*</label>
+                              </div>
+                              <div class="form-floating mb-3">
+                                <input type="text" class="form-control border-dark" name="orgPrice" id="orgPrice" placeholder="Original Price">
+                                <label for="orgPrice">Original Price*</label>
+                              </div>
+                              <div class="form-floating mb-3">
+                                <input type="text" class="form-control border-dark" name="discPrice" id="discPrice" placeholder="Discount Price">
+                                <label for="discPrice">Discount Price*</label>
+                              </div>
+                              <div class="form-floating mb-3">
+                                <textarea class="form-control border-dark" style="height: 100px" placeholder="Description..." id="foodDescription"></textarea>
+                                <label for="foodDescription">Description*</label>
+                              </div>
+                              <div class="form-floating mb-3">
+                                <textarea class="form-control border-dark" style="height: 100px" placeholder="Ingredients..." id="foodIngredients"></textarea>
+                                <label for="foodIngredients">Ingredients*</label>
+                              </div>
+                        </div>
+                    </div>
+                    <div class="gap-2 col-3 mx-auto d-flex justify-content-center text-center my-5">
+                        <button type="button" class="btn btn-danger float-start">Cancel</button>
+                        <button type="button" class="btn btn-primary gap-2">Reset</button>
+                        <button type="submit" class="btn btn-success float-end">Submit</button>
+                      </div>
+                </form>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>

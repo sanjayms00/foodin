@@ -1,5 +1,10 @@
+
 const dashboard = (req,res)=>{
-    res.send("dashboard")
+    try {
+        res.status(200).render("admin/dashboard")
+    } catch (error) {
+        console.log(error.message)
+    }
 }
 
 

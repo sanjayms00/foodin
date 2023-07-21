@@ -7,26 +7,38 @@
         <div class="card w-100">
           <div class="card-body p-0">
             <div class="table-responsive">
-              <table class="table text-nowrap mb-0 align-middle">
+              <table class="table table-striped text-nowrap mb-0 align-middle">
                 <thead class="text-dark fs-4">
                   <tr>
                     <th class="border-bottom-0">
                       <h6 class="fw-semibold mb-0">Id</h6>
                     </th>
                     <th class="border-bottom-0">
-                      <h6 class="fw-semibold mb-0">First Name</h6>
+                      <h6 class="fw-semibold mb-0">Image</h6>
                     </th>
                     <th class="border-bottom-0">
-                      <h6 class="fw-semibold mb-0">Last Name</h6>
+                      <h6 class="fw-semibold mb-0">Food Name</h6>
                     </th>
                     <th class="border-bottom-0">
-                      <h6 class="fw-semibold mb-0">Email Id</h6>
+                      <h6 class="fw-semibold mb-0">Category</h6>
                     </th>
                     <th class="border-bottom-0">
-                      <h6 class="fw-semibold mb-0">Mobile Number</h6>
+                      <h6 class="fw-semibold mb-0">Type</h6>
                     </th>
                     <th class="border-bottom-0">
-                      <h6 class="fw-semibold mb-0">Addresses</h6>
+                      <h6 class="fw-semibold mb-0">Orginal Price</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">Discount Price</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">Desciption</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">Ingredients</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">Status</h6>
                     </th>
                     <th class="border-bottom-0">
                       <h6 class="fw-semibold mb-0">Action</h6>
@@ -43,27 +55,38 @@
                         <h6 class="fw-semibold mb-0"><%= i %></h6>
                       </td>
                       <td class="border-bottom-0">
-                        <h6 class="fw-semibold mb-1"><%= item.firstName %></h6>
+                        <h6 class="fw-semibold mb-1"><%= item.image %></h6>
                       </td>
                       <td class="border-bottom-0">
-                        <h6 class="fw-semibold mb-1"><%= item.lastName %></h6>
+                        <h6 class="fw-semibold mb-1"><%= item.foodName %></h6>
                       </td>
                       <td class="border-bottom-0">
-                        <h6 class="fw-semibold mb-1"><%= item.email %></h6>
+                        <h6 class="fw-semibold mb-1"><%= item.category %></h6>
                       </td>
                       <td class="border-bottom-0">
-                        <h6 class="fw-semibold mb-1"><%= item.phone %></h6>
+                        <h6 class="fw-semibold mb-1"><%= item.type %></h6>
                       </td>
                       <td class="border-bottom-0">
-                        <h6 class="fw-semibold mb-1"><%= item.Addresses %></h6>
+                        <h6 class="fw-semibold mb-1"><%= item.orgPrice %></h6>
+                      </td>
+                      <td class="border-bottom-0">
+                        <h6 class="fw-semibold mb-1"><%= item.discPrice %></h6>
+                      </td>
+                      <td class="border-bottom-0">
+                        <h6 class="fw-semibold mb-1"><%= item.description %></h6>
+                      </td>
+                      <td class="border-bottom-0">
+                        <h6 class="fw-semibold mb-1"><%= item.ingredients %></h6>
+                      </td>
+                      <td class="border-bottom-0">
+                        <h6 class="fw-semibold mb-1"><%= item.status %></h6>
                       </td>
                       <td class="border-bottom-0">
                         <h6 class="fw-semibold mb-1">
-                        <% if(!item.blocked){ %> 
-                          <button type="button" class="btn btn-danger">Block User</button>
-                        <% }else{ %> 
-                          <button type="button" class="btn btn-success">Unblock User</button>
-                        <% } %> 
+                          <button type="button" class="btn btn-primary w-100">Edit</button>
+                          <br><br>
+                          <button type="button" class="btn btn-danger w-100">Delete</button>
+                        
                         </h6>
                       </td>
                   </tr>

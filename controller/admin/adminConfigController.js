@@ -1,27 +1,37 @@
 const AdminUsers = require("../../models/admin/adminModel")
 const bcrypt = require("bcryptjs")
+
 const admin = (req,res) => {
     try {
-        res.redirect("/admin/login")
+        if (req.session && req.session.adminUser) {
+            res.redirect("/admin/dashboard")
+        } else {
+            res.redirect("/admin/login")
+        }
     } catch (error) {
         console.log(error.message)
     }
 }
 
 const login = (req,res) => {
+    
     try {
-        res.render("admin/adminlogin",{layout : false})
+        if (req.session && req.session.adminUser) {
+            res.redirect("/admin/dashboard")
+        } else {
+            res.render("admin/adminlogin",{layout : false})
+        }
+        
     } catch (error) {
         console.log(error.message)
     }
 }
+
 const auth = async(req,res) => {
     try {
         //logic
         const {adminEmail, adminPassword } = req.body 
-        console.log(adminEmail, adminPassword)
         const checkAdmin = await AdminUsers.findOne({email : adminEmail})
-        console.log(checkAdmin)
         if(!checkAdmin){
             console.log("user name or pass in correct");
             return res.render("admin/adminlogin", {layout : false})
@@ -31,15 +41,30 @@ const auth = async(req,res) => {
             console.log("incorrect pass")
             return res.render("admin/adminlogin", {layout : false})
         }
+        req.session.adminUser = true;
         res.redirect("/admin/dashboard")
     } catch (error) {
         console.log(error.message)
     }
 }
 
+const logout  = (req,res) => {
+    try {
+        req.session.destroy((err) => {
+            if(err){
+                console.error('Error destroying session:', err);
+            }else{
+                res.redirect("/admin/login")
+            }
+        })
+    } catch (error) {
+        
+    }
+}
 
 module.exports = {
     admin,
     login,
-    auth
+    auth,
+    logout
 }

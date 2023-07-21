@@ -12,13 +12,13 @@
             </button>
             <div class="card w-100">
             <div class="card-body p-0">
-                <form action="/admin/saveFood" method="POST">
+                <form action="admin/saveFood" method="post" enctype="multipart/form-data">
                     <div class="row">
                         <div class="col-xl-6 text-dark">
-                            <!-- <div class="form-floating mb-3">
+                            <div class="form-floating mb-3">
                                 <input type="file" class="form-control border-dark" name="foodImage" id="foodImage" placeholder="Select an image">
                                 <label for="foodImage">Image*</label>
-                              </div> -->
+                              </div>
                               <div class="form-floating mb-3">
                                 <input type="text" class="form-control border-dark" name="foodName" id="foodName" placeholder="Food Name">
                                 <label for="foodName">Food Name*</label>
@@ -26,14 +26,14 @@
                         </div>
                         <div class="col-xl-6 text-dark">
                             <div class="form-floating mb-3">
-                                <select class="form-select border-dark" name="categories" id="Categories" aria-label="Food Category">
+                                <select class="form-select border-dark" id="Categories" aria-label="Food Category">
                                   <option selected value="">Select Categories*</option>
                                   <option value="1">One</option>
                                 </select>
                                 <label for="Categories">Categories*</label>
                               </div>
                               <div class="form-floating mb-3">
-                                <select class="form-select border-dark" name="foodType" id="foodType" aria-label="Food Type">
+                                <select class="form-select border-dark" id="foodType" aria-label="Food Type">
                                   <option selected value="">Select Type*</option>
                                   <option value="1">Veg</option>
                                   <option value="1">Non Veg</option>
@@ -49,11 +49,11 @@
                                 <label for="discPrice">Discount Price*</label>
                               </div>
                               <div class="form-floating mb-3">
-                                <textarea class="form-control border-dark" style="height: 100px" placeholder="Description..." name="foodDescription" id="foodDescription"></textarea>
+                                <textarea class="form-control border-dark" style="height: 100px" placeholder="Description..." id="foodDescription"></textarea>
                                 <label for="foodDescription">Description*</label>
                               </div>
                               <div class="form-floating mb-3">
-                                <textarea class="form-control border-dark" style="height: 100px" placeholder="Ingredients..." name="foodIngredients" id="foodIngredients"></textarea>
+                                <textarea class="form-control border-dark" style="height: 100px" placeholder="Ingredients..." id="foodIngredients"></textarea>
                                 <label for="foodIngredients">Ingredients*</label>
                               </div>
                         </div>

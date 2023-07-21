@@ -10,7 +10,7 @@ mongoose.connect(process.env.DATABSE_URL,{useNewUrlParser : true,  useUnifiedTop
 }).catch((err)=>{
     console.log(err)
 })
-
+const nocache = require("nocache")
 //get port from environment variables
 const PORT = process.env.PORT || 3001;
 const path = require("path")
@@ -24,12 +24,14 @@ app.set('layout', 'admin/layout');
 app.use(express.static("views/public"))
 app.use(express.static("views/admin"))
 
-//public and admin routes
-const publicRoute = require("./routes/public/publicRoute")
-const adminRoute  = require("./routes/admin/adminRoute")
 app.use(express.urlencoded({extended : true}))
 app.use(express.json())
 
+//public and admin routes
+const publicRoute = require("./routes/public/publicRoute")
+const adminRoute  = require("./routes/admin/adminRoute")
+
+app.use(nocache())
 app.use("/",publicRoute);
 app.use("/admin",adminRoute)
 

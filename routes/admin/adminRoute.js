@@ -1,11 +1,30 @@
+require("dotenv").config()
 const express = require("express")
 const adminRoute = express.Router()
 const expressLayouts = require("express-ejs-layouts")
+const session = require("express-session")
+const mongoDBSession = require("connect-mongodb-session")(session)
+
+const store = mongoDBSession({
+    uri : process.env.DATABSE_URL,
+    collection : "adminSessions"
+})
+
+    
+//session middlware
+adminRoute.use(session({
+    secret : process.env.SECRET,
+    resave : false,
+    saveUninitialized : false,
+    store : store
+}))
+
 //importing the controllers
 const dashboardController = require("../../controller/admin/dashboardController")
 const adminConfigController = require("../../controller/admin/adminConfigController")
 const userController = require("../../controller/admin/userController")
 const foodController = require("../../controller/admin/foodController")
+const adminMiddleware = require("../../middleware/admin/adminMiddleware")
 
 adminRoute.use(expressLayouts)
 
@@ -13,15 +32,17 @@ adminRoute.use(expressLayouts)
 adminRoute.get("/",adminConfigController.admin)
 adminRoute.get("/login",adminConfigController.login)
 adminRoute.post("/auth",adminConfigController.auth)
+adminRoute.get("/logout",adminConfigController.logout)
 //dashboard routes
-adminRoute.get("/dashboard",dashboardController.dashboard)
+adminRoute.get("/dashboard", adminMiddleware.adminSessionCheck, dashboardController.dashboard)
 //user routes
-adminRoute.get("/users",userController.showusers)
+adminRoute.get("/users", adminMiddleware.adminSessionCheck, userController.showusers)
 //food routes
-adminRoute.get("/food",foodController.showFood)
-adminRoute.get("/createFood",foodController.createFood)
-// adminRoute.get("/updateFood",foodController.UpdateFood)
-// adminRoute.get("/deleteFood",foodController.deletefood)
+adminRoute.get("/food", adminMiddleware.adminSessionCheck, foodController.showFood)
+adminRoute.get("/createFood",adminMiddleware.adminSessionCheck, foodController.createFood)
+adminRoute.post("/saveFood",adminMiddleware.adminSessionCheck, foodController.saveFood)
+adminRoute.get("/editFood",adminMiddleware.adminSessionCheck, foodController.editFood)
+adminRoute.get("/deleteFood",adminMiddleware.adminSessionCheck, foodController.deleteFood)
 
 //export adminRoute
 module.exports = adminRoute

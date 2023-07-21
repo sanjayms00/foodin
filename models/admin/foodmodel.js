@@ -13,14 +13,14 @@ const foodSchema = new  mongoose.Schema({
         type : Number,
         required : true
     },
-    Category : {
+    category : {
         type : String,
         required : true
     },
-    image : {
-        type : String,
-        required : true
-    },
+    // image : {
+    //     type : String,
+    //     required : true
+    // },
     type : {
         type : String,
         required : true
@@ -41,9 +41,9 @@ const foodSchema = new  mongoose.Schema({
 })
 
 //define Model
-const Food = mongoose.model("food", foodSchema)
+const Foods = mongoose.model("Foods", foodSchema)
 
-module.exports = Food;
+module.exports = Foods;
 
 
 

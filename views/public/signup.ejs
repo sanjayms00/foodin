@@ -1,67 +1,58 @@
 <!-- include header -->
 <%- include('./includes/header') %>
 
-	<!-- Start Banner Area -->
-	<section class="banner-area organic-breadcrumb">
-		<div class="container">
-			<div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
-				<div class="col-first">
-					<h1>Sign Up</h1>
-					<nav class="d-flex align-items-center">
-						<a href="/">Home<span class="lnr lnr-arrow-right"></span></a>
-						<a href="category.html">Sign Up</a>
-					</nav>
-				</div>
-			</div>
-		</div>
-	</section>
-	<!-- End Banner Area -->
-	
-    <!-- login page content starts -->  
-	<section class="login_box_area section_gap">
-		<div class="container">
-			<div class="row">
-				<div class="col-lg-6">
-					<div class="login_box_img">
-						<img class="img-fluid" src="./assets/img/i6.jpg" alt="login image sample">
-						<div class="hover">
-							<h4>Already have an account?</h4>
-							<a class="primary-btn" href="/login">login</a>
-						</div>
-					</div>
-				</div>
-				<div class="col-lg-6">
-					<div class="login_form_inner">
-						<h3>Sign Up</h3>
-						<form class="row login_form" action="/signupAuthenticate" method="post" id="contactForm" novalidate="novalidate" onsubmit="return signupValidate()">
-							<div class="col-md-12 form-group">
-								<input type="text" class="form-control" id="fname" name="firstName" placeholder="first Name" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Username'">
-							</div>
-							<div class="col-md-12 form-group">
-								<input type="text" class="form-control" id="lname" name="lastName" placeholder="lastName" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Username'">
-							</div>
-							<div class="col-md-12 form-group">
-								<input type="email" class="form-control" id="email" name="email" placeholder="email" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Username'">
-							</div>
-							<div class="col-md-12 form-group">
-								<input type="text" class="form-control" id="mobile" name="mobileNumber" placeholder="mobile Number" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Username'">
-							</div>
-							<div class="col-md-12 form-group">
-								<input type="password" class="form-control" id="password" name="password" placeholder="password" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Username'">
-							</div>
-							<div class="col-md-12 form-group">
-								<input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="confirmPassword" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Password'">
-							</div>
-							<div class="col-md-12 form-group">
-								<button type="submit" value="submit" class="primary-btn">Signup</button>
-							</div>
-						</form>
-					</div>
-				</div>
-			</div>
-		</div>
-	</section>
-    <!-- login page content ends -->
-	<script src="./assets/js/signupValidate.js"></script>
-	<!-- include footer -->
-	<%- include('./includes/footer') %>a
+    
+    <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full" data-sidebar-position="fixed" data-header-position="fixed">
+        <div class="position-relative overflow-hidden radial-gradient min-vh-100 d-flex align-items-center justify-content-center">
+            <div class="d-flex align-items-center justify-content-center w-100">
+                <div class="row justify-content-center w-100 padd-top">
+                    <div class="col-md-8 col-lg-6 col-xxl-3">
+                        <% if (locals.status === "success") { %>
+                            <div class="alert alert-success" role="alert">
+                                <%= locals.msg %>
+                            </div>
+                        <% } if(locals.status === "error"){ %>
+                            <div class="alert alert-danger" role="alert">
+                                <%= locals.msg %>
+                            </div>
+                        <% } %>
+                        <div class="card mb-0">
+                            <div class="card-body">
+                                <h1 class="text-center">Signup</h1>
+                                <form class="login_form" action="/signupAuthenticate" method="post" id="signupForm" onsubmit="return validateSignup()">
+                                <div class="mb-3">
+                                    <label for="firstName" id="firstNameLabel" class="form-label">First Name</label>
+                                    <input type="text" class="form-control" id="firstName" name="firstName" placeholder="First Name" onfocus="this.placeholder = ''" onblur="this.placeholder = 'First Name'">				
+                                </div>
+                                <div class="mb-2">
+                                    <label for="lastName" id="lastNameLabel" class="form-label">Last Name</label>
+                                    <input type="text" class="form-control" id="lastName" name="lastName" placeholder="Last Name" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Last Name'">				
+                                </div>
+                                <div class="mb-2">
+                                    <label for="Email" id="emailLabel" class="form-label">Email Id</label>
+                                    <input type="email" class="form-control" id="emailId" name="emailId" placeholder="Email Id" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Email Id'">				
+                                </div>
+                                <div class="mb-2">
+                                    <label for="mobile" id="mobileLabel" class="form-label">Mobile</label>
+                                    <input type="text" class="form-control" id="mobile" name="mobileNumber" placeholder="mobile" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Mobile'">				
+                                </div>
+                                <div class="mb-2">
+                                    <label for="password" id="passwordLabel" class="form-label">Password</label>
+                                    <input type="password" class="form-control" id="signupPassword" name="signupPassword" placeholder="Password" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Password'">				
+                                </div>
+                                <div class="mb-2">
+                                    <label for="confirmPassword" id="confirmPasswordLabel" class="form-label">Confirm Password</label>
+                                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Password" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Confirm Password'">				
+                                </div>
+                                <button class="btn btn-warning w-100 py-8 fs-4 mb-4 rounded-2">Submit</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<script src="assets/js/signupValidate.js"></script>
+<!-- include footer -->
+<%- include('./includes/footer') %>

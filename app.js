@@ -1,7 +1,7 @@
 require('dotenv').config()
 const express = require("express")
 const app = express();
-
+const path = require("path")
 //connect to database
 const mongoose = require('mongoose')
 mongoose.connect(process.env.DATABSE_URL,{useNewUrlParser : true,  useUnifiedTopology : true})
@@ -13,7 +13,7 @@ mongoose.connect(process.env.DATABSE_URL,{useNewUrlParser : true,  useUnifiedTop
 const nocache = require("nocache")
 //get port from environment variables
 const PORT = process.env.PORT || 3001;
-const path = require("path")
+
 
 //view engine, views settinng
 app.set('view engine', "ejs");
@@ -21,8 +21,11 @@ app.set("views","./views")
 app.set('layout', 'admin/layout');
 
 //serve static files
-app.use(express.static("views/public"))
-app.use(express.static("views/admin"))
+// app.use(express.static("views/public"))
+// app.use(express.static("views/admin"))
+app.use(express.static(path.join(__dirname, 'views/public')));
+app.use(express.static(path.join(__dirname, 'views/admin')));
+app.use(express.static(path.join(__dirname, 'views/uploads')));
 
 app.use(express.urlencoded({extended : true}))
 app.use(express.json())

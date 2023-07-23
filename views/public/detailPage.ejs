@@ -1,0 +1,83 @@
+<!-- include header -->
+<%- include('./includes/header') %>
+    <div class="container-fluid padd-top">
+        <div class="container">
+            <div class="row gx-4 gx-lg-5 align-datas-center">
+                <div class="col-lg-6 px-5"><img class="img-fluid rounded mb-4 mb-lg-0" src="/food/<%= locals.data.image %>"
+                        alt="<%= locals.data.foodName %>" /></div>
+                <div class="col-lg-6">
+                    <%= data.category %>
+                        &nbsp;
+                        <i class="bi bi-circle-fill text-<%= locals.data.type === 1 ? "success" : "danger" %>"></i>
+                      
+                        <h1 class="font-weight-light">
+                            <%= locals.data.foodName %>
+                        </h1>
+                        <h3 class="pt-2">
+                            <b>₹ <%= locals.data.discPrice %></b>
+                            &nbsp;&nbsp;
+                        </h3>
+                        <span class="text-secondary"><del>₹ <%= locals.data.orgPrice %></del></span>
+                        <h5 class="text-secondary py-1">
+                            <%= locals.data.type===1 ? "Veg" : "Non-Veg" %>
+                        </h5>
+                        <h6>Description</h6>
+                        <p>
+                            <%= locals.data.description %>
+                        </p>
+                        <h6>Ingredients</h6>
+                        <p>
+                            <%= locals.data.ingredients %>
+                        </p>
+                        <a class="btn btn-warning" href="#">Add to Cart</a>
+                </div>
+            </div>
+            <!-- Call to Action-->
+            <div class="card text-white bg-secondary my-5 py-4 text-center">
+                <div class="card-body">
+                    <p class="text-white m-0">GREAT OFFERS ARE WAITING FOR YOU....</p>
+                </div>
+            </div>
+            <!-- Content Row-->
+            <!-- <div class="row gx-4 gx-lg-5">
+                <div class="col-md-4 mb-5">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h2 class="card-title">Card One</h2>
+                            <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rem magni
+                                quas ex numquam, maxime minus quam molestias corporis quod, ea minima accusamus.</p>
+                        </div>
+                        <div class="card-footer"><a class="btn btn-primary btn-sm" href="#!">More Info</a></div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-5">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h2 class="card-title">Card Two</h2>
+                            <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quod tenetur
+                                ex natus at dolorem enim! Nesciunt pariatur voluptatem sunt quam eaque, vel, non in id
+                                dolore voluptates quos eligendi labore.</p>
+                        </div>
+                        <div class="card-footer"><a class="btn btn-primary btn-sm" href="#!">More Info</a></div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-5">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h2 class="card-title">Card Three</h2>
+                            <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rem magni
+                                quas ex numquam, maxime minus quam molestias corporis quod, ea minima accusamus.</p>
+                        </div>
+                        <div class="card-footer"><a class="btn btn-primary btn-sm" href="#!">More Info</a></div>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+    </div>
+
+
+
+
+
+    <!-- include footer -->
+    <%- include('./includes/footer') %>

@@ -7,13 +7,13 @@
         <div class="card w-100">
           <div class="card-body p-0">
             <div class="table-responsive">
-              <table class="table table-striped text-nowrap mb-0 align-middle">
-                <thead class="text-dark fs-4">
+              <table class="table table-striped text-nowrap mb-0 align-middle text-center">
+                <thead class="fs-4">
                   <tr>
                     <th class="border-bottom-0">
                       <h6 class="fw-semibold mb-0">Id</h6>
                     </th>
-                    <th class="border-bottom-0">
+                    <th class="border-bottom-0" style="min-width: 100px;">
                       <h6 class="fw-semibold mb-0">Image</h6>
                     </th>
                     <th class="border-bottom-0">
@@ -45,6 +45,7 @@
                     </th>
                   </tr>
                 </thead>
+                
                 <tbody>
                   <% if(locals.data){ 
                     let i = 1;
@@ -55,7 +56,11 @@
                         <h6 class="fw-semibold mb-0"><%= i %></h6>
                       </td>
                       <td class="border-bottom-0">
-                        <h6 class="fw-semibold mb-1"><%= item.image %></h6>
+                        <% if(item.image){ %>
+                          <img src="/food/<%= item.image %>" class="img-fluid">
+                          <% }else{ %>
+                            <img src="/no-image.jpg" class="img-fluid">
+                        <% } %>
                       </td>
                       <td class="border-bottom-0">
                         <h6 class="fw-semibold mb-1"><%= item.foodName %></h6>
@@ -73,27 +78,101 @@
                         <h6 class="fw-semibold mb-1"><%= item.discPrice %></h6>
                       </td>
                       <td class="border-bottom-0">
-                        <h6 class="fw-semibold mb-1"><%= item.description %></h6>
+                        <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#foodModal<%= i %>">
+                          <h6 class="fw-semibold mb-1">Description</h6>
+                        </button>
                       </td>
                       <td class="border-bottom-0">
-                        <h6 class="fw-semibold mb-1"><%= item.ingredients %></h6>
+                        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#foodModalIngredients<%= i %>">
+                          <h6 class="fw-semibold mb-1">Ingredients</h6>
+                        </button>
                       </td>
                       <td class="border-bottom-0">
                         <h6 class="fw-semibold mb-1"><%= item.status %></h6>
                       </td>
                       <td class="border-bottom-0">
-                        <h6 class="fw-semibold mb-1">
-                          <button type="button" class="btn btn-primary w-100">Edit</button>
+                          <a href="/admin/editFood?id=<%= item._id %>"><button type="button" class="btn btn-primary w-100">Edit</button></a>
                           <br><br>
-                          <button type="button" class="btn btn-danger w-100">Delete</button>
-                        
-                        </h6>
+                          <a href="/admin/deleteFood?id=<%= item._id %>"><button type="button" class="btn btn-danger w-100" onclick="return confirm('Are you sure?')">Delete</button></a>
                       </td>
                   </tr>
+                  <div class="modal fade" id="foodModal<%= i %>" tabindex="-1" aria-labelledby="foodModal" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h1 class="modal-title fs-5" id="foodModalLabel"><%= item.foodName %></h1>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          <p><%= item.description %></p>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal fade" id="foodModalIngredients<%= i %>" tabindex="-1" aria-labelledby="foodModal" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h1 class="modal-title fs-5" id="foodModalLabel"><%= item.foodName %></h1>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          <p><%= item.ingredients %></p>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+
+
+
                   <% i++ }) }else{ %>
                       <%= "No Products Available" %>
                   <% } %>
                 </tbody>
+                <tfoot class="fs-4">
+                  <tr>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">Id</h6>
+                    </th>
+                    <th class="border-bottom-0" style="min-width: 100px;">
+                      <h6 class="fw-semibold mb-0">Image</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">Food Name</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">Category</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">Type</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">Orginal Price</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">Discount Price</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">Desciption</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">Ingredients</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">Status</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">Action</h6>
+                    </th>
+                  </tr>
+                </tfoot>
               </table>
             </div>
           </div>

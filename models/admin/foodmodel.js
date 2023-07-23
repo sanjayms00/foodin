@@ -17,12 +17,16 @@ const foodSchema = new  mongoose.Schema({
         type : String,
         required : true
     },
-    // image : {
-    //     type : String,
-    //     required : true
-    // },
-    type : {
+    image : {
         type : String,
+        required : true
+    },
+    slug : {
+        type : String,
+        required : true
+    },
+    type : {
+        type : Number,
         required : true
     },
     description : {

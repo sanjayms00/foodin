@@ -1,0 +1,58 @@
+<!--  Header End -->
+<div class="container-fluid">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title fw-semibold mb-4 float-start">Category</h5>
+        <a href="/admin/createcategory"><button type="button" class="btn btn-primary float-end">Add category</button></a>
+        <div class="card w-100">
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-striped text-nowrap mb-0 align-middle">
+                <thead class="text-dark fs-4">
+                  <tr>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">Id</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">category Name</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">Status</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">Action</h6>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% if(locals.data.length > 0){ 
+                    let i = 1;
+                    data.forEach((item)=>{
+                  %>
+                  <tr>
+                      <td class="border-bottom-0">
+                        <h6 class="fw-semibold mb-0"><%= i %></h6>
+                      </td>
+                      <td class="border-bottom-0">
+                        <h6 class="fw-semibold mb-1"><%= item.categoryName %></h6>
+                      </td>
+                      <td class="border-bottom-0">
+                        <h6 class="fw-semibold mb-1"><%= item.status %></h6>
+                      </td>
+                      <td class="border-bottom-0">
+                          <a href="/admin/editCategory?id=<%= item._id %>"><button type="button" class="btn btn-primary w-50">Edit</button></a>
+                          <br><br>
+                          <a href="/admin/deleteCategory?id=<%= item._id %>"><button type="button" class="btn btn-danger w-50" onclick="return confirm('Are you sure?')">Delete</button></a>
+                      </td>
+                  </tr>
+                  <% i++ }) }else{ %>
+                      <tr><p></p><%= "No Categories To Show" %></p></tr>
+                  <% } %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

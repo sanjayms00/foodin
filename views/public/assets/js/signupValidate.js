@@ -1,49 +1,61 @@
-//signupvalidation front end
-function signupValidate() {
-  const fname = document.getElementById("fname");
-  const lname = document.getElementById("lname");
-  const email = document.getElementById("email");
-  const mobile = document.getElementById("mobile");
-  const password = document.getElementById("password");
-  const confirmPassword = document.getElementById("confirmPassword");
+function validateSignup() {
+    const firstName = document.getElementsByName("firstName")[0];
+    const lastName = document.getElementsByName("lastName")[0];
+    const emailId = document.getElementsByName("emailId")[0];
+    const mobile = document.getElementsByName("mobile")[0];
+    const signupPassword = document.getElementsByName("signupPassword")[0];
+    const confirmPassword = document.getElementsByName("confirmPassword")[0];
 
-  if (fname.value.trim() === "") {
-    swal("oops!", "First Name Required!", "error");
-    fname.focus();
-    return false;
-  }
-  if (lname.value.trim() === "") {
-    swal("oops!", "Last Name Required!", "error");
-    lname.focus();
-    return false;
-  }
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailPattern.test(email.value)) {
-    swal("oops!", "Email Id Required!", "error");
-    emailInput.focus();
-    return false;
-  }
-  const mobilePattern = /^\d{10}$/;
-  if (!mobilePattern.test(mobile.value)) {
-    swal("oops!", "Please enter a valid 10-digit mobile number!", "error");
-    mobile.focus();
-    return false;
-  }
-  if (password.value.length < 6) {
-    swal("oops!", "Password should be at least 6 characters long!", "error");
-    password.focus();
-    return false;
-  }
-  if (confirmPassword.value.length < 6) {
-    swal("oops!", "Password should be at least 6 characters long!", "error");
-    confirmPassword.focus();
-    return false;
-  }
-  if (password.value !== confirmPassword.value) {
-    
-    swal("oops!", "Password does not match!", "error");
-    confirmPassword.focus();
-    return false;
-  }
-  return true;
+    if (firstName.value.trim() === "") {
+        const firstNameLabel = document.getElementById("firstNameLabel")
+        firstNameLabel.innerHTML = "first name Required"
+        firstNameLabel.style.color = "red"
+        firstName.focus();
+        return false;
+    }
+    if (lastName.value.trim() === "") {
+        const lastNameLabel = document.getElementById("lastNameLabel")
+        lastNameLabel.innerHTML = "Last name Required"
+        lastNameLabel.style.color = "red"
+        lastName.focus();
+        return false;
+    }
+    if (emailId.value.trim() === "") {
+        const emailLabel = document.getElementById("emailLabel")
+        emailLabel.innerHTML = "Email Id Required"
+        emailLabel.style.color = "red"
+        emailId.focus();
+        return false;
+    }
+    var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(emailId.value)) {
+        const emailIdLabel = document.getElementById("emailLabel")
+        emailIdLabel.innerHTML = "Please enter a valid email address"
+        emailIdLabel.style.color = "red"
+        emailId.focus();
+        return false;
+    }
+    var mobilePattern = /^\d{10}$/;
+    if (!mobilePattern.test(mobile.value)) {
+        const mobileLabel = document.getElementById("mobileLabel")
+        mobileLabel.innerHTML = "Please enter a valid 10-digit mobile number."
+        mobileLabel.style.color = "red"
+        mobile.focus();
+        return false;
+    }
+    if (signupPassword.value.length < 6) {
+        const passowrdLabel = document.getElementById("passwordLabel")
+        passowrdLabel.innerHTML = "Password should be at least 6 characters long."
+        passowrdLabel.style.color = "red"
+        signupPassword.focus();
+        return false;
+    }
+    if(signupPassword.value !== confirmPassword.value){
+        const confirmPasswordLabel = document.getElementById("confirmPasswordLabel")
+        confirmPasswordLabel.innerHTML = "Password Doe's not match"
+        confirmPasswordLabel.style.color = "red"
+        confirmPassword.focus();
+        return false;
+    }
+    return true;
 }

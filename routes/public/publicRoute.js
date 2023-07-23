@@ -20,14 +20,24 @@ publicRoute.use(session({
 // get controllers
 const homeController = require("../../controller/public/homeController")
 const configController = require("../../controller/public/configController");
+const foodController = require("../../controller/public/foodController");
+//include middleware
+const userMiddleWare = require("../../middleware/public/userMiddleware")
 
-//routes
+publicRoute.use(userMiddleWare.sessionCheck)
+
+//home route
 publicRoute.get("/",homeController.home)
-publicRoute.get("/login",configController.login)
+//config routes
+publicRoute.get("/login",userMiddleWare.isloggedIn, configController.login)
 publicRoute.post("/loginAuthenticate",configController.loginAuthenticate)
-publicRoute.get("/signup",configController.signup)
+publicRoute.get("/signup",userMiddleWare.isloggedIn, configController.signup)
 publicRoute.post("/signupAuthenticate",configController.signupAuthenticate)
 publicRoute.get("/forgotPassword",configController.forgotPassword)
+publicRoute.get("/logout",configController.logOut)
+//food routes
+publicRoute.get("/foodDetail/:slug",foodController.detail)
+
 
 
 //export publicRoute

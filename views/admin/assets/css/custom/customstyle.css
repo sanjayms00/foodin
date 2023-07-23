@@ -1,3 +1,11 @@
-option {
-    height: 100px; 
-  }
+
+.file-preview {
+
+  max-width: 100%;
+  max-height: 364px;
+}
+
+.preview-image {
+  max-width: 100%;
+  max-height: 364px;
+}

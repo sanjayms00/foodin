@@ -5,6 +5,10 @@ const expressLayouts = require("express-ejs-layouts")
 const session = require("express-session")
 const mongoDBSession = require("connect-mongodb-session")(session)
 
+const multer = require("multer")
+const storage = multer.memoryStorage();
+const uploads = multer({storage})
+
 const store = mongoDBSession({
     uri : process.env.DATABSE_URL,
     collection : "adminSessions"
@@ -24,6 +28,8 @@ const dashboardController = require("../../controller/admin/dashboardController"
 const adminConfigController = require("../../controller/admin/adminConfigController")
 const userController = require("../../controller/admin/userController")
 const foodController = require("../../controller/admin/foodController")
+const categoryController = require("../../controller/admin/categoryController")
+
 const adminMiddleware = require("../../middleware/admin/adminMiddleware")
 
 adminRoute.use(expressLayouts)
@@ -40,9 +46,17 @@ adminRoute.get("/users", adminMiddleware.adminSessionCheck, userController.showu
 //food routes
 adminRoute.get("/food", adminMiddleware.adminSessionCheck, foodController.showFood)
 adminRoute.get("/createFood",adminMiddleware.adminSessionCheck, foodController.createFood)
-adminRoute.post("/saveFood",adminMiddleware.adminSessionCheck, foodController.saveFood)
+adminRoute.post("/saveFood", uploads.single('foodImage'), foodController.saveFood)
+adminRoute.post("/updateFood", uploads.single('foodImage'), foodController.updateFood)
 adminRoute.get("/editFood",adminMiddleware.adminSessionCheck, foodController.editFood)
 adminRoute.get("/deleteFood",adminMiddleware.adminSessionCheck, foodController.deleteFood)
+//category routes
+adminRoute.get("/category", adminMiddleware.adminSessionCheck, categoryController.showCategory)
+adminRoute.get("/createCategory",adminMiddleware.adminSessionCheck, categoryController.createCategory)
+adminRoute.post("/saveCategory",adminMiddleware.adminSessionCheck, categoryController.saveCategory)
+adminRoute.get("/editCategory",adminMiddleware.adminSessionCheck, categoryController.editCategory)
+adminRoute.post("/updatecategory",adminMiddleware.adminSessionCheck, categoryController.updateCategory)
+adminRoute.get("/deleteCategory",adminMiddleware.adminSessionCheck, categoryController.deleteCategory)
 
 //export adminRoute
 module.exports = adminRoute

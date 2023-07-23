@@ -1,9 +1,14 @@
-const Foods = require("../../models/admin/foodmodel")
+const Foods = require("../../models/admin/foodModel")
+const Category = require("../../models/admin/categoryModel")
+const sharp = require("sharp")
+const fs = require("fs")
+const path = require("path")
+const { v4: uuidv4 } = require('uuid');
 
 const showFood = async (req,res)=>{
     try {
-        const userData = await Foods.find({})
-        res.status(200).render("admin/food/index", {data : userData})
+        const foodData = await Foods.find({})
+        res.status(200).render("admin/food/index", { data : foodData })
     } catch (error) {
         console.log(error.message)
     }
@@ -11,7 +16,8 @@ const showFood = async (req,res)=>{
 
 const createFood = async (req,res)=>{
     try {
-        res.status(200).render("admin/food/create")
+        const categoryData = await Category.find({})
+        res.status(200).render("admin/food/create", { category : categoryData })
     } catch (error) {
         console.log(error.message)
     }
@@ -19,7 +25,67 @@ const createFood = async (req,res)=>{
 
 const editFood = async (req,res)=>{
     try {
-        res.status(200).render("admin/food/edit")
+        const getFoodData = await Foods.findOne({_id : req.query.id})
+        const categoryData = await Category.find({})
+        if(!getFoodData){
+            return res.status(404).render("admin/food/index", {msg :  "can not edit the food" })
+        }
+        res.status(200).render("admin/food/edit", {food : getFoodData, category : categoryData})
+    } catch (error) {
+        console.log(error.message)
+    }
+}
+const updateFood = async (req,res)=>{
+    try {
+        const {foodId, prevImage, foodName, categories, foodType, orgPrice, discPrice, foodDescription, foodIngredients} = req.body
+        if(!(foodId || prevImage || foodName || categories || foodType || orgPrice || discPrice || foodDescription || foodIngredients)){
+            console.log("fill")
+            return res.status(400).render("admin/food/edit", {msg : "fill all fields"})
+        }
+
+        const uploadDirectory = "./views/uploads/food"
+        const fileExtension = path.extname(req.file.originalname);
+        const newFileName = `${uuidv4()}${fileExtension}`;
+        const filePath = path.join(uploadDirectory, newFileName);
+
+        //make directory it its does not exist
+        if (!fs.existsSync(uploadDirectory)) {
+            fs.mkdirSync(uploadDirectory, { recursive: true });
+        }
+        await sharp(req.file.buffer)
+        .resize({ width: 720, height: 720 })
+        .toFile(filePath, (err, info) => {
+            if (err) {
+                return res.status(400).render("admin/food/edit", {msg : `Error while processing the image ${err}`})
+            } 
+        });  
+        const slug = foodName.split(" ").join('-')
+        const prevImagePath = path.join(uploadDirectory, prevImage);
+
+        // Check if the file exists before attempting to delete
+        if (fs.existsSync(prevImagePath)) {
+            // Delete the file
+            fs.unlinkSync(prevImagePath);
+            // res.send(`Image ${prevImage} deleted successfully.`);
+        } else {
+            return res.status(404).render("admin/food/edit", {msg : 'Image not found'});
+        }
+        const updateFood = {
+            image: newFileName,
+            foodName: foodName,
+            orgPrice: orgPrice,
+            discPrice: discPrice,
+            slug : slug,
+            category: categories,
+            type: foodType,
+            description : foodDescription,
+            ingredients : foodIngredients,
+        }
+        const saveData = await Foods.updateOne({ _id: foodId},{$set : updateFood})
+        if(!saveData){
+            return res.status(500).render("admin/food/edit", {msg : "Food cannot be Updated"})
+        }
+        res.status(200).redirect("/admin/food")
     } catch (error) {
         console.log(error.message)
     }
@@ -27,7 +93,11 @@ const editFood = async (req,res)=>{
 
 const deleteFood = async (req,res)=>{
     try {
-        res.status(200).render("admin/food/edit")
+        const deleteUserData = await Foods.deleteOne({_id : req.query.id})
+        if(!deleteUserData){
+            return res.status(400).render("admin/food/index", {msg : "Can not delete food"})
+        }
+        res.redirect("/admin/food")
     } catch (error) {
         console.log(error.message)
     }
@@ -35,19 +105,35 @@ const deleteFood = async (req,res)=>{
 
 const saveFood = async (req,res)=>{
     try {
-        //foodImage
         const {foodName, categories, foodType, orgPrice, discPrice, foodDescription, foodIngredients} = req.body
-        // console.log(req.body)
-        // console.log(foodName, categories, foodType, orgPrice, discPrice, foodDescription, foodIngredients)
+        
         if(!(foodName || categories || foodType || orgPrice || discPrice || foodDescription || foodIngredients)){
             console.log("fill")
             return res.status(400).render("admin/food/create", {msg : "fill all fields"})
         }
+
+        const uploadDirectory = "./views/uploads/food"
+        const fileExtension = path.extname(req.file.originalname);
+        const newFileName = `${uuidv4()}${fileExtension}`;
+        const filePath = path.join(uploadDirectory, newFileName);
+        //make directory it its does not exist
+        if (!fs.existsSync(uploadDirectory)) {
+            fs.mkdirSync(uploadDirectory, { recursive: true });
+        }
+        await sharp(req.file.buffer)
+        .resize({ width: 720, height: 720 })
+        .toFile(filePath, (err, info) => {
+            if (err) {
+                return res.status(400).render("admin/food/create", {msg : `Error while processing the image ${err}`})
+            } 
+        });  
+        const slug = foodName.split(" ").join('-')
         const newFood = new Foods({
-            // image: foodImage,
+            image: newFileName,
             foodName: foodName,
             orgPrice: orgPrice,
             discPrice: discPrice,
+            slug : slug,
             category: categories,
             type: foodType,
             description : foodDescription,
@@ -59,8 +145,7 @@ const saveFood = async (req,res)=>{
             console.log("500 eror")
             return res.status(500).render("admin/food/create", {msg : "food insertion failed"})
         }
-        console.log("success")
-        res.status(200).render("admin/food/index")
+        res.status(200).redirect("/admin/food")
     } catch (error) {
         console.log(error.message)
     }
@@ -72,6 +157,7 @@ module.exports = {
     createFood,
     saveFood,
     editFood,
+    updateFood,
     deleteFood
 
 }

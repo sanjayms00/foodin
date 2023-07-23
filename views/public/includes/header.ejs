@@ -1,79 +1,80 @@
 <!DOCTYPE html>
-<html lang="zxx" class="no-js">
+<html lang="en">
 
 <head>
-	<!-- Mobile Specific Meta -->
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<!-- Favicon-->
-	<link rel="shortcut icon" href="../assets/img/fav.png">
-	<!-- Author Meta -->
-	<meta name="author" content="CodePixar">
-	<!-- Meta Description -->
-	<meta name="description" content="">
-	<!-- Meta Keyword -->
-	<meta name="keywords" content="">
-	<!-- meta character set -->
-	<meta charset="UTF-8">
-	<!-- Site Title -->
-	<title>foodIN</title>
-	<!--
-		CSS
-		============================================= -->
-	<link rel="stylesheet" href="../assets/css/linearicons.css">
-	<script src="https://kit.fontawesome.com/849a6c8f3b.js" crossorigin="anonymous"></script>
-	<link rel="stylesheet" href="../assets/css/bootstrap.css">
-	<link rel="stylesheet" href="../assets/css/owl.carousel.css">
-	<link rel="stylesheet" href="../assets/css/nice-select.css">
-	<link rel="stylesheet" href="../assets/css/nouislider.min.css">
-	<link rel="stylesheet" href="../assets/css/ion.rangeSlider.css" />
-	<link rel="stylesheet" href="../assets/css/ion.rangeSlider.skinFlat.css" />
-	<link rel="stylesheet" href="../assets/css/magnific-popup.css">
-	<link rel="stylesheet" href="../assets/css/main.css">
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>Foodin</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+  <!-- <link href="../assets/img/favicon.png" rel="icon"> -->
+  <link href="../assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Inter:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+    rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="../assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+  <link href="../assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+  <link href="../assets/vendor/aos/aos.css" rel="stylesheet">
+
+  <!-- Template Main CSS Files -->
+  <link href="../assets/css/variables.css" rel="stylesheet">
+  <link href="../assets/css/main.css" rel="stylesheet">
+
 </head>
 
 <body>
 
-	<!-- Start Header Area -->
-	<header class="header_area sticky-header">
-		<div class="main_menu">
-			<nav class="navbar navbar-expand-lg navbar-light main_box">
-				<div class="container">
-					<!-- Brand and toggle get grouped for better mobile display -->
-					<a class="navbar-brand logo_h" href="/"><h2><b>FOODIN</b></h2></a>
-					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-					 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</button>
-					<!-- Collect the nav links, forms, and other content for toggling -->
-					<div class="collapse navbar-collapse offset" id="navbarSupportedContent">
-						<ul class="nav navbar-nav menu_nav ml-auto">
-							<li class="nav-item"><a href="/login" class="cart"><i class="fas fa-envelope"></i>&nbsp;foodin@gmail.com</a></li>
-							<li class="nav-item"><a href="/login" class="cart"><i class="fas fa-phone"></i>&nbsp;foodin@gmail.com</a></li>
-							<li class="nav-item"><a href="/login" class="cart"><i class="fa-solid fa-location-dot"></i>&nbsp;access location</a></li>
-						</ul>
-						<ul class="nav navbar-nav navbar-right">
-							
-							<li class="nav-item"><a href="/login" class="cart"><i class="fas fa-user"></i></a></li>
-							<li class="nav-item"><a href="#" class="cart"><i class="fas fa-shopping-bag"></i></a></li>
-							<li class="nav-item">
-								<button class="search"><i class="fas fa-search" id="search"></i></button>
-							</li>
-						</ul>
-					</div>
-				</div>
-			</nav>
-		</div>
-		<div class="search_input" id="search_input_box">
-			<div class="container">
-				<form class="d-flex justify-content-between">
-					<input type="text" class="form-control" id="search_input" placeholder="Search Here">
-					<button type="submit" class="btn"></button>
-					<span class="lnr lnr-cross" id="close_search" title="Close Search"></span>
-				</form>
-			</div>
-		</div>
-	</header>
-	<!-- End Header Area -->
+  <!-- ======= Header ======= -->
+  <header id="header" class="header d-flex align-items-center fixed-top">
+    <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
+      <!-- logo -->
+      <a href="/" class="logo d-flex align-items-center">
+        <!-- <img src="../assets/img/logo.png" alt=""> -->
+        <h1>FoodIn</h1>
+      </a>
+      <nav id="navbar" class="navbar">
+        <ul>
+          <a href="mailto: sfoodin@gmail.com"><span class="bi bi-envelope-at"></span>foodin@gmail.com</a>
+          <a href="tel:+91 1234567890" class="mx-2"><span class="bi bi-telephone"></span>+91 1234567890</a>
+          <a href="#" class="mx-2"><span class="bi bi-geo-alt"></span>access your location</a>
+          <a href="/cart" class="mx-5"><span class="bi bi-bag"></span>&nbsp;Cart</a>
+          <% if (!isAuthenticated) { %>
+            <a href="/login" class="mx-2"><span class="bi bi-person-circle"></span>&nbsp; Login</a>
+            <% } else { %>
+              <div class="d-flex align-items-center author mx-2">
+                <i class="bi bi-list mobile-nav-toggle"></i>
+                <div class="photo"><img src="assets/img/person-1.jpg" alt="" class="img-fluid"></div>
+                <div class="name">
+                  <h3 class="m-0 p-0"><%= userName ? userName.split("@")[0] : "user" %></h3>
+                </div>
+              </div>
+              <a href="/logout" class="mx-2"><span class="bi bi-power"></span> Logout</a>
+              <% } %>
+        </ul>
+      </nav>
 
+      <div class="position-relative">
+        <a href="#" class="mx-2 js-search-open"><span class="bi-search"></span></a>
+            <!-- ======= Search Form ======= -->
+            <div class="search-form-wrap js-search-form-wrap">
+              <form action="/search-result" class="search-form">
+                <span class="icon bi-search"></span>
+                <input type="text" placeholder="Search" class="form-control">
+                <button class="btn js-search-close"><span class="bi-x"></span></button>
+              </form>
+            </div>
+            <!-- End Search Form -->
+      </div>
+    </div>
+  </header><!-- End Header -->

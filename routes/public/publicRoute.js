@@ -40,17 +40,15 @@ publicRoute.get("/",homeController.home)
 publicRoute.get("/login",userMiddleWare.isloggedIn, configController.login)
 publicRoute.post("/loginAuthenticate",configController.loginAuthenticate)
 publicRoute.get("/signup",userMiddleWare.isloggedIn, configController.signup)
-publicRoute.post("/signupAuthenticate", userMiddleWare.isloggedIn, configController.signupAuthenticate)
+publicRoute.post("/signupAuthenticate", configController.signupAuthenticate)
 publicRoute.get("/forgotPassword",userMiddleWare.isloggedIn, configController.forgotPassword)
 publicRoute.get("/logout",configController.logOut)
 //2fa varification
 publicRoute.post("/totp-secret",userMiddleWare.isloggedIn, configController.qrimage)
-publicRoute.get("/verifyuser", userMiddleWare.isloggedIn, configController.verifyuser)
-publicRoute.post("/validateOtp",userMiddleWare.isloggedIn, configController.validateOtp)
+publicRoute.get("/verifyuser", userMiddleWare.loginCheck, configController.verifyuser)
+publicRoute.post("/validateOtp",userMiddleWare.loginCheck, configController.validateOtp)
 //food routes
 publicRoute.get("/foodDetail/:slug",foodController.detail)
-
-
 
 //export publicRoute
 module.exports = publicRoute;

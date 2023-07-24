@@ -2,7 +2,7 @@ function validateSignup() {
     const firstName = document.getElementsByName("firstName")[0];
     const lastName = document.getElementsByName("lastName")[0];
     const emailId = document.getElementsByName("emailId")[0];
-    const mobile = document.getElementsByName("mobile")[0];
+    const mobile = document.getElementsByName("mobileNumber")[0];
     const signupPassword = document.getElementsByName("signupPassword")[0];
     const confirmPassword = document.getElementsByName("confirmPassword")[0];
 

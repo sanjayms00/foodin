@@ -69,7 +69,7 @@
                         <h6 class="fw-semibold mb-1"><%= item.category %></h6>
                       </td>
                       <td class="border-bottom-0">
-                        <h6 class="fw-semibold mb-1"><%= item.type %></h6>
+                        <h6 class="fw-semibold mb-1"><%= (item.type === 1) ? "Veg" : "Non Veg" %></h6>
                       </td>
                       <td class="border-bottom-0">
                         <h6 class="fw-semibold mb-1"><%= item.orgPrice %></h6>
@@ -88,14 +88,25 @@
                         </button>
                       </td>
                       <td class="border-bottom-0">
-                        <h6 class="fw-semibold mb-1"><%= item.status %></h6>
+                        <h6 class="fw-semibold mb-1">
+                          <% if (!item.status) { %>
+                            <a href="/admin/foodStatus/<%= item._id %>-true">
+                              <button type="button" class="btn btn-danger w-100">In Active</button>
+                            </a>
+                          <% } else { %> 
+                            <a href="/admin/foodStatus/<%= item._id %>-false">
+                              <button type="button" class="btn btn-success w-100">Active</button>
+                            </a>
+                          <% } %>
+                          </h6>
                       </td>
                       <td class="border-bottom-0">
                           <a href="/admin/editFood?id=<%= item._id %>"><button type="button" class="btn btn-primary w-100">Edit</button></a>
                           <br><br>
-                          <a href="/admin/deleteFood?id=<%= item._id %>"><button type="button" class="btn btn-danger w-100" onclick="return confirm('Are you sure?')">Delete</button></a>
+                          <a href="/admin/deleteFood?id=<%= item._id %>"><button type="button" class="btn btn-danger w-100" onclick="return confirm('Are you sure to Delete?')">Delete</button></a>
                       </td>
                   </tr>
+
                   <div class="modal fade" id="foodModal<%= i %>" tabindex="-1" aria-labelledby="foodModal" aria-hidden="true">
                     <div class="modal-dialog">
                       <div class="modal-content">

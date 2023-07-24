@@ -50,6 +50,7 @@ adminRoute.post("/saveFood", uploads.single('foodImage'), foodController.saveFoo
 adminRoute.post("/updateFood", uploads.single('foodImage'), foodController.updateFood)
 adminRoute.get("/editFood",adminMiddleware.adminSessionCheck, foodController.editFood)
 adminRoute.get("/deleteFood",adminMiddleware.adminSessionCheck, foodController.deleteFood)
+adminRoute.get("/foodStatus/:status", adminMiddleware.adminSessionCheck, foodController.foodStatus)
 //category routes
 adminRoute.get("/category", adminMiddleware.adminSessionCheck, categoryController.showCategory)
 adminRoute.get("/createCategory",adminMiddleware.adminSessionCheck, categoryController.createCategory)

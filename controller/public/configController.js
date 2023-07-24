@@ -34,7 +34,7 @@ const loginAuthenticate = async(req, res) => {
             if(!checkPassword){
                 return res.status(401).render("public/login",{status : "error", msg : "username and password is incorrect"})
             }
-
+            req.session.isloggedIn = true
             res.redirect(`/verifyuser?id=${checkUser._id}`)
             // // show otp verify page
             // res.status(200).render("public/totpVerification",{status : "success", msg : "verify OTP"})
@@ -103,6 +103,7 @@ const validateOtp = async (req,res,next)=>{
         }
         req.session.isauth = true
         req.session.userName = userData.firstName
+        req.session.isloggedIn = false
         res.redirect("/")
         //end
     } catch (error) {

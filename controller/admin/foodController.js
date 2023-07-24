@@ -35,43 +35,45 @@ const editFood = async (req,res)=>{
         console.log(error.message)
     }
 }
+
 const updateFood = async (req,res)=>{
     try {
         const {foodId, prevImage, foodName, categories, foodType, orgPrice, discPrice, foodDescription, foodIngredients} = req.body
         if(!(foodId || prevImage || foodName || categories || foodType || orgPrice || discPrice || foodDescription || foodIngredients)){
-            console.log("fill")
-            return res.status(400).render("admin/food/edit", {msg : "fill all fields"})
+            return res.status(400).render("admin/food/edit", {status : "error", msg : "fill all fields"})
+        }
+        if(req.file){
+            const uploadDirectory = "./views/uploads/food"
+            const fileExtension = path.extname(req.file.originalname);
+            var newFileName = `${uuidv4()}${fileExtension}`;
+            const filePath = path.join(uploadDirectory, newFileName);
+
+            //make directory it its does not exist
+            if (!fs.existsSync(uploadDirectory)) {
+                fs.mkdirSync(uploadDirectory, { recursive: true });
+            }
+            await sharp(req.file.buffer)
+            .resize({ width: 720, height: 720 })
+            .toFile(filePath, (err, info) => {
+                if (err) {
+                    return res.status(400).render("admin/food/edit", {status : "error", msg : `Error while processing the image ${err}`})
+                } 
+            });  
+            var slug = foodName.split(" ").join('-')
+            const prevImagePath = path.join(uploadDirectory, prevImage);
+
+            // Check if the file exists before attempting to delete
+            if (fs.existsSync(prevImagePath)) {
+                // Delete the file
+                fs.unlinkSync(prevImagePath);
+                // res.send(`Image ${prevImage} deleted successfully.`);
+            } else {
+                return res.status(404).render("admin/food/edit", {status : "error", msg : 'Image not found'});
+            }
         }
 
-        const uploadDirectory = "./views/uploads/food"
-        const fileExtension = path.extname(req.file.originalname);
-        const newFileName = `${uuidv4()}${fileExtension}`;
-        const filePath = path.join(uploadDirectory, newFileName);
-
-        //make directory it its does not exist
-        if (!fs.existsSync(uploadDirectory)) {
-            fs.mkdirSync(uploadDirectory, { recursive: true });
-        }
-        await sharp(req.file.buffer)
-        .resize({ width: 720, height: 720 })
-        .toFile(filePath, (err, info) => {
-            if (err) {
-                return res.status(400).render("admin/food/edit", {msg : `Error while processing the image ${err}`})
-            } 
-        });  
-        const slug = foodName.split(" ").join('-')
-        const prevImagePath = path.join(uploadDirectory, prevImage);
-
-        // Check if the file exists before attempting to delete
-        if (fs.existsSync(prevImagePath)) {
-            // Delete the file
-            fs.unlinkSync(prevImagePath);
-            // res.send(`Image ${prevImage} deleted successfully.`);
-        } else {
-            return res.status(404).render("admin/food/edit", {msg : 'Image not found'});
-        }
         const updateFood = {
-            image: newFileName,
+            image: (newFileName === null) ? prevImage : newFileName,
             foodName: foodName,
             orgPrice: orgPrice,
             discPrice: discPrice,
@@ -83,9 +85,9 @@ const updateFood = async (req,res)=>{
         }
         const saveData = await Foods.updateOne({ _id: foodId},{$set : updateFood})
         if(!saveData){
-            return res.status(500).render("admin/food/edit", {msg : "Food cannot be Updated"})
+            return res.status(500).render("admin/food/edit", {status : "error", msg : "Food cannot be Updated"})
         }
-        res.status(200).redirect("/admin/food")
+        res.status(200).render("admin/food/edit",{status : "success", msg : "Updated Successfully"})
     } catch (error) {
         console.log(error.message)
     }
@@ -109,7 +111,7 @@ const saveFood = async (req,res)=>{
         
         if(!(foodName || categories || foodType || orgPrice || discPrice || foodDescription || foodIngredients)){
             console.log("fill")
-            return res.status(400).render("admin/food/create", {msg : "fill all fields"})
+            return res.status(400).render("admin/food/create", {status : "error" , msg : "fill all fields"})
         }
 
         const uploadDirectory = "./views/uploads/food"
@@ -145,7 +147,23 @@ const saveFood = async (req,res)=>{
             console.log("500 eror")
             return res.status(500).render("admin/food/create", {msg : "food insertion failed"})
         }
-        res.status(200).redirect("/admin/food")
+        res.status(200).render("admin/food/create",{status : "success", msg : "Added Food Successfully"})
+    } catch (error) {
+        console.log(error.message)
+    }
+}
+const foodStatus = async (req, res)=>{
+    try {
+        const foodStatus = req.params.status
+        const foodStat = foodStatus.split("-")
+        const [foodId, status] = foodStat
+        const updateStatus = await Foods.updateOne({_id : foodId}, {$set : {status : status === "true"}})
+        console.log(updateStatus)
+        const foodData = await Foods.find({})
+        if(!updateStatus){
+            return res.status(400).render("admin/food", {data : foodData, status : "error", msg : "Status Updation Failed"})
+        }
+        res.status(200).render("admin/food", {data : foodData, status : "success", msg : "Status Updated"})
     } catch (error) {
         console.log(error.message)
     }
@@ -158,6 +176,7 @@ module.exports = {
     saveFood,
     editFood,
     updateFood,
-    deleteFood
+    deleteFood,
+    foodStatus
 
 }

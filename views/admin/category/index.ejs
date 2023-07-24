@@ -2,6 +2,25 @@
 <div class="container-fluid">
     <div class="card">
       <div class="card-body">
+        <% if (locals.status === "success") { %>
+            <div class="alert alert-success" role="alert">
+                <%= locals.msg %>
+            </div>
+            <script>
+              setTimeout(()=>{
+                window.location.href = "http://127.0.0.1:3000/admin/category"; 
+              },800)
+            </script>
+        <% } if(locals.status === "error"){ %>
+            <div class="alert alert-danger" role="alert">
+                <%= locals.msg %>
+            </div>
+            <script>
+              setTimeout(()=>{
+                window.location.href = "http://127.0.0.1:3000/admin/category"; 
+              },800)
+            </script>
+        <% } %>
         <h5 class="card-title fw-semibold mb-4 float-start">Category</h5>
         <a href="/admin/createcategory"><button type="button" class="btn btn-primary float-end">Add category</button></a>
         <div class="card w-100">
@@ -42,7 +61,7 @@
                       <td class="border-bottom-0">
                           <a href="/admin/editCategory?id=<%= item._id %>"><button type="button" class="btn btn-primary w-50">Edit</button></a>
                           <br><br>
-                          <a href="/admin/deleteCategory?id=<%= item._id %>"><button type="button" class="btn btn-danger w-50" onclick="return confirm('Are you sure?')">Delete</button></a>
+                          <a href="/admin/deleteCategory?id=<%= item._id %>"><button type="button" class="btn btn-danger w-50" onclick="return confirm('Are you sure to Delete?')">Delete</button></a>
                       </td>
                   </tr>
                   <% i++ }) }else{ %>

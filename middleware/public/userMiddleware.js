@@ -11,7 +11,16 @@ const sessionCheck = (req, res, next) => {
     res.locals.userName = req.session.userName;
     next();
 }
+const loginCheck = (req,res,next)=>{
+    if (req.session.isloggedIn === true) {
+        next();
+    }else{
+        res.redirect("/")
+    }
+}
+
 module.exports = {
     isloggedIn,
-    sessionCheck
+    sessionCheck,
+    loginCheck
 }

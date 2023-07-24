@@ -45,21 +45,21 @@
       </a>
       <nav id="navbar" class="navbar">
         <ul>
-          <a href="mailto: sfoodin@gmail.com"><span class="bi bi-envelope-at"></span>foodin@gmail.com</a>
-          <a href="tel:+91 1234567890" class="mx-2"><span class="bi bi-telephone"></span>+91 1234567890</a>
-          <a href="#" class="mx-2"><span class="bi bi-geo-alt"></span>access your location</a>
-          <a href="/cart" class="mx-5"><span class="bi bi-bag"></span>&nbsp;Cart</a>
+          <a href="mailto: sfoodin@gmail.com"><span class="bi bi-envelope-at"></span>&nbsp;foodin@gmail.com</a>
+          <a href="tel:+91 1234567890" class="mx-2"><span class="bi bi-telephone"></span>&nbsp;+91 1234567890</a>
+          <a href="#" class="mx-3"><span class="bi bi-geo-alt"></span>&nbsp;access your location</a>
+          <a href="/cart" class="mx-3"><span class="bi bi-bag"></span>&nbsp;Cart</a>
           <% if (!isAuthenticated) { %>
-            <a href="/login" class="mx-2"><span class="bi bi-person-circle"></span>&nbsp; Login</a>
+            <a href="/login" class="mx-3"><span class="bi bi-person-circle"></span>&nbsp; Login</a>
             <% } else { %>
-              <div class="d-flex align-items-center author mx-2">
+              <div class="d-flex align-items-center author mx-3">
                 <i class="bi bi-list mobile-nav-toggle"></i>
-                <div class="photo"><img src="assets/img/person-1.jpg" alt="" class="img-fluid"></div>
+                <div class="photo"><img src="assets/img/person-1.jpg" alt="profile-img" class="img-fluid"></div>
                 <div class="name">
-                  <h3 class="m-0 p-0"><%= userName ? userName.split("@")[0] : "user" %></h3>
+                  <a href="#" class="m-0 p-0"><%= userName ? userName : "user" %></a>
                 </div>
               </div>
-              <a href="/logout" class="mx-2"><span class="bi bi-power"></span> Logout</a>
+              <a href="/logout" class="mx-3"><span class="bi bi-power"></span> Logout</a>
               <% } %>
         </ul>
       </nav>

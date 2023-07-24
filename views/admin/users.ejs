@@ -6,7 +6,26 @@
       <div class="card w-100">
         <div class="card-body p-4">
           <div class="table-responsive">
-            <table class="table text-nowrap mb-0 align-middle">
+            <table class="table text-nowrap text-center mb-0 align-middle">
+              <% if (locals.status === "success") { %>
+                  <div class="alert alert-success" role="alert">
+                      <%= locals.msg %>
+                  </div>
+                  <script>
+                    setTimeout(()=>{
+                      window.location.href = "http://127.0.0.1:3000/admin/users"; 
+                    },800)
+                  </script>
+              <% } if(locals.status === "error"){ %>
+                  <div class="alert alert-danger" role="alert">
+                      <%= locals.msg %>
+                  </div>
+                  <script>
+                    setTimeout(()=>{
+                      window.location.href = "http://127.0.0.1:3000/admin/users"; 
+                    },800)
+                  </script>
+              <% } %>
               <thead class="text-dark fs-4">
                 <tr>
                   <th class="border-bottom-0">
@@ -33,6 +52,7 @@
                 </tr>
               </thead>
               <tbody>
+                
                 <% if(locals.data){ 
                   let i = 1;
                   data.forEach((item)=>{
@@ -54,15 +74,19 @@
                       <h6 class="fw-semibold mb-1"><%= item.phone %></h6>
                     </td>
                     <td class="border-bottom-0">
-                      <h6 class="fw-semibold mb-1"><%= item.Addresses %></h6>
+                      <h6 class="fw-semibold mb-1"><%= item.addresses %></h6>
                     </td>
                     <td class="border-bottom-0">
                       <h6 class="fw-semibold mb-1">
-                      <% if(!item.blocked){ %> 
-                        <button type="button" class="btn btn-danger">Block User</button>
-                      <% }else{ %> 
-                        <button type="button" class="btn btn-success">Unblock User</button>
-                      <% } %> 
+                        <% if (!item.blocked) { %>
+                          <a href="/admin/userStatus/<%= item._id %>-true">
+                            <button type="button" class="btn btn-danger w-100">Block User</button>
+                          </a>
+                        <% } else { %> 
+                          <a href="/admin/userStatus/<%= item._id %>-false">
+                            <button type="button" class="btn btn-success w-100">Unblock User</button>
+                          </a>
+                        <% } %>
                       </h6>
                     </td>
                 </tr>

@@ -26,21 +26,24 @@
 			<% } %>
 			<br>
 			<div class="card-body">
-			  <h1 class="text-center">login</h1>
-			  <form class="login_form" action="/loginAuthenticate" method="post" id="contactForm" onsubmit="return validateLogin()">
+                <% if (locals.status == true) { %>
+                    <div class="d-flex justify-content-center align-items-center">
+                        <img src="<%= locals.image %>" alt="qrcode" class="img-fluid">
+                        <p>Scan QR Code using Google Authenticator App</p>
+                    </div>
+                <% }else{ %>
+                    <div class="d-flex justify-content-center align-items-center">
+                        <p><%= "Unable get the QRcode" %></p>
+                    </div>
+                <% } %>
+			  <h1 class="text-center pt-2">Verify</h1>
+			  <form class="login_form" action="/validateOtp" method="POST" id="otpForm">
+                <input type="hidden" class="form-control border-secondary" id="userId" name="userId" value="<%= locals.userId %>">				
 				<div class="mb-3">
-					<label for="Email" id="emailLabel" class="form-label">Email Id</label>
-					<input type="email" class="form-control" id="emailId" name="emailId" placeholder="Email Id">				
+					<label for="otp" id="otpLabel" class="form-label">OTP</label>
+					<input type="text" class="form-control border-secondary" id="otp" name="otp" placeholder="OTP">				
 				</div>
-				<div class="mb-3">
-					<label for="password" id="passwordLabel" class="form-label">Password</label>
-					<input type="password" class="form-control" id="loginPassword" name="loginPassword" placeholder="Password">				
-				</div>
-				<button class="btn btn-warning w-100 py-8 fs-4 mb-4 rounded-2">Login</button>
-				<div class="d-flex align-items-center justify-content-center">
-					<a class="text-primary fw-bold" href="./forgotPassword">Forgot Password ?</a>
-					<a class="text-primary fw-bold ms-2" href="/signup">Create an account</a>
-				</div>
+				<button class="btn btn-warning w-100 py-8 fs-4 mb-4 rounded-2">Verify OTP</button>
 			  </form>
 			</div>
 		  </div>

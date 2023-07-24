@@ -154,8 +154,8 @@ section {
 
 .search-form-wrap {
   position: absolute;
-  right: 0;
-  top: 0;
+  right: -2px;
+  top: 39px;
   z-index: 9;
   transition: 0.3s all ease;
   visibility: hidden;
@@ -167,9 +167,11 @@ section {
 }
 
 .search-form-wrap .search-form .form-control {
-  width: 300px;
+  width: 420px;
+  height: 50px;
+  background-color: rgb(230, 193, 144);
   border: none;
-  box-shadow: 0 15px 20px -10px rgba(var(--color-black-rgb), 0.1);
+  box-shadow: 0 15px 10px -8px rgba(var(--color-black-rgb), 0.3);
   padding-left: 40px;
   padding-right: 40px;
 }
@@ -183,14 +185,14 @@ section {
 .search-form-wrap .search-form .icon {
   position: absolute;
   left: 0;
-  top: 7px;
+  top: 14px;
   opacity: 0.5;
   left: 10px;
 }
 
 .search-form-wrap .search-form .btn {
   position: absolute;
-  top: 2px;
+  top: 10px;
   right: 4px;
   padding: 0;
   margin: 0;
@@ -501,7 +503,7 @@ section {
 }
 
 .author .photo img {
-  width: 40px;
+  width: 27px;
   border-radius: 50%;
   margin-bottom: 0;
 }

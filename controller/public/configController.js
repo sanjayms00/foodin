@@ -1,5 +1,9 @@
 const Users = require("../../models/public/userModel")
 const bcrypt = require("bcryptjs")
+const axios = require("axios")
+const qrcode = require("qrcode")
+const {authenticator} = require("otplib")
+
 //login
 const login = (req, res) => {
     try {
@@ -12,21 +16,104 @@ const login = (req, res) => {
 //login authenticate
 const loginAuthenticate = async(req, res) => {
     try {
-        const { loginEmail, loginPassword } = req.body
-        const checkUser = await Users.findOne({email : loginEmail})
-        if(!checkUser){
-            return res.status(401).render("public/login",{status : "username and password is incorrect"})
+        const { emailId, loginPassword } = req.body
+        //validate all fields
+        if (!emailId) {
+            return res.status(400).render("public/login", {status : "error", msg : "Email Id Required"});
+        } 
+        else if(!loginPassword){
+            return res.status(400).render("public/login", {status : "error", msg : "Password Required"});
         }
-        const checkPassword = await bcrypt.compare(loginPassword, checkUser.password)
-        if(!checkPassword){
-            return res.status(401).render("public/login",{status : "username and password is incorrect"})
+        else 
+        {
+            const checkUser = await Users.findOne({email : emailId})
+            if(!checkUser){
+                return res.status(401).render("public/login",{status : "error", msg : "username and password is incorrect"})
+            }
+            const checkPassword = await bcrypt.compare(loginPassword, checkUser.password)
+            if(!checkPassword){
+                return res.status(401).render("public/login",{status : "error", msg : "username and password is incorrect"})
+            }
+
+            res.redirect(`/verifyuser?id=${checkUser._id}`)
+            // // show otp verify page
+            // res.status(200).render("public/totpVerification",{status : "success", msg : "verify OTP"})
+            // res.status(200).render("public/login",{status : "success", msg : "Login Successfull"})
         }
-        req.session.isauth = true
-        req.session.username = checkUser.firstName
-        res.status(200).redirect("/")
     } catch (error) {
         console.log(error.message)
     }
+}
+
+const verifyuser = async (req,res)=>{
+        //post request
+        try {
+            const userId = req.query.id
+            const checkUser = await Users.findOne({_id : userId})
+            if(!checkUser){
+                return res.redirect("/login")
+            }
+            axios.post('http://127.0.0.1:3000/totp-secret', {userId : userId})
+            .then((response) => {
+                // Handle the response from the API
+                res.render("public/totpVerification",{image : response.data.image, status : response.data.success, userId :userId})
+            })
+            .catch((error) => {
+                // Handle errors
+                res.redirect("/login")
+            }); 
+        } catch (error) {
+            console.log(error.message)
+        }
+        
+}
+
+//create secret key
+const qrimage = async (req,res, next)=>{
+    //secret key creation
+    const {userId} = req.body
+    const secret = authenticator.generateSecret()
+    const uri = authenticator.keyuri(userId, "foodin", secret)
+    const image = await qrcode.toDataURL(uri)
+    //store temp secret in db
+    const tempSecretSave = await Users.updateOne({_id : userId},{$set : {tempSecret : secret}})
+    res.send({success : true, image})
+}
+
+
+const validateOtp = async (req,res,next)=>{
+    try {
+        const { otp, userId } = req.body;
+
+        const userData = await Users.findOne({_id : userId})
+        if(!userData){
+            return res.redirect(`/verifyuser?id=${userId}`)
+        }
+        const {tempSecret} = userData
+
+        const verified = authenticator.check(otp, tempSecret)
+        if(!verified){
+            console.log("not varified")
+            return res.redirect(`/verifyuser?id=${userId}`)
+        }
+        //update db is verified true
+        const result = await Users.updateOne({_id : userId}, {$set : {isVarified : true}})
+        if(!result){
+            console.log("validation failed")
+        }
+        req.session.isauth = true
+        req.session.userName = userData.firstName
+        res.redirect("/")
+        //end
+    } catch (error) {
+        console.log(error.message)
+    }
+    // res.send({
+    //     "token" : speakeasy.totp({
+    //         secret : req.body.secret,
+    //         encoding : "base32"
+    //     })
+    // })
 }
 
 //fogot password authenticate
@@ -84,12 +171,12 @@ const signupAuthenticate = async (req, res) => {
                         email: emailId,
                         phone: mobileNumber,
                         password: strongPassword,
-                        isVarified: true,
+                        isVarified: false,
                         blocked : false
                     })
                     await newUser.save()
                     .then(() => {
-                        req.session.isAuth = true
+                        // req.session.isAuth = true
                         res.status(200).render("public/signup", {status : "success", msg : "Registation SuccessFull"})
                     }).catch((err) => {
                         console.log(err.message)
@@ -130,6 +217,9 @@ module.exports = {
     loginAuthenticate,
     forgotPassword,
     signup,
+    qrimage,
+    verifyuser,
     signupAuthenticate,
+    validateOtp,
     logOut
 }

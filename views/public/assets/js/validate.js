@@ -27,7 +27,7 @@ function validateSignup() {
         emailId.focus();
         return false;
     }
-    var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(emailId.value)) {
         const emailIdLabel = document.getElementById("emailLabel")
         emailIdLabel.innerHTML = "Please enter a valid email address"
@@ -35,7 +35,7 @@ function validateSignup() {
         emailId.focus();
         return false;
     }
-    var mobilePattern = /^\d{10}$/;
+    const mobilePattern = /^\d{10}$/;
     if (!mobilePattern.test(mobile.value)) {
         const mobileLabel = document.getElementById("mobileLabel")
         mobileLabel.innerHTML = "Please enter a valid 10-digit mobile number."
@@ -55,6 +55,36 @@ function validateSignup() {
         confirmPasswordLabel.innerHTML = "Password Doe's not match"
         confirmPasswordLabel.style.color = "red"
         confirmPassword.focus();
+        return false;
+    }
+    return true;
+}
+
+
+function validateLogin() {
+    const emailId = document.getElementsByName("emailId")[0];
+    const loginPassword = document.getElementsByName("loginPassword")[0];
+    
+    if (emailId.value.trim() === "") {
+        const emailLabel = document.getElementById("emailLabel")
+        emailLabel.innerHTML = "Email Id Required"
+        emailLabel.style.color = "red"
+        emailId.focus();
+        return false;
+    }
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(emailId.value)) {
+        const emailIdLabel = document.getElementById("emailLabel")
+        emailIdLabel.innerHTML = "Please enter a valid email address"
+        emailIdLabel.style.color = "red"
+        emailId.focus();
+        return false;
+    }
+    if (loginPassword.value.trim() === "") {
+        const passowrdLabel = document.getElementById("passwordLabel")
+        passowrdLabel.innerHTML = "Password Required"
+        passowrdLabel.style.color = "red"
+        loginPassword.focus();
         return false;
     }
     return true;

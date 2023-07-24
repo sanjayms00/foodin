@@ -30,6 +30,12 @@ const userSchema = new  mongoose.Schema({
     cart : {
         type : [Object]
     },
+    confirmSecret : {
+        type : String,
+    },
+    tempSecret : {
+        type : String,
+    },
     isVarified : {
         type : Boolean,
         required :true

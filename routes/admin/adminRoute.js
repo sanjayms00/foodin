@@ -14,7 +14,6 @@ const store = mongoDBSession({
     collection : "adminSessions"
 })
 
-    
 //session middlware
 adminRoute.use(session({
     secret : process.env.SECRET,
@@ -43,6 +42,7 @@ adminRoute.get("/logout",adminConfigController.logout)
 adminRoute.get("/dashboard", adminMiddleware.adminSessionCheck, dashboardController.dashboard)
 //user routes
 adminRoute.get("/users", adminMiddleware.adminSessionCheck, userController.showusers)
+adminRoute.get("/userStatus/:status", adminMiddleware.adminSessionCheck, userController.userStatus)
 //food routes
 adminRoute.get("/food", adminMiddleware.adminSessionCheck, foodController.showFood)
 adminRoute.get("/createFood",adminMiddleware.adminSessionCheck, foodController.createFood)

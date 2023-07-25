@@ -32,6 +32,9 @@ const loginAuthenticate = async(req, res) => {
             if(!checkUser){
                 return res.status(401).render("public/login",{status : "error", msg : "username and password is incorrect"})
             }
+            if(checkUser.blocked === true){
+                return res.status(401).render("public/login",{status : "error", msg : "User is temporarily blocked. Contact the web site owner for assistance"}) 
+            }
             const checkPassword = await bcrypt.compare(loginPassword, checkUser.password)
             if(!checkPassword){
                 return res.status(401).render("public/login",{status : "error", msg : "username and password is incorrect"})

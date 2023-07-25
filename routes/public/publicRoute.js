@@ -39,6 +39,7 @@ publicRoute.get("/",homeController.home)
 //config routes
 publicRoute.get("/login",userMiddleWare.isloggedIn, configController.login)
 publicRoute.post("/loginAuthenticate",configController.loginAuthenticate)
+publicRoute.get("/loginAuthenticate",userMiddleWare.isloggedIn, configController.login)
 publicRoute.get("/signup",userMiddleWare.isloggedIn, configController.signup)
 publicRoute.post("/signupAuthenticate", configController.signupAuthenticate)
 publicRoute.get("/forgotPassword",userMiddleWare.isloggedIn, configController.forgotPassword)

@@ -21,8 +21,6 @@ app.set("views","./views")
 app.set('layout', 'admin/layout');
 
 //serve static files
-// app.use(express.static("views/public"))
-// app.use(express.static("views/admin"))
 app.use(express.static(path.join(__dirname, 'views/public')));
 app.use(express.static(path.join(__dirname, 'views/admin')));
 app.use(express.static(path.join(__dirname, 'views/uploads')));
@@ -40,7 +38,7 @@ app.use("/admin",adminRoute)
 
 // handle 404 page not found
 app.use("*",(req,res,next)=>{
-    res.status(404).render("public/pageNotFound")
+    res.status(404).render("public/pageNotFound", {layout : false})
 })
 
 app.listen(PORT,()=>{

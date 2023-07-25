@@ -674,7 +674,9 @@ section {
 
 .img-bg .img-bg-inner h2,
 .img-bg .img-bg-inner p {
-  color: var(--color-white);
+  color: black;
+  background-color: rgb(255 228 196 / 50%);
+  padding: 15px;
 }
 
 @media (max-width: 500px) {

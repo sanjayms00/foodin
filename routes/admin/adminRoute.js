@@ -37,6 +37,7 @@ adminRoute.use(expressLayouts)
 adminRoute.get("/",adminConfigController.admin)
 adminRoute.get("/login",adminConfigController.login)
 adminRoute.post("/auth",adminConfigController.auth)
+adminRoute.get("/auth",adminConfigController.login)
 adminRoute.get("/logout",adminConfigController.logout)
 //dashboard routes
 adminRoute.get("/dashboard", adminMiddleware.adminSessionCheck, dashboardController.dashboard)

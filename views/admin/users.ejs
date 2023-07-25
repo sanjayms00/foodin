@@ -2,9 +2,9 @@
 <div class="container-fluid">
   <div class="card">
     <div class="card-body">
-      <h5 class="card-title fw-semibold mb-4">Users</h5>
+      <h5 class="card-title fw-semibold mb-4 float-start">Users</h5>
       <div class="card w-100">
-        <div class="card-body p-4">
+        <div class="card-body p-0">
           <div class="table-responsive">
             <table class="table text-nowrap text-center mb-0 align-middle">
               <% if (locals.status === "success") { %>
@@ -20,11 +20,11 @@
                   <div class="alert alert-danger" role="alert">
                       <%= locals.msg %>
                   </div>
-                  <script>
+                  <!-- <script>
                     setTimeout(()=>{
                       window.location.href = "http://127.0.0.1:3000/admin/users"; 
                     },800)
-                  </script>
+                  </script> -->
               <% } %>
               <thead class="text-dark fs-4">
                 <tr>

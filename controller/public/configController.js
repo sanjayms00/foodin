@@ -1,13 +1,15 @@
 const Users = require("../../models/public/userModel")
+const Category = require("../../models/admin/categoryModel")
 const bcrypt = require("bcryptjs")
 const axios = require("axios")
 const qrcode = require("qrcode")
 const {authenticator} = require("otplib")
 
 //login
-const login = (req, res) => {
+const login = async (req, res) => {
     try {
-        res.render("public/login")
+        const categoryData = await Category.find({})
+        res.render("public/login", {categories : categoryData})
     } catch (error) {
         console.log(error.message)
     }
@@ -127,9 +129,10 @@ const forgotPassword = (req, res) => {
 }
 
 //signup 
-const signup = (req, res) => {
+const signup = async (req, res) => {
     try {
-        res.render("public/signup")
+        const categoryData = await Category.find({})
+        res.render("public/signup", {categories : categoryData})
     } catch (error) {
         console.log(error.message)
     }

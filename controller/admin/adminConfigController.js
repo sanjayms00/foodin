@@ -33,13 +33,11 @@ const auth = async(req,res) => {
         const {adminEmail, adminPassword } = req.body 
         const checkAdmin = await AdminUsers.findOne({email : adminEmail})
         if(!checkAdmin){
-            console.log("user name or pass in correct");
-            return res.render("admin/adminlogin", {layout : false})
+            return res.render("admin/adminLogin", {layout : false, status : "error" , msg : "Email id or password is incorrect"})
         }
         const checkPassword = await bcrypt.compare(adminPassword, checkAdmin.password)
         if(!checkPassword){
-            console.log("incorrect pass")
-            return res.render("admin/adminlogin", {layout : false})
+            return res.render("admin/adminLogin", {layout : false, status : "error" , msg : "Email id or password is incorrect"})
         }
         req.session.adminUser = true;
         res.redirect("/admin/dashboard")

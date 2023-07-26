@@ -4,10 +4,10 @@ const Users = require("../../models/public/userModel")
 const Category = require("../../models/admin/categoryModel")
 const bcrypt = require("bcryptjs")
 const crypto = require('crypto');
-const accountSid = 'AC9a4ee74013947f7bdf79a01bbd9a642a';
-const authToken = '5b354d9f48186cd7021d3affcc1aff9b';
-const twilioNumber = "+12292673022"
-const client = require('twilio')(accountSid, authToken);
+const accountSid = "ACfd21e83a558ab9b0d9c73cc71bb002ef";
+const authToken = "28fad8a079b6190b309c4ece17bb1e46";
+const verifySid = "VA9d9e171ce3777e4ded970b3ac7ea8941";
+const client = require("twilio")(accountSid, authToken);
 
 //login
 const login = async (req, res) => {
@@ -86,17 +86,19 @@ const validateOtp = async (req, res) => {
         if(!getUserOtp){
             res.json({status : "error", msg : "unauthorozed User"})
         }
-        bcrypt.compare(otp, getUserOtp.tempSecret, (err, isMatch)=>{
-            if(err){
-                res.json({status : "error", msg : "Wrong OTP"})
-            }else if(isMatch){
-                req.session.isauth = true;
-                req.session.userName = getUserOtp.firstName;
-                res.json({status : "success", msg : "OTP Verified"})
-            }else{
-                res.json({status : "error", msg : "OTP is incorrect. Login failed"})
-            }
-        });
+
+        client.verify.v2
+                    .services(verifySid)
+                    .verificationChecks.create({ to: `+91${mobileNumber}`, code: otp })
+                    .then((verification_check) => {
+                        console.log(verification_check.status)
+                        req.session.isauth = true;
+                        req.session.userName = getUserOtp.firstName;
+                        res.json({status : "success", msg : "OTP Verified"})
+                    })
+                    .catch((err)=>{
+                        console.log(err.message)
+                    })
     } catch (error) {
         console.log(error.message)
     }
@@ -113,21 +115,16 @@ const validateNumber = async (req, res) => {
             const otp = generateOTP();
             console.log('Generated OTP:', otp);
             console.log(userData.phone)
-            const sendOtp = client.messages
-                            .create({
-                                body: `foodin otp to verify mobile Number, Enter the otp and verify your account - ${otp}`,
-                                to: `+91${userData.phone}`,
-                                from: "+12292673022", 
-                            })
-            if(!sendOtp){
-                res.json({status : "error", msg : "can not sent OTP at the moment"})
-            }
-            const hashOtp = await bcrypt.hash(otp, 12)
-            const updateStatus = await Users.updateOne({phone : mobileNumber}, {$set : {tempSecret : hashOtp}})
-            if(!updateStatus){
-                res.json({status : "error", msg : "can not move on , some issue occured"})
-            }
-            res.json({status : "success", msg : "mobile number verified"})
+            client.verify.v2
+            .services(verifySid)
+            .verifications.create({ to: `+91${mobileNumber}`, channel: "sms" })
+            .then((verification) => {
+                console.log(verification.status)
+                res.json({status : "success", msg : "mobile number verified"})
+            })
+            .catch((err)=>{
+                console.log(err.message)
+            });
         }
     } catch (error) {
         res.json({status : "error", msg : error.message})

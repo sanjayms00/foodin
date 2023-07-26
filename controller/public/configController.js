@@ -1,9 +1,13 @@
+
+require("dotenv").config()
 const Users = require("../../models/public/userModel")
 const Category = require("../../models/admin/categoryModel")
 const bcrypt = require("bcryptjs")
-const axios = require("axios")
-const qrcode = require("qrcode")
-const {authenticator} = require("otplib")
+const crypto = require('crypto');
+const accountSid = 'AC9a4ee74013947f7bdf79a01bbd9a642a';
+const authToken = '5b354d9f48186cd7021d3affcc1aff9b';
+const twilioNumber = "+12292673022"
+const client = require('twilio')(accountSid, authToken);
 
 //login
 const login = async (req, res) => {
@@ -16,7 +20,7 @@ const login = async (req, res) => {
 }
 
 //login authenticate
-const loginAuthenticate = async(req, res) => {
+const loginAuthenticate = async (req, res) => {
     try {
         const { emailId, loginPassword } = req.body
         //validate all fields
@@ -40,87 +44,97 @@ const loginAuthenticate = async(req, res) => {
                 return res.status(401).render("public/login",{status : "error", msg : "username and password is incorrect"})
             }
             req.session.isloggedIn = true
-            res.redirect(`/verifyuser?id=${checkUser._id}`)
-            // // show otp verify page
-            // res.status(200).render("public/totpVerification",{status : "success", msg : "verify OTP"})
-            // res.status(200).render("public/login",{status : "success", msg : "Login Successfull"})
+            
+            res.render("public/ShowNumber")
+            
         }
     } catch (error) {
         console.log(error.message)
     }
 }
 
-const verifyuser = async (req,res)=>{
-        //post request
-        try {
-            const userId = req.query.id
-            const checkUser = await Users.findOne({_id : userId})
-            if(!checkUser){
-                return res.redirect("/login")
-            }
-            axios.post('http://127.0.0.1:3000/totp-secret', {userId : userId})
-            .then((response) => {
-                // Handle the response from the API
-                res.render("public/totpVerification",{image : response.data.image, status : response.data.success, userId :userId})
-            })
-            .catch((error) => {
-                // Handle errors
-                res.redirect("/login")
-            }); 
-        } catch (error) {
-            console.log(error.message)
-        }
-        
-}
-
-//create secret key
-const qrimage = async (req,res, next)=>{
-    //secret key creation
-    const {userId} = req.body
-    const secret = authenticator.generateSecret()
-    const uri = authenticator.keyuri(userId, "foodin", secret)
-    const image = await qrcode.toDataURL(uri)
-    //store temp secret in db
-    const tempSecretSave = await Users.updateOne({_id : userId},{$set : {tempSecret : secret}})
-    res.send({success : true, image})
-}
-
-
-const validateOtp = async (req,res,next)=>{
+function generateOTP() {
     try {
-        const { otp, userId } = req.body;
+        const digits = '0123456789';
+            let otp = '';
+            for (let i = 0; i < 6; i++) {
+                const index = crypto.randomInt(0, digits.length);
+                otp += digits[index];
+            }
+            return otp;
+    } 
+    catch (error) {
+        console.log(error.message)
+    }
+  
+}
 
-        const userData = await Users.findOne({_id : userId})
-        if(!userData){
-            return res.redirect(`/verifyuser?id=${userId}`)
-        }
-        const {tempSecret} = userData
-
-        const verified = authenticator.check(otp, tempSecret)
-        if(!verified){
-            console.log("not varified")
-            return res.redirect(`/verifyuser?id=${userId}`)
-        }
-        //update db is verified true
-        const result = await Users.updateOne({_id : userId}, {$set : {isVarified : true}})
-        if(!result){
-            console.log("validation failed")
-        }
-        req.session.isauth = true
-        req.session.userName = userData.firstName
-        req.session.isloggedIn = false
-        res.redirect("/")
-        //end
+const verifyOtp = (req, res) => {
+    try {
+        const mobileNumber = req.query.userMobileNumber;
+        res.render("public/otpPage", {mobile : mobileNumber})
     } catch (error) {
         console.log(error.message)
     }
-    // res.send({
-    //     "token" : speakeasy.totp({
-    //         secret : req.body.secret,
-    //         encoding : "base32"
-    //     })
-    // })
 }
+
+const validateOtp = async (req, res) => {
+    try {
+        const { otp , mobileNumber } = req.body;
+        console.log(otp, mobileNumber)
+        const getUserOtp = await Users.findOne({phone : mobileNumber})
+        if(!getUserOtp){
+            res.json({status : "error", msg : "unauthorozed User"})
+        }
+        bcrypt.compare(otp, getUserOtp.tempSecret, (err, isMatch)=>{
+            if(err){
+                res.json({status : "error", msg : "Wrong OTP"})
+            }else if(isMatch){
+                req.session.isauth = true;
+                req.session.userName = getUserOtp.firstName;
+                res.json({status : "success", msg : "OTP Verified"})
+            }else{
+                res.json({status : "error", msg : "OTP is incorrect. Login failed"})
+            }
+        });
+    } catch (error) {
+        console.log(error.message)
+    }
+}
+
+const validateNumber = async (req, res) => {
+    try {
+        const { mobileNumber } = req.body
+        const userData = await Users.findOne({phone : mobileNumber})
+        if(!userData){
+            res.json({status : "error", msg : "Wrong Mobile Number"})
+        }else{
+            console.log("success verified mobile number")
+            const otp = generateOTP();
+            console.log('Generated OTP:', otp);
+            console.log(userData.phone)
+            const sendOtp = client.messages
+                            .create({
+                                body: `foodin otp to verify mobile Number, Enter the otp and verify your account - ${otp}`,
+                                to: `+91${userData.phone}`,
+                                from: "+12292673022", 
+                            })
+            if(!sendOtp){
+                res.json({status : "error", msg : "can not sent OTP at the moment"})
+            }
+            const hashOtp = await bcrypt.hash(otp, 12)
+            const updateStatus = await Users.updateOne({phone : mobileNumber}, {$set : {tempSecret : hashOtp}})
+            if(!updateStatus){
+                res.json({status : "error", msg : "can not move on , some issue occured"})
+            }
+            res.json({status : "success", msg : "mobile number verified"})
+        }
+    } catch (error) {
+        res.json({status : "error", msg : error.message})
+    }
+}
+
+
 
 //fogot password authenticate
 const forgotPassword = (req, res) => {
@@ -216,17 +230,15 @@ const logOut = (req,res)=>{
 }
 
 
-
-
 //export all functions like objects
 module.exports = {
     login,
     loginAuthenticate,
     forgotPassword,
     signup,
-    qrimage,
-    verifyuser,
     signupAuthenticate,
+    logOut,
+    verifyOtp,
     validateOtp,
-    logOut
+    validateNumber
 }

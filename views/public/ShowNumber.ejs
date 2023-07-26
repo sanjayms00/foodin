@@ -1,0 +1,82 @@
+
+<!-- include header -->
+<%- include('./includes/header') %>
+
+
+  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full" data-sidebar-position="fixed" data-header-position="fixed">
+  <div
+	class="position-relative overflow-hidden radial-gradient min-vh-100 d-flex align-items-center justify-content-center">
+	<div class="d-flex align-items-center justify-content-center w-100">
+	  <div class="row justify-content-center w-100">
+		<div class="col-md-8 col-lg-6 col-xxl-3">
+		  <div class="card mb-0">
+			<div class="alert d-none" role="alert" id="alertResult">
+				<%= locals.msg %>
+			</div>
+			<div class="card-body">
+			  <h1 class="text-center">Number Validate</h1>
+			  <form class="login_form" method="post" id="mobileNumberValidateForm" onsubmit="return validateMobileNumber()">
+				<div class="mb-3">
+					<label for="password" id="passwordLabel" class="form-label">Mobile number used to create account</label>
+					<input type="text" class="form-control" id="mobileNumber" name="mobileNumber" placeholder="Mobile Number">				
+				</div>
+				<button class="btn btn-warning w-100 py-8 fs-4 mb-4 rounded-2">Send OTP</button>
+				<div class="d-flex align-items-center justify-content-center">
+					<a class="text-primary fw-bold" href="./forgotPassword">Forgot Password ?</a>
+					<a class="text-primary fw-bold ms-2" href="/signup">Create an account</a>
+				</div>
+			  </form>
+			</div>
+		  </div>
+		</div>
+	  </div>
+	</div>
+  </div>
+</div>
+
+<script>
+	document.getElementById('mobileNumberValidateForm').addEventListener('submit', async (event) => {
+		event.preventDefault();
+		
+		const formData = new FormData(event.target);
+		const mobileNumber = formData.get('mobileNumber');
+		
+		try {
+			const response = await fetch('/validateNumber', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ mobileNumber })
+			});
+			
+			const data = await response.json();
+			// alert(JSON.stringify(data)); 
+			const alertDiv = document.getElementById('alertResult');
+			
+			if (data.status === 'success') { 
+				alertDiv.classList.remove('alert-danger');
+				alertDiv.classList.add('alert-success');
+				alertDiv.classList.remove('d-none');
+				alertDiv.innerText = data.msg;
+				//page load
+				window.location.href = `/verifyOtp?userMobileNumber=${mobileNumber}`;
+			} else {
+				alertDiv.classList.remove('alert-success');
+				alertDiv.classList.add('alert-danger');
+				alertDiv.classList.remove('d-none');
+				alertDiv.innerText = data.msg;
+			}
+		}catch (error) {
+			const alertDiv = document.getElementById('alertResult')
+			alertDiv.classList.add("alert-danger")
+			alertDiv.classList.remove("d-none")
+			alertDiv.innerText = 'An error occurred. Please try again later.';
+		}
+	});
+
+</script>
+
+<script src="assets/js/validate.js"></script>
+<!-- include footer -->
+<%- include('./includes/footer') %>

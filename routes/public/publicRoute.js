@@ -9,13 +9,13 @@ const store = mongoDBSession({
     collection : "userSessions"
 })
 
-publicRoute.use((req, res, next) => {
-    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-    res.setHeader('Pragma', 'no-cache');
-    res.setHeader('Expires', '0');
-    res.setHeader('Surrogate-Control', 'no-store');
-    next();
-  });
+// publicRoute.use((req, res, next) => {
+//     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+//     res.setHeader('Pragma', 'no-cache');
+//     res.setHeader('Expires', '0');
+//     res.setHeader('Surrogate-Control', 'no-store');
+//     next();
+//   });
 
 //session middlware
 publicRoute.use(session({
@@ -43,13 +43,15 @@ publicRoute.get("/loginAuthenticate",userMiddleWare.isloggedIn, configController
 publicRoute.get("/signup",userMiddleWare.isloggedIn, configController.signup)
 publicRoute.post("/signupAuthenticate", configController.signupAuthenticate)
 publicRoute.get("/forgotPassword",userMiddleWare.isloggedIn, configController.forgotPassword)
-publicRoute.get("/logout",configController.logOut)
+publicRoute.get("/logout", configController.logOut)
+
 //2fa varification
-publicRoute.post("/totp-secret",userMiddleWare.isloggedIn, configController.qrimage)
-publicRoute.get("/verifyuser", userMiddleWare.loginCheck, configController.verifyuser)
-publicRoute.post("/validateOtp",userMiddleWare.loginCheck, configController.validateOtp)
+publicRoute.get("/verifyOtp",userMiddleWare.isloggedIn, configController.verifyOtp)
+publicRoute.post("/validateOtp", userMiddleWare.isloggedIn, configController.validateOtp)
+publicRoute.post("/validateNUmber", userMiddleWare.isloggedIn, configController.validateNumber)
+
 //food routes
-publicRoute.get("/foodDetail/:slug",foodController.detail)
+publicRoute.get("/foodDetail/:slug", foodController.detail)
 
 //export publicRoute
 module.exports = publicRoute;

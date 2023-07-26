@@ -1,0 +1,81 @@
+
+<!-- include header -->
+<%- include('./includes/header') %>
+
+
+  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full" data-sidebar-position="fixed" data-header-position="fixed">
+  <div
+	class="position-relative overflow-hidden radial-gradient min-vh-100 d-flex align-items-center justify-content-center">
+	<div class="d-flex align-items-center justify-content-center w-100">
+	  <div class="row justify-content-center w-100">
+		<div class="col-md-8 col-lg-6 col-xxl-3">
+		  <div class="card mb-0">
+			<div class="alert d-none" role="alert" id="alertResult">
+				<%= locals.msg %>
+			</div>
+			<div class="card-body">
+			  <h1 class="text-center pt-2">Verify</h1>
+			  <form class="login_form" method="POST" id="otpValidateForm">			
+				<div class="mb-3">
+					<label for="otp" id="otpLabel" class="form-label">OTP</label>
+					<input type="text" class="form-control border-secondary" id="otp" name="otp" placeholder="OTP">				
+				</div>
+				<button class="btn btn-warning w-100 py-8 fs-4 mb-4 rounded-2">Verify OTP</button>
+				<p><a href="">Resend OTP</a></p>
+			  </form>
+			</div>
+		  </div>
+		</div>
+	  </div>
+	</div>
+  </div>
+</div>
+
+<script>
+	document.getElementById('otpValidateForm').addEventListener('submit', async (event) => {
+		event.preventDefault();
+		
+		const formData = new FormData(event.target);
+		const otp = formData.get('otp');
+		const mobileNumber = '<%= mobile %>'
+		
+		try {
+			const response = await fetch('/validateOtp', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ mobileNumber, otp })
+			});
+
+			const data = await response.json();
+			// alert(JSON.stringify(data)); 
+			const alertDiv = document.getElementById('alertResult');
+			
+			if (data.status === 'success') { 
+				alertDiv.classList.remove('alert-danger');
+				alertDiv.classList.add('alert-success');
+				alertDiv.classList.remove('d-none');
+				alertDiv.innerText = data.msg;
+				//page load
+				window.location.href = "/";
+			} else {
+				alertDiv.classList.remove('alert-success');
+				alertDiv.classList.add('alert-danger');
+				alertDiv.classList.remove('d-none');
+				alertDiv.innerText = data.msg;
+			}
+		}catch (error) {
+			const alertDiv = document.getElementById('alertResult')
+			alertDiv.classList.add("alert-danger")
+			alertDiv.classList.remove("d-none")
+			alertDiv.innerText = 'An error occurred. Please try again later.';
+		}
+	});
+
+</script>
+
+
+<script src="assets/js/validate.js"></script>
+<!-- include footer -->
+<%- include('./includes/footer') %>

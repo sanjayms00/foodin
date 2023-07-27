@@ -52,14 +52,26 @@
           <% if (!isAuthenticated) { %>
             <a href="/login" class="mx-3"><span class="bi bi-person-circle"></span>&nbsp; Login</a>
             <% } else { %>
-              <div class="d-flex align-items-center author mx-3">
-                <i class="bi bi-list mobile-nav-toggle"></i>
-                <div class="photo"><img src="assets/img/person-1.jpg" alt="profile-img" class="img-fluid"></div>
-                <div class="name">
-                  <a href="#" class="m-0 p-0"><%= userName ? userName : "user" %></a>
-                </div>
+              <div class="dropdown">
+                <button class="dropdown-toggle border-0 mx-5" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <div class="d-flex align-items-center author mx-3">
+                    <i class="bi bi-list mobile-nav-toggle"></i>
+                    <div class="photo"><img src="assets/img/person-1.jpg" alt="profile-img" class="img-fluid"></div>
+                    <div class="name">
+                      <a href="#" class="m-0 p-0"><%= userName ? userName : "user" %></a>
+                    </div>
+                  </div>
+                </button>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="/my-profile">My Profile</a></li>
+                  <li><a class="dropdown-item" href="/address-book">Address Book</a></li>
+                  <li><a class="dropdown-item" href="/order-history">Order History</a></li>
+                  <li><a class="dropdown-item" href="/track-order">Track Order</a></li>
+                  <hr>
+                  <li><a class="dropdown-item" href="/logout">logout</a></li>
+                </ul>
               </div>
-              <a href="/logout" class="mx-3"><span class="bi bi-power"></span> Logout</a>
+              <!-- <a href="" class="mx-3"><span class="bi bi-power"></span> </a> -->
               <% } %>
         </ul>
       </nav>

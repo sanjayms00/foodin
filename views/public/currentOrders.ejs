@@ -1,0 +1,44 @@
+<!-- include header -->
+<%- include('./includes/header') %>
+
+    <section style="background-color: #eee;">
+        <div class="container profile-section">
+            <div class="row">
+                <%-include("./includes/profileLeft") %>
+                <div class="col-lg-8">
+                    <div class="card mb-4 profile-right">
+                        <div class="card-body">
+                            <div class="row py-3">
+                                <div class="col-sm-12">
+                                    <h3 class="mb-0">current Orders</h3>
+                                </div>
+                            </div>
+                            <div class="row py-3 text-light">
+                                <div class="py-3 col-sm-12">
+                                    <div class="bg-success rounded">
+                                        <p class="mb-0 p-3">dummy address</p>
+                                    </div>
+                                </div>
+                                <div class="py-3 col-sm-12">
+                                    <div class="bg-warning rounded">
+                                        <p class="mb-0 p-3">dummy address</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row py-1">
+                                <div class="col-sm-12">
+                                    <a href="/order-history">
+                                        <button type="button" class="btn btn-outline-primary float-end">order History</button>
+                                    </a>    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+<!-- include footer -->
+<%- include('./includes/footer') %>

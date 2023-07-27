@@ -20,6 +20,10 @@ body {
   color: rgba(var(--color-primary-rgb), 1);
 }
 
+.dropdown-toggle::after {
+  display: none;
+}
+
 a {
   color: var(--color-links);
   text-decoration: none;
@@ -31,6 +35,15 @@ a:hover {
   color: var(--color-links-hover);
   text-decoration: none;
 }
+
+.profile-right{
+  min-height: 558px;
+}
+
+.profile-section{
+  padding: 80px 15px;
+}
+
 
 h1,
 h2,
@@ -284,7 +297,7 @@ section {
     left: 14px;
     top: calc(100% + 30px);
     margin: 0;
-    padding: 10px 0;
+    padding: 0;
     z-index: 99;
     opacity: 0;
     visibility: hidden;

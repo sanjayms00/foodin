@@ -28,6 +28,7 @@ const adminConfigController = require("../../controller/admin/adminConfigControl
 const userController = require("../../controller/admin/userController")
 const foodController = require("../../controller/admin/foodController")
 const categoryController = require("../../controller/admin/categoryController")
+const ordersController = require("../../controller/admin/orderscontroller")
 
 const adminMiddleware = require("../../middleware/admin/adminMiddleware")
 
@@ -59,6 +60,13 @@ adminRoute.post("/saveCategory",adminMiddleware.adminSessionCheck, categoryContr
 adminRoute.get("/editCategory",adminMiddleware.adminSessionCheck, categoryController.editCategory)
 adminRoute.post("/updatecategory",adminMiddleware.adminSessionCheck, categoryController.updateCategory)
 adminRoute.get("/deleteCategory",adminMiddleware.adminSessionCheck, categoryController.deleteCategory)
+//order routes
+adminRoute.get("/orders", adminMiddleware.adminSessionCheck, ordersController.showOrders)
+// adminRoute.get("/createCategory",adminMiddleware.adminSessionCheck, categoryController.createCategory)
+// adminRoute.post("/saveCategory",adminMiddleware.adminSessionCheck, categoryController.saveCategory)
+// adminRoute.get("/editCategory",adminMiddleware.adminSessionCheck, categoryController.editCategory)
+// adminRoute.post("/updatecategory",adminMiddleware.adminSessionCheck, categoryController.updateCategory)
+// adminRoute.get("/deleteCategory",adminMiddleware.adminSessionCheck, categoryController.deleteCategory)
 
 //export adminRoute
 module.exports = adminRoute

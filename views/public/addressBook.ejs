@@ -1,0 +1,67 @@
+<!-- include header -->
+<%- include('./includes/header') %>
+
+<section style="background-color: #eee;">
+    <div class="container profile-section">
+        <div class="row">
+            <%-include("./includes/profileLeft") %>
+            <div class="col-lg-8">
+                <div class="card mb-4 profile-right">
+                    <div class="card-body">
+                        <div class="row py-3">
+                            <div class="col-sm-12">
+                                <h3 class="mb-0">Address Book</h3>
+                            </div>
+                        </div>
+                        <div class="row py-3 text-light">
+                            <div class="py-3 col-sm-12">
+                                <div class="bg-secondary rounded">
+                                    <p class="mb-0 p-3">dummy address</p>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        
+                        <div class="row py-1">
+                            <div class="col-sm-12">
+                                <!-- Button trigger modal -->
+                                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                    Add Address
+                                </button>
+  
+                                <!-- Modal -->
+                                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Add Address</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="form-floating mb-3">
+                                                <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+                                                <label for="floatingInput">Email address</label>
+                                              </div>
+                                              <div class="form-floating">
+                                                <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+                                                <label for="floatingPassword">Password</label>
+                                              </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-success">Save changes</button>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>   
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- include footer -->
+<%- include('./includes/footer') %>

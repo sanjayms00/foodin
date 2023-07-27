@@ -29,6 +29,10 @@ publicRoute.use(session({
 const homeController = require("../../controller/public/homeController")
 const configController = require("../../controller/public/configController");
 const foodController = require("../../controller/public/foodController");
+const profileController = require("../../controller/public/profileController")
+const addressController = require("../../controller/public/addressController")
+const orderController = require("../../controller/public/orderController")
+
 //include middleware
 const userMiddleWare = require("../../middleware/public/userMiddleware")
 
@@ -52,6 +56,18 @@ publicRoute.post("/validateNUmber", userMiddleWare.isloggedIn, configController.
 
 //food routes
 publicRoute.get("/foodDetail/:slug", foodController.detail)
+
+//profile Routes
+publicRoute.get("/my-profile", profileController.myProfile)
+publicRoute.get("/edit-profile", profileController.editProfile)
+publicRoute.get("/address-book", addressController.addressBook)
+publicRoute.get("/orders", orderController.currentOrders)
+publicRoute.get("/order-history", orderController.orderHistory)
+publicRoute.get("/track-order", addressController.trackOrder)
+
+
+
+
 
 //export publicRoute
 module.exports = publicRoute;

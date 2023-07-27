@@ -1,0 +1,124 @@
+<!--  Header End -->
+<div class="container-fluid">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title fw-semibold mb-4">orders</h5>
+        <div class="card w-100">
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-striped text-nowrap mb-0 align-middle">
+                <thead class="text-dark fs-4">
+                  <tr>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">#</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">order Id</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">Address</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">User Name</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">Time</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">Food & Qty</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">Payment Status</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">Manage Status</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">Action</h6>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% if(locals.data.length > 0){ 
+                    let i = 1;
+                    data.forEach((item)=>{
+                  %>
+                  <tr>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0"><%= i %></h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0"><%= item.userId %></h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0"><%= item.address %></h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0"><%=  item.userName%></h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0"><%= item.createdAt %></h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0"><%= item.food %></h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0"><%= item.paymentMethod %></h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <select class="custom-select custom-select-lg mb-3">
+                        <option value="1">Placed</option>
+                        <option value="2">confirmed</option>
+                        <option value="3">prepared</option>
+                        <option value="4">Delivered</option>
+                      </select>
+                    </th>
+                    <td class="border-bottom-0">
+                        <a href="/admin/deleteorders?id=<%= item._id %>">
+                          <button type="button" class="btn btn-danger w-50" onclick="return confirm('Are You Sure?')">Cancel Order</button>
+                        </a>
+                    </td>
+                  </tr>
+                  <% i++ }) }else{ %>
+                      <tr><p></p><%= "No Orders To Show" %></p></tr>
+                  <% } %>
+                </tbody>
+                <tfoot class="text-dark fs-4">
+                  <tr>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">#</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">order Id</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">Address</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">User Name</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">Time</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">Food & Qty</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">Payment Status</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">Manage Status</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">Action</h6>
+                    </th>
+                  </tr>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

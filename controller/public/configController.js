@@ -4,10 +4,17 @@ const Users = require("../../models/public/userModel")
 const Category = require("../../models/admin/categoryModel")
 const bcrypt = require("bcryptjs")
 const crypto = require('crypto');
+// const accountSid = "ACfd21e83a558ab9b0d9c73cc71bb002ef";
+// const authToken = "28fad8a079b6190b309c4ece17bb1e46";
+// const verifySid = "VA9d9e171ce3777e4ded970b3ac7ea8941";
+// const client = require("twilio")(accountSid, authToken);
+
 const accountSid = "ACfd21e83a558ab9b0d9c73cc71bb002ef";
-const authToken = "28fad8a079b6190b309c4ece17bb1e46";
+const authToken = "f5aac186bd398803cca40e9f4535fd43";
 const verifySid = "VA9d9e171ce3777e4ded970b3ac7ea8941";
 const client = require("twilio")(accountSid, authToken);
+
+
 
 //login
 const login = async (req, res) => {
@@ -53,21 +60,6 @@ const loginAuthenticate = async (req, res) => {
     }
 }
 
-function generateOTP() {
-    try {
-        const digits = '0123456789';
-            let otp = '';
-            for (let i = 0; i < 6; i++) {
-                const index = crypto.randomInt(0, digits.length);
-                otp += digits[index];
-            }
-            return otp;
-    } 
-    catch (error) {
-        console.log(error.message)
-    }
-  
-}
 
 const verifyOtp = (req, res) => {
     try {
@@ -93,6 +85,7 @@ const validateOtp = async (req, res) => {
                     .then((verification_check) => {
                         console.log(verification_check.status)
                         req.session.isauth = true;
+                        req.session.isBlocked = getUserOtp.blocked;
                         req.session.userName = getUserOtp.firstName;
                         res.json({status : "success", msg : "OTP Verified"})
                     })
@@ -111,20 +104,17 @@ const validateNumber = async (req, res) => {
         if(!userData){
             res.json({status : "error", msg : "Wrong Mobile Number"})
         }else{
-            console.log("success verified mobile number")
-            const otp = generateOTP();
-            console.log('Generated OTP:', otp);
-            console.log(userData.phone)
             client.verify.v2
-            .services(verifySid)
-            .verifications.create({ to: `+91${mobileNumber}`, channel: "sms" })
-            .then((verification) => {
-                console.log(verification.status)
-                res.json({status : "success", msg : "mobile number verified"})
-            })
-            .catch((err)=>{
-                console.log(err.message)
-            });
+                .services(verifySid)
+                .verifications.create({ to: `+91${mobileNumber}`, channel: "sms" })
+                .then((verification) => {
+                    console.log(verification.status)
+                    console.log("haii")
+                    res.json({status : "success", msg : "mobile number verified"})
+                })
+                .catch((err)=>{
+                    console.log(err.message)
+                });
         }
     } catch (error) {
         res.json({status : "error", msg : error.message})

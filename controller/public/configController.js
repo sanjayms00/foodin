@@ -3,18 +3,17 @@ require("dotenv").config()
 const Users = require("../../models/public/userModel")
 const Category = require("../../models/admin/categoryModel")
 const bcrypt = require("bcryptjs")
-const crypto = require('crypto');
-// const accountSid = "ACfd21e83a558ab9b0d9c73cc71bb002ef";
-// const authToken = "28fad8a079b6190b309c4ece17bb1e46";
-// const verifySid = "VA9d9e171ce3777e4ded970b3ac7ea8941";
-// const client = require("twilio")(accountSid, authToken);
+const jwt = require("jsonwebtoken")
+const nodemailer = require('nodemailer');
+const mailgen = require("mailgen")
+const jwtsecretKey = process.env.JWTSECRETKEY;
 
-const accountSid = "ACfd21e83a558ab9b0d9c73cc71bb002ef";
-const authToken = "f5aac186bd398803cca40e9f4535fd43";
-const verifySid = "VA9d9e171ce3777e4ded970b3ac7ea8941";
+const accountSid = process.env.ACCOUNTSID;
+const authToken = process.env.AUTHTOKEN;
+const verifySid = process.env.VERIFYSID;
 const client = require("twilio")(accountSid, authToken);
-
-
+const fromEmailId = process.env.EMAILID;
+const emailPassword = process.env.EMAilPASSWORD;
 
 //login
 const login = async (req, res) => {
@@ -53,14 +52,13 @@ const loginAuthenticate = async (req, res) => {
             req.session.isloggedIn = true
             
             res.render("public/ShowNumber")
-            
         }
     } catch (error) {
         console.log(error.message)
     }
 }
 
-
+//show verify otp page
 const verifyOtp = (req, res) => {
     try {
         const mobileNumber = req.query.userMobileNumber;
@@ -70,12 +68,12 @@ const verifyOtp = (req, res) => {
     }
 }
 
+//validate otp
 const validateOtp = async (req, res) => {
     try {
         const { otp , mobileNumber } = req.body;
-        console.log(otp, mobileNumber)
-        const getUserOtp = await Users.findOne({phone : mobileNumber})
-        if(!getUserOtp){
+        const getUser = await Users.findOne({phone : mobileNumber})
+        if(!getUser){
             res.json({status : "error", msg : "unauthorozed User"})
         }
 
@@ -84,9 +82,10 @@ const validateOtp = async (req, res) => {
                     .verificationChecks.create({ to: `+91${mobileNumber}`, code: otp })
                     .then((verification_check) => {
                         console.log(verification_check.status)
-                        req.session.isauth = true;
-                        req.session.isBlocked = getUserOtp.blocked;
-                        req.session.userName = getUserOtp.firstName;
+                        req.session.isauth = getUser._id;
+                        req.session.email = getUser.email;
+                        req.session.isBlocked = getUser.blocked;
+                        req.session.userName = getUser.firstName;
                         res.json({status : "success", msg : "OTP Verified"})
                     })
                     .catch((err)=>{
@@ -97,6 +96,7 @@ const validateOtp = async (req, res) => {
     }
 }
 
+//validate the mobile number
 const validateNumber = async (req, res) => {
     try {
         const { mobileNumber } = req.body
@@ -121,12 +121,127 @@ const validateNumber = async (req, res) => {
     }
 }
 
-
-
 //fogot password authenticate
 const forgotPassword = (req, res) => {
     try {
-        res.send("forgot pass")
+        res.render("public/forgotPassword.ejs")
+    } catch (error) {
+        console.log(error.message)
+    }
+}
+
+//fogot password authenticate
+const forgotPasswordAuth = async (req, res) => {
+    try {
+        const {forgotEmail} = req.body
+        const findUser = await Users.findOne({email : forgotEmail})
+        if(!findUser){
+            res.status(400).json({status : "error", msg : "User is not found"})
+        }else{
+            const newSecret = jwtsecretKey+findUser.password
+            const payload = {
+                email : findUser.email,
+                id : findUser._id
+            }
+            const token = jwt.sign(payload, newSecret, {expiresIn : '5m'})
+            const link = `http://localhost:3000/reset-password/${findUser._id}/${token}`;
+
+            //send email
+            // let testAccount = await nodemailer.createTestAccount()
+            console.log(fromEmailId, emailPassword)
+            const config = {
+                service : "gmail",
+                auth : {
+                    user : fromEmailId,
+                    pass : emailPassword
+                }
+            }
+
+            const transporter = nodemailer.createTransport(config);
+
+            let mailGenerator = new mailgen({
+                theme : "default" ,
+                product : {
+                    name : "foodin",
+                    link : "http://localhost:3000/"
+                }
+            })
+
+            let response = {
+                body : {
+                    name : `${findUser.firstName}`,
+                    intro : "Welcome to foodin! We\'re very excited to have you on board.",
+                    action: {
+                        instructions: 'To reset password , please click here:',
+                        button: {
+                            color: '#22BC66',
+                            text: 'reset password',
+                            link: link
+                        }
+                    },
+                    outro : "looking forward to having buisness with you"
+                }
+            }
+
+            let mail = mailGenerator.generate(response)
+            // var emailText = mailGenerator.generatePlaintext(email);
+
+            const message = {
+                    from: fromEmailId, 
+                    to: findUser.email, 
+                    subject: "Reset password", 
+                    html: mail, 
+            }
+
+            transporter.sendMail(message).then(()=>{
+                res.status(201).json({status : "success", msg : "reset password email send", })  
+            }).catch((err)=>{
+                res.status(500).json({status : "error", msg : err.message })  
+            })
+        }
+    } catch (error) {
+        console.log(error.message)
+    }
+}
+
+//fogot password authenticate
+const resetPassword = async (req, res) => {
+    try {
+        const {id, token} = req.params
+        const checkUser = await Users.findOne({_id : id})
+        if(!checkUser){
+            res.status(400).send("User is not found")
+        }else{
+                const secret = jwtsecretKey+checkUser.password
+                const payload = jwt.verify(token, secret)
+                if(!payload){
+                    res.status(400).send("unauthorixed user")
+                }else{
+                    res.render("public/resetPassword", {email : checkUser.email})
+                    // res.status(200).json({status : "status", msg : "User verified, reset the password"})
+                }
+        }
+    } catch (error) {
+        console.log(error.message)
+    }
+}
+
+//fogot password authenticate
+const resetPasswordAuth = async (req, res) => {
+    try {
+        const {password, confirmPassword, email} = req.body
+        console.log(password, confirmPassword, email)
+        if(password !== confirmPassword){
+            res.status(400).json({status : "error", msg : "password does not match"})
+        }else{
+            const hashedPassword = await bcrypt.hash(password, 12)
+            const updatePassword = await Users.updateOne({email},{$set : {password : hashedPassword}})
+            if(!updatePassword){
+                res.status(500).json({status : "error", msg : "cannot update password at the moment"})
+            }else{
+                res.status(200).json({status : "success", msg : "password updated"})
+            }
+        }
     } catch (error) {
         console.log(error.message)
     }
@@ -207,7 +322,7 @@ const logOut = (req,res)=>{
             if(err){
                 console.log(err.message)
             }else{
-                res.redirect("/")
+                res.redirect("/login")
             }
         })
         
@@ -222,6 +337,9 @@ module.exports = {
     login,
     loginAuthenticate,
     forgotPassword,
+    forgotPasswordAuth,
+    resetPassword,
+    resetPasswordAuth,
     signup,
     signupAuthenticate,
     logOut,

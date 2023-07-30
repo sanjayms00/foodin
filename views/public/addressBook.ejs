@@ -9,6 +9,9 @@
                 <div class="card mb-4 profile-right">
                     <div class="card-body">
                         <div class="row py-3">
+                            <div class="alert d-none" role="alert" id="alertResult">
+                                <%= locals.msg %>
+                            </div>
                             <div class="col-sm-12">
                                 <h3 class="mb-0">Address Book</h3>
                             </div>
@@ -18,40 +21,64 @@
                                 <div class="bg-secondary rounded">
                                     <p class="mb-0 p-3">dummy address</p>
                                 </div>
-                            </div>
-                            
+                            </div> 
                         </div>
                         
                         <div class="row py-1">
                             <div class="col-sm-12">
                                 <!-- Button trigger modal -->
-                                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#addressModal">
                                     Add Address
                                 </button>
   
                                 <!-- Modal -->
-                                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="addressModalLabel" aria-hidden="true">
                                     <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">Add Address</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                            <h5 class="modal-title" id="addressModalLabel">Add Address</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form id="addressBook" onsubmit="return validateForm()">
+                                                    <div class="mb-3">
+                                                        <label for="fullName" class="form-label">Full Name</label>
+                                                        <input type="text" class="form-control" id="fullName" name="fullName" placeholder="Enter Full Name" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="mobileNumber" class="form-label">Mobile Number</label>
+                                                        <input type="tel" class="form-control" id="mobileNumber" name="mobileNumber" placeholder="Enter Mobile Number" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="pinCode" class="form-label">Pin Code</label>
+                                                        <input type="text" class="form-control" id="pinCode" name="pinCode" placeholder="Enter Pin Code" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="addressLine1" class="form-label">Address Line</label>
+                                                        <input type="text" class="form-control" id="addressLine" name="addressLine" placeholder="Enter Address Line" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="city" class="form-label">City / Town / District</label>
+                                                        <input type="text" class="form-control" id="city" name="city" placeholder="Enter City / Town / District" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="state" class="form-label">State</label>
+                                                        <input type="text" class="form-control" id="state" name="state" placeholder="Enter State" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="addressType" class="form-label">Address Type</label>
+                                                        <select class="form-select" id="addressType" name="addressType">
+                                                          <option value="Home">Home</option>
+                                                          <option value="Office">Office</option>
+                                                          <option value="Other">Other</option>
+                                                        </select>
+                                                    </div>
+                                                    <br>
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                    <button type="submit" class="btn btn-success">Add Address</button>     
+                                                </form>
+                                            </div>
                                         </div>
-                                        <div class="modal-body">
-                                            <div class="form-floating mb-3">
-                                                <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
-                                                <label for="floatingInput">Email address</label>
-                                              </div>
-                                              <div class="form-floating">
-                                                <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
-                                                <label for="floatingPassword">Password</label>
-                                              </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        <button type="button" class="btn btn-success">Save changes</button>
-                                        </div>
-                                    </div>
                                     </div>
                                 </div>   
                             </div>
@@ -62,6 +89,62 @@
         </div>
     </div>
 </section>
+
+<script>
+    document.getElementById('addressBook').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        alert("hi")
+        const formData = new FormData(event.target);
+        const addressData = {
+                fullName: formData.get('fullName'),
+                mobileNumber: formData.get('mobileNumber'),
+                pinCode: formData.get('pinCode'),
+                addressLine: formData.get('addressLine'),
+                city: formData.get('city'),
+                state: formData.get('state'),
+                addressType: formData.get('addressType')
+            };
+        // const message = `Food Name: ${foodname}\nFood ID: ${foodId}\nFood Type: ${foodType}\nPrice: ${price}`;
+        // alert(message);
+        try {
+            const response = await fetch('/save-address', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(addressData)
+            });
+            
+            const data = await response.json();
+            alert(JSON.stringify(data)); 
+            const alertDiv = document.getElementById('alertResult');
+            
+            if (data.status === 'success') { 
+                alertDiv.classList.remove('alert-danger');
+                alertDiv.classList.add('alert-success');
+                alertDiv.classList.remove('d-none');
+                alertDiv.innerText = data.msg;
+                //page load
+            } else {
+                alertDiv.classList.remove('alert-success');
+                alertDiv.classList.add('alert-danger');
+                alertDiv.classList.remove('d-none');
+                alertDiv.innerText = data.msg;
+            }    
+        }catch (error) {
+            const alertDiv = document.getElementById('alertResult')
+            alertDiv.classList.add("alert-danger")
+            alertDiv.classList.remove("d-none")
+            alertDiv.innerText = 'An error occurred. Please try again later.';
+        }
+    });
+
+</script>
+
+
+
+
+
 
 <!-- include footer -->
 <%- include('./includes/footer') %>

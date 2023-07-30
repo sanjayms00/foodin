@@ -59,7 +59,6 @@ const updateFood = async (req,res)=>{
                     return res.status(400).render("admin/food/edit", {status : "error", msg : `Error while processing the image ${err}`})
                 } 
             });  
-            var slug = foodName.split(" ").join('-')
             const prevImagePath = path.join(uploadDirectory, prevImage);
 
             // Check if the file exists before attempting to delete
@@ -71,7 +70,7 @@ const updateFood = async (req,res)=>{
                 return res.status(404).render("admin/food/edit", {status : "error", msg : 'Image not found'});
             }
         }
-
+        const slug = foodName.split(" ").join('-')
         const updateFood = {
             image: (newFileName === null) ? prevImage : newFileName,
             foodName: foodName,
@@ -152,13 +151,13 @@ const saveFood = async (req,res)=>{
         console.log(error.message)
     }
 }
+
 const foodStatus = async (req, res)=>{
     try {
         const foodStatus = req.params.status
         const foodStat = foodStatus.split("-")
         const [foodId, status] = foodStat
         const updateStatus = await Foods.updateOne({_id : foodId}, {$set : {status : status === "true"}})
-        console.log(updateStatus)
         const foodData = await Foods.find({})
         if(!updateStatus){
             return res.status(400).render("admin/food", {data : foodData, status : "error", msg : "Status Updation Failed"})

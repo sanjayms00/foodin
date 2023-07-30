@@ -1,6 +1,42 @@
 //create schema structure of document
 const mongoose = require("mongoose")
+
+
+const addressSchema = new mongoose.Schema({
+    fullName : {
+        type : String,
+        required : true
+    }, 
+    mobileNumber : {
+            type : Number,
+            required : true
+        }, 
+    pinCode : {
+        type : Number,
+        required : true
+    }, 
+    addressLine : {
+        type : String,
+        required : true
+    }, 
+    city : {
+        type : String,
+        required : true
+    }, 
+    state : {
+        type : String,
+        required : true
+    }, 
+    addressType : {
+        type : String,
+        required : true
+    }
+})
+
+
+
 const userSchema = new  mongoose.Schema({
+    
     firstName : {
         type : String,
         required : true
@@ -25,7 +61,7 @@ const userSchema = new  mongoose.Schema({
         type : String
     },
     addresses : {
-        type : [Object]
+        type : [addressSchema]
     },
     cart : {
         type : [Object]

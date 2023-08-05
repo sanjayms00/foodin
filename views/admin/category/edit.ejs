@@ -1,25 +1,6 @@
 <!--  Header End -->
 <div class="container-fluid"></div>
     <div class="card">
-        <% if (locals.status === "success") { %>
-            <div class="alert alert-success" role="alert">
-                <%= locals.msg %>
-            </div>
-            <script>
-              setTimeout(()=>{
-                window.location.href = "http://127.0.0.1:3000/admin/category"; 
-              },800)
-            </script>
-        <% } if(locals.status === "error"){ %>
-            <div class="alert alert-danger" role="alert">
-                <%= locals.msg %>
-            </div>
-            <!-- <script>
-              setTimeout(()=>{
-                window.location.href = "http://127.0.0.1:3000/admin/category"; 
-              },800)
-            </script> -->
-        <% } %>
         <div class="card-body">
             <h5 class="card-title fw-semibold mb-4 float-start">Edit Category</h5>
             <button type="button" onclick="history.back(-1)" class="btn btn-outline-primary float-end">
@@ -34,7 +15,7 @@
                 <% if (!locals.category) { %>
                     <p>can not edit the Category</p>
                 <% }else{ %>
-                    <form action="/admin/updatecategory" method="POST" onsubmit="return categoryValidate()">
+                    <form id="editCategoryForm">
                         <div class="row">
                             <div class="col-xl-6 text-dark">
                             <div class="form-floating mb-3">
@@ -69,4 +50,57 @@
         }
         return true
     }
+
+    document.getElementById('editCategoryForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (categoryValidate()) {
+
+          const formData = new FormData(event.target);
+          const updateCategoryName = formData.get('updateCategoryName');
+          const categoryId = formData.get('categoryId');
+          try {
+            const response = await fetch('/admin/updatecategory', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ updateCategoryName, categoryId })
+          });
+          
+          const data = await response.json();
+          //const alertDiv = document.getElementById('alertResult');
+          
+          if (data.status === 'success') { 
+            Swal.fire(
+            data.status,
+            data.msg,
+            'success'
+            )
+            setTimeout(() => {
+                window.location = "http://127.0.0.1:3000/admin/category"
+            }, 2000);
+            
+          } else {
+            Toastify({
+            text: data.msg,
+            className: "info",
+            style: {
+                background: "linear-gradient(to right, #ff0000, #dd2a7f)",
+            }
+            }).showToast();
+            
+          }
+        }catch (error) {
+            Toastify({
+            text: data.msg,
+            className: "info",
+            style: {
+                background: "linear-gradient(to right, #ff0000, #dd2a7f)",
+            }
+            }).showToast();
+        }
+      }
+    });
+
+
 </script>

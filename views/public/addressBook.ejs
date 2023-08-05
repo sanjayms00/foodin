@@ -16,13 +16,27 @@
                                 <h3 class="mb-0">Address Book</h3>
                             </div>
                         </div>
-                        <div class="row py-3 text-light">
+                        <div class="row py-3 text-dark">
                             <div class="py-3 col-sm-12">
-                                <div class="bg-secondary rounded">
-                                    <p class="mb-0 p-3">dummy address</p>
-                                </div>
+                                <% address.addresses.forEach(element => { %>
+                                    <div class="rounded p-3 mb-3" style="background-color: #e4e4da;">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <p class="mb-0"><strong><%= element.fullName %></strong></p>
+                                                <p class="mb-0"><%= element.addressLine %>, <%= element.city %>, <%= element.state %>, <%= element.pinCode %></p>
+                                                <p class="mb-0">Mobile: <%= element.mobileNumber %></p>
+                                                <p class="mb-0">Address Type: <%= element.addressType %></p>
+                                            </div>
+                                            <div>
+                                                <a href="/edit-address/<%= element._id %>"><button class="btn btn-primary">Edit</button></a>
+                                                <button data-address="<%= JSON.stringify(element) %>" class="btn btn-danger delete-address">Delete</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% }) %>
                             </div> 
                         </div>
+                        
                         
                         <div class="row py-1">
                             <div class="col-sm-12">
@@ -35,7 +49,7 @@
                                 <div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="addressModalLabel" aria-hidden="true">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
-                                            <div class="modal-header">
+                                            <div class="modal-header bg-warning text-dark">
                                             <h5 class="modal-title" id="addressModalLabel">Add Address</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
@@ -90,56 +104,7 @@
     </div>
 </section>
 
-<script>
-    document.getElementById('addressBook').addEventListener('submit', async (event) => {
-        event.preventDefault();
-        alert("hi")
-        const formData = new FormData(event.target);
-        const addressData = {
-                fullName: formData.get('fullName'),
-                mobileNumber: formData.get('mobileNumber'),
-                pinCode: formData.get('pinCode'),
-                addressLine: formData.get('addressLine'),
-                city: formData.get('city'),
-                state: formData.get('state'),
-                addressType: formData.get('addressType')
-            };
-        // const message = `Food Name: ${foodname}\nFood ID: ${foodId}\nFood Type: ${foodType}\nPrice: ${price}`;
-        // alert(message);
-        try {
-            const response = await fetch('/save-address', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(addressData)
-            });
-            
-            const data = await response.json();
-            alert(JSON.stringify(data)); 
-            const alertDiv = document.getElementById('alertResult');
-            
-            if (data.status === 'success') { 
-                alertDiv.classList.remove('alert-danger');
-                alertDiv.classList.add('alert-success');
-                alertDiv.classList.remove('d-none');
-                alertDiv.innerText = data.msg;
-                //page load
-            } else {
-                alertDiv.classList.remove('alert-success');
-                alertDiv.classList.add('alert-danger');
-                alertDiv.classList.remove('d-none');
-                alertDiv.innerText = data.msg;
-            }    
-        }catch (error) {
-            const alertDiv = document.getElementById('alertResult')
-            alertDiv.classList.add("alert-danger")
-            alertDiv.classList.remove("d-none")
-            alertDiv.innerText = 'An error occurred. Please try again later.';
-        }
-    });
-
-</script>
+<script src="./assets/js/addressBook.js"></script>
 
 
 

@@ -1,4 +1,5 @@
 const Users = require("../../models/public/userModel")
+const Cart = require("../../models/public/cartModel")
 
 const isloggedIn = (req, res, next) => {
     if (req.session.isauth) {
@@ -23,8 +24,14 @@ const isBlocked = async (req,res,next) => {
     }
 }
 
-const sessionCheck = (req, res, next) => {
-    // console.log("session check")
+const sessionCheck = async (req, res, next) => {
+
+    const cart = await Cart.findOne({ userId: req.session.isauth });
+    if (cart) {
+        res.locals.CartLength = cart.items.length;
+    }else{
+        res.locals.CartLength = false
+    }
     const isAuthenticated = req.session.isauth ? true : false;
     res.locals.userId = req.session.isauth;
     res.locals.isBlocked = req.session.isBlocked ? true : false; 

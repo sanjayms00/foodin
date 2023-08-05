@@ -33,7 +33,8 @@
                         <p>
                             <%= locals.data.ingredients %>
                         </p>
-                        <form method="post" id="addToCart">
+                        <button id="addToCart" onclick="addToCart('<%= isAuthenticated %>', '<%= JSON.stringify(data) %>')" class="btn btn-warning w-25 fs-5 rounded-2">Add to cart</button>
+                        <!-- <form method="post" id="addToCart">
                             <div class="mb-3">
                                 <input type="hidden" id="foodName" name="foodName" value="<%= locals.data.foodName %>">				
                                 <input type="hidden" id="foodId" name="foodId" value="<%= locals.data._id %>">				
@@ -41,7 +42,7 @@
                                 <input type="hidden" id="price" name="price" value="<%= locals.data.discPrice %>">				
                             </div>
                             <button class="btn btn-warning w-25 fs-5 rounded-2">Add to cart</button>
-                        </form>
+                        </form> -->
                 </div>
             </div>
             <!-- Call to Action-->
@@ -87,108 +88,6 @@
         </div>
     </div>
 
-    <script>
-        document.getElementById('addToCart').addEventListener('submit', async (event) => {
-            event.preventDefault();
-            
-            const formData = new FormData(event.target);
-            const foodName = formData.get('foodName');
-            const foodId = formData.get('foodId');
-            const foodType = formData.get('foodType');
-            const price = formData.get('price');
-            // const message = `Food Name: ${foodname}\nFood ID: ${foodId}\nFood Type: ${foodType}\nPrice: ${price}`;
-            // alert(message);
-            try {
-                if(!foodName || !foodId || !foodType){
-                    throw new Error("can not add food to Cart")
-                    
-                }else{
-                    const response = await fetch('/cart', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({foodName, foodId, foodType, price})
-                    });
-                    
-                    const data = await response.json();
-                    alert(JSON.stringify(data)); 
-                    const alertDiv = document.getElementById('alertResult');
-                    
-                    if (data.status === 'success') { 
-                        alertDiv.classList.remove('alert-danger');
-                        alertDiv.classList.add('alert-success');
-                        alertDiv.classList.remove('d-none');
-                        alertDiv.innerText = data.msg;
-                        //page load
-                    } else {
-                        alertDiv.classList.remove('alert-success');
-                        alertDiv.classList.add('alert-danger');
-                        alertDiv.classList.remove('d-none');
-                        alertDiv.innerText = data.msg;
-                    }
-                }
-                
-            }catch (error) {
-                const alertDiv = document.getElementById('alertResult')
-                alertDiv.classList.add("alert-danger")
-                alertDiv.classList.remove("d-none")
-                alertDiv.innerText = 'An error occurred. Please try again later.';
-            }
-        });
-    
-    </script><script>
-        document.getElementById('addToCart').addEventListener('submit', async (event) => {
-            event.preventDefault();
-            
-            const formData = new FormData(event.target);
-            const foodName = formData.get('foodName');
-            const foodId = formData.get('foodId');
-            const foodType = formData.get('foodType');
-            const price = formData.get('price');
-            // const message = `Food Name: ${foodname}\nFood ID: ${foodId}\nFood Type: ${foodType}\nPrice: ${price}`;
-            // alert(message);
-            try {
-                if(!foodName || !foodId || !foodType){
-                    throw new Error("can not add food to Cart")
-                    
-                }else{
-                    const response = await fetch('/cart', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({foodName, foodId, foodType, price})
-                    });
-                    
-                    const data = await response.json();
-                    alert(JSON.stringify(data)); 
-                    const alertDiv = document.getElementById('alertResult');
-                    
-                    if (data.status === 'success') { 
-                        alertDiv.classList.remove('alert-danger');
-                        alertDiv.classList.add('alert-success');
-                        alertDiv.classList.remove('d-none');
-                        alertDiv.innerText = data.msg;
-                        //page load
-                    } else {
-                        alertDiv.classList.remove('alert-success');
-                        alertDiv.classList.add('alert-danger');
-                        alertDiv.classList.remove('d-none');
-                        alertDiv.innerText = data.msg;
-                    }
-                }
-                
-            }catch (error) {
-                const alertDiv = document.getElementById('alertResult')
-                alertDiv.classList.add("alert-danger")
-                alertDiv.classList.remove("d-none")
-                alertDiv.innerText = 'An error occurred. Please try again later.';
-            }
-        });
-    
-    </script>
-
-
+    <script src="../assets/js/cart.js"></script>
     <!-- include footer -->
     <%- include('./includes/footer') %>

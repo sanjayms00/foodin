@@ -282,7 +282,7 @@ const signupAuthenticate = async (req, res) => {
         }
         else 
         {
-            const checkUser = await Users.findOne({email : emailId})
+            const checkUser = await Users.findOne({$or : [{email : emailId}, {phone : mobileNumber}]})
             if(checkUser){
                 return res.status(409).render("public/signup", { status : "error", msg : "User already exist, login to your account" });
             }else{
@@ -318,13 +318,13 @@ const signupAuthenticate = async (req, res) => {
 
 const logOut = (req,res)=>{
     try {
-        req.session.destroy((err)=>{
-            if(err){
-                console.log(err.message)
-            }else{
-                res.redirect("/login")
-            }
-        })
+        // req.session.destroy((err)=>{
+        //     if(err){
+        //         console.log(err.message)
+        //     }else{
+        //         res.redirect("/login")
+        //     }
+        // })
         
     } catch (error) {
         console.log(error.message)

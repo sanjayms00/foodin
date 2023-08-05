@@ -16,7 +16,8 @@ publicRoute.use(session({
     secret : process.env.SECRET,
     resave : false,
     saveUninitialized : false,
-    store : store
+    store : store,
+    //cookie : {maxAge : 1000 * 60 * 60 * 24} //24 hours life
 }))
 
 // get controllers
@@ -27,6 +28,7 @@ const profileController = require("../../controller/public/profileController")
 const addressController = require("../../controller/public/addressController")
 const orderController = require("../../controller/public/orderController")
 const cartController = require("../../controller/public/cartContoller")
+const checkoutController = require("../../controller/public/checkoutController")
 
 //include middleware
 const userMiddleWare = require("../../middleware/public/userMiddleware")
@@ -60,15 +62,32 @@ publicRoute.get("/foodDetail/:slug", foodController.detail)
 publicRoute.get("/my-profile", userMiddleWare.isBlocked,  profileController.myProfile)
 publicRoute.get("/edit-profile", userMiddleWare.isBlocked, profileController.editProfile)
 publicRoute.post("/update-profile", userMiddleWare.isBlocked, profileController.updateProfile)
+
+//address routes
 publicRoute.get("/address-book", userMiddleWare.isBlocked, addressController.addressBook)
+publicRoute.get("/edit-address/:id", userMiddleWare.isBlocked, addressController.editAddress)
+publicRoute.post("/delete-address", userMiddleWare.isBlocked, addressController.deleteAddress)
 publicRoute.post("/save-address", userMiddleWare.isBlocked, addressController.saveAddress)
+publicRoute.patch("/update-address", userMiddleWare.isBlocked, addressController.updateAddress)
+publicRoute.put("/update-address", userMiddleWare.isBlocked, addressController.updateAddress)
+
+// order routes
 publicRoute.get("/orders", userMiddleWare.isBlocked, orderController.currentOrders)
 publicRoute.get("/order-history", userMiddleWare.isBlocked, orderController.orderHistory)
 publicRoute.get("/track-order", userMiddleWare.isBlocked, addressController.trackOrder)
 
 //cart routes
-publicRoute.post("/cart", cartController.addToCart)
-publicRoute.get("/cart", cartController.showCart)
+publicRoute.post("/add-to-cart", userMiddleWare.isBlocked, cartController.addToCart)
+publicRoute.post("/delete-cart-item", userMiddleWare.isBlocked, cartController.deleteCartItem)
+publicRoute.get("/cart", userMiddleWare.isBlocked, cartController.showCart)
+publicRoute.patch("/update-cart-data", userMiddleWare.isBlocked, cartController.updateCartByQuantity)
+
+
+//checkout Routes
+publicRoute.get("/checkout",userMiddleWare.isBlocked, checkoutController.checkout)
+publicRoute.post("/authCheckout",userMiddleWare.isBlocked,  checkoutController.authCheckout)
+publicRoute.get("/payment",userMiddleWare.isBlocked, checkoutController.payment)
+
 
 //export publicRoute
 module.exports = publicRoute;

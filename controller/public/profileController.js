@@ -42,6 +42,7 @@ const updateProfile = async (req, res) => {
         if(!updateUser){
             res.status(400).json({status : "error", msg : "can not update profile details"})
         }else{
+            req.session.userName = fName
             res.status(200).json({status : "success", msg : "profile updated successfully"})
         }
     }

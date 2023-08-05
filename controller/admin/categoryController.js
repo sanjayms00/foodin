@@ -31,17 +31,28 @@ const editCategory = async (req,res)=>{
 
 const updateCategory = async (req,res)=>{
     try {
-        const{categoryId, updateCategoryName} = req.body
-        if(!categoryId || !updateCategoryName){
-            return res.status(400).render("admin/category/edit", {status : "error", msg : "fill all fields"})
+        const{updateCategoryName, categoryId} = req.body
+        if(!updateCategoryName){
+            return res.status(400).json({status : "error", msg : "Category required"})
         }
-        const categoryUpdateResult = await Category.updateOne({_id : categoryId},{$set : {categoryName : updateCategoryName}})
+        if(!categoryId){
+            throw new Error();
+        }
+        const isExisting = await Category.findOne({categoryName : updateCategoryName})
+        if(isExisting){
+            
+            return res.status(400).json({status : "error", msg : "Category already exist"})
+        }
+        const categoryUpdateResult = await Category.updateOne(
+            {_id : categoryId},
+            {$set : {categoryName : updateCategoryName}}
+        );
         if(!categoryUpdateResult){
-            return res.status(400).render("admin/category/edit")
+            return res.status(400).json({status : "error", msg : "Category insertion failed"})
         }
-        res.status(200).render("admin/category/edit", {status : "success",  msg :  "category updated" })
+        return res.status(200).json({status : "success", msg : "Category updated"})
     } catch (error) {
-        console.log(error.message)
+        return res.status(500).json({status : "error", msg : "Category updation failed"})
     }
 }
 
@@ -62,7 +73,11 @@ const saveCategory = async (req,res)=>{
         const {categoryName} = req.body
         console.log(categoryName)
         if(!categoryName){
-            return res.status(400).render("admin/category/create", {status : "error", msg : "fill all fields"})
+            return res.status(400).json({status : "error", msg : "Category required"})
+        }
+        const isExisting = await Category.findOne({categoryName})
+        if(isExisting){
+            return res.status(400).json({status : "error", msg : "Category already exist"})
         }
         const newCategory = new Category({
             categoryName: categoryName,
@@ -70,11 +85,11 @@ const saveCategory = async (req,res)=>{
         })
         const saveData = await newCategory.save()
         if(!saveData){
-            return res.status(500).render("admin/category/create", {status : "error", msg : "Category insertion failed"})
+            return res.status(400).json({status : "error", msg : "Category insertion failed"})
         }
-        res.status(200).render("admin/category/create", {status : "success",  msg :  "category created" })
+        return res.status(200).json({status : "success", msg : "Category Inserted"})
     } catch (error) {
-        console.log(error.message)
+        return res.status(500).json({status : "error", msg : "Category insertion failed"})
     }
 }
 

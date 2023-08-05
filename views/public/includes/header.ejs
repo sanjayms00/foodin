@@ -21,13 +21,15 @@
     rel="stylesheet">
 
   <!-- Vendor CSS Files -->
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
   <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
   <link href="../assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
   <link href="../assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
   <link href="../assets/vendor/aos/aos.css" rel="stylesheet">
 
-  <!-- <link rel="stylesheet" href="/node_modules/izitoast/dist/css/iziToast.min.css"> -->
+  <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.20/dist/sweetalert2.min.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 
   <!-- Template Main CSS Files -->
   <link href="../assets/css/variables.css" rel="stylesheet">
@@ -52,7 +54,7 @@
           <a href="mailto: sfoodin@gmail.com"><span class="bi bi-envelope-at"></span>&nbsp;foodin@gmail.com</a>
           <a href="tel:+91 1234567890" class="mx-2"><span class="bi bi-telephone"></span>&nbsp;+91 1234567890</a>
           <a href="#" class="mx-3"><span class="bi bi-geo-alt"></span>&nbsp;access your location</a>
-          <a href="/cart" class="mx-3"><span class="bi bi-bag"></span>&nbsp;Cart</a>
+          <a href="/cart" class="mx-3"><span class="bi bi-bag"></span>&nbsp;Cart&nbsp;<span class="badge bg-danger"><%= locals.CartLength ? locals.CartLength : "" %></span></a>
           <% if (!isAuthenticated) { %>
             <a href="/login" class="mx-3"><span class="bi bi-person-circle"></span>&nbsp; Login</a>
             <% } else { %>

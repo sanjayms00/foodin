@@ -60,6 +60,9 @@ const userSchema = new  mongoose.Schema({
     image : {
         type : String
     },
+    defaultAddress  : {
+        type : mongoose.Schema.Types.ObjectId
+    },
     addresses : {
         type : [addressSchema]
     },

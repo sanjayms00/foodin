@@ -13,7 +13,7 @@ async function addToCart(auth, foodData){
             setTimeout(()=>{
                 window.location = "http://localhost:3000/login"
             },1000)
-    }else{
+    }else if(auth === "true"){
         try {
             const response = await fetch('/add-to-cart', {
             method: 'POST',

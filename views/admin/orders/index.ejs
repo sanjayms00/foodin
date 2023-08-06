@@ -1,13 +1,15 @@
 <!--  Header End -->
-<div class="container-fluid">
+  <div class="container-fluid">
     <div class="card">
       <div class="card-body">
         <h5 class="card-title fw-semibold mb-4">orders</h5>
         <div class="card w-100">
           <div class="card-body p-0">
             <div class="table-responsive">
+              <% if(locals.data.length > 0){ %>
+
               <table class="table table-striped text-nowrap mb-0 align-middle">
-                <thead class="text-dark fs-4">
+                <thead class="text-dark fs-4 text-center">
                   <tr>
                     <th class="border-bottom-0">
                       <h6 class="fw-semibold mb-0">#</h6>
@@ -29,6 +31,9 @@
                     </th>
                     <th class="border-bottom-0">
                       <h6 class="fw-semibold mb-0">Payment Status</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">Payment Method</h6>
                     </th>
                     <th class="border-bottom-0">
                       <h6 class="fw-semibold mb-0">Manage Status</h6>
@@ -38,8 +43,9 @@
                     </th>
                   </tr>
                 </thead>
-                <tbody>
-                  <% if(locals.data.length > 0){ 
+
+                <tbody class="text-center">
+                  <%  
                     let i = 1;
                     data.forEach((item)=>{
                   %>
@@ -48,42 +54,115 @@
                       <h6 class="fw-semibold mb-0"><%= i %></h6>
                     </th>
                     <th class="border-bottom-0">
-                      <h6 class="fw-semibold mb-0"><%= item.userId %></h6>
+                      <h6 class="fw-semibold mb-0"><%= item._id %></h6>
                     </th>
                     <th class="border-bottom-0">
-                      <h6 class="fw-semibold mb-0"><%= item.address %></h6>
+                      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addressModal">
+                        Address
+                      </button>
                     </th>
                     <th class="border-bottom-0">
-                      <h6 class="fw-semibold mb-0"><%=  item.userName%></h6>
+                      <%=  `${item.user.firstName} ${item.user.lastName}` %></h6>
                     </th>
                     <th class="border-bottom-0">
-                      <h6 class="fw-semibold mb-0"><%= item.createdAt %></h6>
+                      <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#timeModal">
+                        Date & Time
+                      </button>
                     </th>
                     <th class="border-bottom-0">
-                      <h6 class="fw-semibold mb-0"><%= item.food %></h6>
+                      <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#foodQtyModal">
+                        Food & Quantity
+                      </button>
+                    </th>
+                    <th class="border-bottom-0">
+                        <% if(item.paymentStatus !== 'delivered'){ %>
+                          <div class="rounded-circle bg-warning float-start mx-1" style="width: 20px; height: 20px;"></div>
+                          <h6 class="fw-semibold mb-0 float-start mx-1"><%= 'Pending' %></h6>
+                        <% }else{ %>
+                          <div class="rounded-circle bg-success float-start mx-1" style="width: 20px; height: 20px;"></div>
+                          <h6 class="fw-semibold mb-0 float-start mx-1"><%= 'Received' %></h6>
+                        <% } %>
                     </th>
                     <th class="border-bottom-0">
                       <h6 class="fw-semibold mb-0"><%= item.paymentMethod %></h6>
                     </th>
                     <th class="border-bottom-0">
-                      <select class="custom-select custom-select-lg mb-3">
-                        <option value="1">Placed</option>
-                        <option value="2">confirmed</option>
-                        <option value="3">prepared</option>
-                        <option value="4">Delivered</option>
+                      <select class="form-select border-dark" aria-label="Default select example">
+                        <option value="placed" <%= (item.paymentStatus === 'placed') ? "selected" : "" %> >Placed</option>
+                        <option value="confirmed" <%= (item.paymentStatus === 'confirmed') ? "selected" : "" %> >confirmed</option>
+                        <option value="prepared" <%= (item.paymentStatus === 'confirmed') ? "selected" : "" %> >prepared</option>
+                        <option value="delivered" <%= (item.paymentStatus === 'confirmed') ? "selected" : "" %> >Delivered</option>
                       </select>
                     </th>
                     <td class="border-bottom-0">
                         <a href="/admin/deleteorders?id=<%= item._id %>">
-                          <button type="button" class="btn btn-danger w-50" onclick="return confirm('Are You Sure?')">Cancel Order</button>
+                          <button type="button" class="btn btn-danger w-100" onclick="return confirm('Are You Sure?')">Cancel Order</button>
                         </a>
                     </td>
                   </tr>
-                  <% i++ }) }else{ %>
-                      <tr><p></p><%= "No Orders To Show" %></p></tr>
-                  <% } %>
+
+                  <div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h1 class="modal-title fs-5" id="exampleModalLabel">Order Address</h1>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          <%= item.address %> 
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="modal fade" id="foodQtyModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h1 class="modal-title fs-5" id="exampleModalLabel">Food Order information</h1>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          
+                          <% item.items.forEach((element)=>{ %>
+                            <h6><b>Dish :</b> <%= element.carted.foodName %></h6><h6><b>Qty :</b> <%= element.quantity %></h6><h6><b>Price :</b> <%= element.total %></h6>
+                            <br><hr><br>
+                          <% }) %>
+                          
+                        </div>
+                        <div class="modal-footer">
+                          <h4>Total : <span class="text-danger">₹ <%= item.subTotal %></span></h4>
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal fade" id="timeModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h1 class="modal-title fs-5" id="exampleModalLabel">Order Date & Time</h1>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          <%= item.time.toLocaleString("en-US", {day: "numeric", month: "short", year: "numeric"}) %> <br>
+                          <%= item.time.toLocaleString("en-US", {hour: "numeric", minute: "numeric", second: "numeric", hour12: true}); %> 
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+
+                  <% i++ }) %>
                 </tbody>
-                <tfoot class="text-dark fs-4">
+
+                <tfoot class="text-dark fs-4 text-center">
                   <tr>
                     <th class="border-bottom-0">
                       <h6 class="fw-semibold mb-0">#</h6>
@@ -107,18 +186,26 @@
                       <h6 class="fw-semibold mb-0">Payment Status</h6>
                     </th>
                     <th class="border-bottom-0">
+                      <h6 class="fw-semibold mb-0">Payment Method</h6>
+                    </th>
+                    <th class="border-bottom-0">
                       <h6 class="fw-semibold mb-0">Manage Status</h6>
                     </th>
                     <th class="border-bottom-0">
                       <h6 class="fw-semibold mb-0">Action</h6>
                     </th>
                   </tr>
-                  </tr>
                 </tfoot>
               </table>
+
+              <% }else{ %>
+                  <h4 class="text-center text-danger m-5"><%= "No Orders To Show" %></h4>
+              <% } %>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+
+

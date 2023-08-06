@@ -85,9 +85,10 @@
                     <div class="card mb-4 ">
                         <div class="w-100">
                             <div class="w-25 float-end">
-                                <button id="checkOutBtn"  onclick="checkOut('<%= JSON.stringify(cart) %>')" class="m-3 float-end btn btn-success w-50">Checkout</button>
+                                <!-- <button id="checkOutBtn"  onclick="checkOut('<%= JSON.stringify(cart) %>')" class="m-3 float-end btn btn-success w-50">Checkout</button> -->
+                                <a href="/checkout"><button id="checkOutBtn" class="m-3 float-end btn btn-success w-50">Checkout</button></a>
                             </div>
-                            <h5 class="float-end m-3">Total : ₹ <%= cart.subTotal %></h5>
+                            <h5 class="float-end m-3">Total : ₹ <span id="subTotal"><%= cartTotal[0].subTotal %></span></h5>
                         </div>
                     </div>
                 </div>

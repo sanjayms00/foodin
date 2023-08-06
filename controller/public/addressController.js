@@ -1,5 +1,6 @@
 const Users = require("../../models/public/userModel")
 const mongoose = require("mongoose")
+
 //show address
 const addressBook = async (req, res) => {
     try {
@@ -34,7 +35,7 @@ const saveAddress = async (req, res) => {
         }
         
     } catch (error) {
-        
+        res.status(400).json({status : "error", msg : error.message})
     }
 }
 
@@ -99,7 +100,6 @@ const updateAddress = async (req, res) => {
 }
 
 //delete address
-//delete cart Item
 const deleteAddress = async (req, res) => {
     try {
 
@@ -114,14 +114,35 @@ const deleteAddress = async (req, res) => {
         { $pull: { addresses: { _id: addressId } } }
       );
       if (result.modifiedCount > 0) {
-        return res.status(200).json({ status: "success", msg: "address deleted successfully" });
+        return res.status(200).json({ status: "success", msg: "Address deleted" });
       } else {
-        return res.status(200).json({ status: "error", msg: "failed to delete the address" });
+        return res.status(200).json({ status: "error", msg: "Failed to delete the address" });
       }
     } catch (error) {
       return res.status(500).json({ status: "error", msg: error.message });
     }
-  };
+}
+
+//set default
+const setDefault = async (req, res) => {
+    try {
+        const { addressId } = req.body
+        userId = req.session.isauth;
+        if(!userId){
+            return res.status(500).json({ status: "error", msg: "user not found" });
+        }
+        await Users.updateOne({_id : userId}, {$set : { defaultAddress : new mongoose.Types.ObjectId(addressId)}})
+        .then((response)=>{
+            res.status(200).json({ status: "success", msg: "Address changed" });
+        })
+        .catch((err)=>{
+            return res.status(500).json({ status: "error", msg: "Cannot change address" });
+        })
+    } catch (error) {
+        return res.status(500).json({ status: "error", msg: "Issue changing the address" });
+    }
+}
+
 
 
 const trackOrder = (req, res) => {
@@ -138,5 +159,6 @@ module.exports = {
     trackOrder,
     saveAddress,
     updateAddress,
-    deleteAddress
+    deleteAddress,
+    setDefault
 }

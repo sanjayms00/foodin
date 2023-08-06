@@ -69,6 +69,7 @@ publicRoute.get("/edit-address/:id", userMiddleWare.isBlocked, addressController
 publicRoute.post("/delete-address", userMiddleWare.isBlocked, addressController.deleteAddress)
 publicRoute.post("/save-address", userMiddleWare.isBlocked, addressController.saveAddress)
 publicRoute.patch("/update-address", userMiddleWare.isBlocked, addressController.updateAddress)
+publicRoute.patch("/set-default", userMiddleWare.isBlocked, addressController.setDefault)
 publicRoute.put("/update-address", userMiddleWare.isBlocked, addressController.updateAddress)
 
 // order routes

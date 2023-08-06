@@ -1,54 +1,49 @@
-//create schema structure of document
-const mongoose = require("mongoose")
 
-const foodSchema = new mongoose.Schema({
-    foodId : String,
-    quantity: Number,
-    price: Number,
-  });
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-
-const orderSchema = new  mongoose.Schema({
-    userId : {
-        type : String,
-        required : true
+const orderSchema = new Schema({
+    items: {
+        type : [],
+        ref : "Foods"
     },
-    address : {
-        type : String,
-        required : true
+    user : {
+        type : mongoose.Schema.Types.ObjectId,
+        required : true,
+        ref: 'Users'
     },
-    userName : {
+    address: {
         type : String,
-        required : true
+        require : true 
     },
-    createdAt: {
+    userName: {
+        type : String,
+        require : true 
+    },
+    time: {
         type : Date,
-        default : Date.now, 
-        required : true
-      },
-    food : {
-        type : [foodSchema],
-        required : true
+        require : true 
     },
-    paymentMethod : {
+    status: {
         type : String,
-        required : true
+        require : true 
     },
-    status : {
+    paymentStatus: {
         type : String,
-        required : true
+        require : true 
     },
-    totalPrice : {
-        type : Number,
+    paymentMethod: {
+        type : String,
+        require : true 
+    },
+    subTotal: {
+        default: 0,
+        type: Number,
         required : true
     }
-    
 });
 
-//define Model
 const Orders = mongoose.model("Orders", orderSchema)
 
 module.exports = Orders;
-
-
 

@@ -1,5 +1,3 @@
-
-
 document.getElementById('addressBook').addEventListener('submit', async (event) => {
     event.preventDefault();
     const formData = new FormData(event.target);
@@ -22,33 +20,40 @@ document.getElementById('addressBook').addEventListener('submit', async (event) 
         });
         
         const data = await response.json();
-        const alertDiv = document.getElementById('alertResult');
-        
+        //alert(JSON.stringify(data))
         if (data.status === 'success') { 
-            alertDiv.classList.remove('alert-danger');
-            alertDiv.classList.add('alert-success');
-            alertDiv.classList.remove('d-none');
-            alertDiv.innerText = data.msg;
-            //page load
+            Toastify({
+                text: data.msg,
+                className: "info",
+                style: {
+                  background: "linear-gradient(to right, #00b09b, #96c93d)",
+                }
+            }).showToast();
+            const addressModal = document.getElementById("addressModal");
+            const modal = bootstrap.Modal.getInstance(addressModal);
+            modal.hide()
             setTimeout(()=>{
-                        window.location = "http://localhost:3000/address-book"
+                        location.reload()
                     },1000)
         } else {
-            alertDiv.classList.remove('alert-success');
-            alertDiv.classList.add('alert-danger');
-            alertDiv.classList.remove('d-none');
-            alertDiv.innerText = data.msg;
+            Toastify({
+                text: data.msg,
+                className: "info",
+                style: {
+                    background: "linear-gradient(to right, #ff0000, #dd2a7f)",
+                }
+                }).showToast();
         }    
     }catch (error) {
-        const alertDiv = document.getElementById('alertResult')
-        alertDiv.classList.add("alert-danger")
-        alertDiv.classList.remove("d-none")
-        alertDiv.innerText = 'An error occurred. Please try again later.';
+        Toastify({
+            text: error.message,
+            className: "info",
+            style: {
+                background: "linear-gradient(to right, #ff0000, #dd2a7f)",
+            }
+            }).showToast();
     }
 });
-
-
-
 
 const deleteCartItem = document.querySelectorAll(".delete-address")
 
@@ -66,14 +71,81 @@ deleteCartItem.forEach(element => {
                 const data = await response.json();
                 // alert(JSON.stringify(data)); 
                 if (data.status === 'success') {
-                    alert(data.msg);
-                    window.location.reload();
+                    Toastify({
+                        text: data.msg,
+                        className: "info",
+                        style: {
+                          background: "linear-gradient(to right, #00b09b, #96c93d)",
+                        }
+                    }).showToast();
+                    setTimeout(()=>{
+                        location.reload()
+                    },1000)
                 }else{
-                    alert(data.msg);
+                    Toastify({
+                        text: data.msg,
+                        className: "info",
+                        style: {
+                            background: "linear-gradient(to right, #ff0000, #dd2a7f)",
+                        }
+                        }).showToast();
                 }
         } catch (error) {
-            console.log(error.message) 
+            Toastify({
+                text: error.message,
+                className: "info",
+                style: {
+                    background: "linear-gradient(to right, #ff0000, #dd2a7f)",
+                }
+                }).showToast();
         }
     })
 })
 
+async function setDefault(addressId){
+    try {
+        const response = await fetch('/set-default', {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({addressId})
+            })
+            const data = await response.json();
+            //alert(JSON.stringify(data)); 
+            if (data.status === 'success') {
+                const addressModal = document.getElementById("exampleModal");
+                if(addressModal){
+                    const modal = bootstrap.Modal.getInstance(addressModal); 
+                    modal.hide();
+                }
+                Toastify({
+                    text: data.msg,
+                    className: "info",
+                    style: {
+                      background: "linear-gradient(to right, #00b09b, #96c93d)",
+                    }
+                }).showToast();
+                setTimeout(()=>{
+                    location.reload()
+                },300)
+            }else{
+                Toastify({
+                    text: data.msg,
+                    className: "info",
+                    style: {
+                        background: "linear-gradient(to right, #ff0000, #dd2a7f)",
+                    }
+                    }).showToast();
+            }
+    } catch (error) {
+        Toastify({
+            text: error.message,
+            className: "info",
+            style: {
+                background: "linear-gradient(to right, #ff0000, #dd2a7f)",
+            }
+            }).showToast();
+    }
+    
+}

@@ -2,8 +2,9 @@ const Orders = require("../../models/admin/ordersModel")
 
 const showOrders = async (req,res)=>{
     try {
-        const ordersData = await Orders.find({status : 1})
-        res.status(200).render("admin/orders/index", {data : ordersData})
+        const orders = await Orders.find({}).populate('user').exec();
+        // console.log(JSON.stringify(orders[0].items));
+        res.status(200).render("admin/orders/index", {data : orders})
     } catch (error) {
         console.log(error.message)
     }

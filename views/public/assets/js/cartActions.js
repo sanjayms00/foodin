@@ -52,9 +52,9 @@ function decrement(btn) {
   }
 }
   
-
 async function updateQtyInDb(btn, foodPrice, qty, foodId, stat){
   try {
+
     const response = await fetch('/update-cart-data', {
       method: 'PATCH',
       headers: {
@@ -63,12 +63,13 @@ async function updateQtyInDb(btn, foodPrice, qty, foodId, stat){
       body: JSON.stringify({foodId, foodPrice, qty, stat})
     });
       const data = await response.json();
-
+      // alert(JSON.stringify(data))
       if(data.status === "success"){
         const input = btn.parentElement.querySelector('input[type="number"]');
         input.value = data.items[0].quantity;
         const itemPrice = btn.parentElement.parentElement.querySelector('.total-price');
         itemPrice.innerText = data.items[0].total;
+        document.getElementById('subTotal').innerText = data.subTotal[0].subTotal;
       }else if(data.removed === true){
         Swal.fire(
           'Removed!',
@@ -87,26 +88,26 @@ async function updateQtyInDb(btn, foodPrice, qty, foodId, stat){
 }
 
 
-async function checkOut(cart){
-  try {
-    if(cart){
-      const response = await fetch("/authCheckout", {
-        method: "POST", 
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: cart,
-      });
+// async function checkOut(cart){
+//   try {
+//     if(cart){
+//       const response = await fetch("/authCheckout", {
+//         method: "POST", 
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//         body: cart,
+//       });
       
-      const result = await response.json();
-      console.log("Success:", result);
-    }
-  } catch (error) {
-    console.error("Error:", error);
-  }
+//       const result = await response.json();
+//       console.log("Success:", result);
+//     }
+//   } catch (error) {
+//     console.error("Error:", error);
+//   }
   
 
-}
+// }
 
 
 

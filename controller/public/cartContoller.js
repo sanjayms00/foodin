@@ -1,6 +1,71 @@
 const Cart = require("../../models/public/cartModel");
 const mongoose = require("mongoose")
 
+//get cart total
+async function getCartTotal(userId){
+  const cartTotal = await Cart.aggregate([
+    {
+      $match: { userId: new mongoose.Types.ObjectId(userId) }
+    },
+    {
+      $unwind: "$items"
+    },
+    {
+      $lookup: {
+        from: "foods",
+        localField: "items.foodId",
+        foreignField: "_id",
+        as: "carted"
+      }
+    },
+    {
+      $project: {
+        item: "$items.foodId",
+        quantity: "$items.quantity",
+        total: "$items.total",
+        carted: { $arrayElemAt: ["$carted", 0] }
+      }
+    },
+    {
+      $group: {
+        _id : null,
+        subTotal: { $sum: { $multiply: ["$quantity", "$carted.discPrice"] } }
+      }
+    }
+  ]);
+  return cartTotal
+}
+
+//get cart items
+async function getCartItems(userId){
+  const cartItems = await Cart.aggregate([
+    {
+      $match: {userId: new mongoose.Types.ObjectId(userId)}
+    },
+    
+    {
+      $unwind: "$items"
+    },
+    {
+      $lookup: {
+        from: "foods",
+        localField: "items.foodId",
+        foreignField: "_id",
+        as: "carted"
+      }
+    },
+    {
+      $project: {
+        item: "$items.foodId",
+        quantity: "$items.quantity",
+        total: "$items.total",
+        carted: { $arrayElemAt: ["$carted", 0] }
+      }
+    }
+  ]);
+  return cartItems
+}
+
 //show cart
 const showCart = async (req, res) => {
   try {
@@ -8,34 +73,9 @@ const showCart = async (req, res) => {
     if (!userId) {
       res.render("public/cart", {data : null});
     } else {
-      // const cartData = await Cart.findOne({userId}, {items : 1})
-      // res.render("public/cart", {data : cartData  });
-        const cart = await Cart.aggregate([
-          {
-            $match: {userId: new mongoose.Types.ObjectId(userId)}
-          },
-          
-          {
-            $unwind: "$items"
-          },
-          {
-            $lookup: {
-              from: "foods",
-              localField: "items.foodId",
-              foreignField: "_id",
-              as: "carted"
-            }
-          },
-          {
-            $project: {
-              item: "$items.foodId",
-              quantity: "$items.quantity",
-              total: "$items.total",
-              carted: { $arrayElemAt: ["$carted", 0] }
-            }
-          }
-        ]);
-        res.render("public/cart", { cart });
+        const cart = await getCartItems(userId)
+        const cartTotal = await getCartTotal(userId);
+        res.render("public/cart", { cart, cartTotal });
       }
   } catch (error) {
     console.log(error.message);
@@ -133,7 +173,6 @@ const addToCart = async (req, res) => {
 //    }
 // }
 
-
 const updateCartByQuantity = async (req, res) => {
   try {
     let { foodId, foodPrice, qty, stat} = req.body;
@@ -169,8 +208,8 @@ const updateCartByQuantity = async (req, res) => {
       { userId: userId, "items.foodId": foodIdAsObjectId },
       { "items.$": 1, _id : 0 }
     );
-
-    res.json({ status: "success", msg: "Cart updated successfully", items: updatedItem.items });
+    const subTotal = await getCartTotal(req.session.isauth)
+    res.json({ status: "success", msg: "Cart updated successfully", items: updatedItem.items, subTotal });
 
   } catch (error) {
     res.status(500).json({ status: "error", msg: error.message });

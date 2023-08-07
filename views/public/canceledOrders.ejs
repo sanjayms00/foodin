@@ -9,32 +9,33 @@
                     <div class="card mb-4 profile-right">
                         <div class="card-body">
                             <div class="row py-3">
-                                <div class="col-sm-">
-                                    <h3 class="mb-0 float-start">Order History</h3>
-                                    <a href="/canceled-orders">
-                                        <button type="button" class="btn btn-outline-danger float-end mb-3">Canceled Orders</button>
-                                    </a>  
+                                <div class="col-sm-12">
+                                    <h3 class="mb-3 float-start">Canceled Orders</h3>
+                                    <a href="/order-history">
+                                        <button type="button" class="btn btn-outline-secondary float-end mb-3">Order History</button>
+                                    </a>
                                     <a href="/orders" >
                                         <button type="button" class="btn btn-outline-warning float-end mb-3 mx-1">Current Orders</button>
-                                    </a> 
+                                    </a>
                                     <div class="float-end mx-4 pt-2">
-                                        <div class="rounded-circle bg-secondary mx-3 float-start" style="width: 20px; height: 20px;"></div>
-                                        <h6 class="fw-semibold mb-0 float-start mx-1">Previos Orders</h6>
+                                        <div class="rounded-circle bg-dark mx-3 float-start" style="width: 20px; height: 20px;"></div>
+                                        <h6 class="fw-semibold mb-0 float-start mx-1">Canceled Orders</h6>
                                     </div>
+                                    
                                 </div>
                                 <hr>
                             </div>
-                            
                             <%  
                                 let i = 1;
                                 data.forEach((item)=>{
                             %>
-                            <div class="row py-1 text-light">
+                            <div class="row py-1">
                                 <div class="py-3 col-sm-12">
-                                    <div class="bg-secondary rounded p-2">
+                                    <div class="text-light rounded p-2" style="background-color: #595959;">
                                         <p class="mb-0 px-3">Order Id : <%= item._id %></p>
                                         <p class="mb-0 px-3">Payment Method : <%= item.paymentMethod %></p>
                                         <p class="mb-0 px-3">Payment Status : <%= item.paymentStatus %></p>
+                                        <p class="mb-0 px-3">status : <%= item.status %></p>
                                         <p class="mb-0 px-3">Address : <%= item.address %></p>
                                         <p class="mb-0 px-3">Date : <%= item.time.toLocaleString("en-US", {day: "numeric", month: "short", year: "numeric"}) %></p>
                                         <p class="mb-0 px-3">Time : <%= item.time.toLocaleString("en-US", {hour: "numeric", minute: "numeric", second: "numeric", hour12: true}); %> </p>

@@ -4,7 +4,7 @@ const deleteCartItem = document.querySelectorAll(".cart-delete-btn")
 deleteCartItem.forEach(element => {
     element.addEventListener('click', async (event) => {
         const foodId = element.dataset.item
-        const deleteData = { foodId }
+        const deleteData = { foodId,  }
         try {
             const response = await fetch('/delete-cart-item', {
                 method: 'POST',
@@ -30,7 +30,19 @@ deleteCartItem.forEach(element => {
 
 function increment(btn) {
   const foodId = btn.parentElement.querySelector('input[name="foodId"]').getAttribute('value');
+  const foodLimit = btn.parentElement.querySelector('input[name="foodLimit"]').getAttribute('value');
   let input = document.getElementById(foodId).value
+  if(foodLimit === input){
+    Toastify({
+      text: "Limit Reached",
+      className: "info",
+      style: {
+          background: "linear-gradient(to right, #ff0000, #dd2a7f)",
+      }
+      }).showToast();
+    return
+  }
+  
   input = parseInt(input)+1
 
   let foodPrice = btn.parentElement.querySelector('input[name="foodPrice"]').getAttribute('value');
@@ -44,12 +56,37 @@ function decrement(btn) {
   const foodId = btn.parentElement.querySelector('input[name="foodId"]').getAttribute('value');
   let input = document.getElementById(foodId).value
   input = parseInt(input)-1
-  let foodPrice = btn.parentElement.querySelector('input[name="foodPrice"]').getAttribute('value');
-  foodPrice = -1*foodPrice;
-
-  if (foodId && foodPrice) {
-    updateQtyInDb(btn, foodPrice, input, foodId, -1)
+  if(input === 0){
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire(
+          'Deleted!',
+          'Your file has been deleted.',
+          'success'
+        )
+        let foodPrice = btn.parentElement.querySelector('input[name="foodPrice"]').getAttribute('value');
+        foodPrice = -1*foodPrice;
+        if (foodId && foodPrice) {
+          updateQtyInDb(btn, foodPrice, input, foodId, -1)
+        }
+      }
+    })
+  }else{
+    let foodPrice = btn.parentElement.querySelector('input[name="foodPrice"]').getAttribute('value');
+    foodPrice = -1*foodPrice;
+    if (foodId && foodPrice) {
+      updateQtyInDb(btn, foodPrice, input, foodId, -1)
+    }
   }
+  
 }
   
 async function updateQtyInDb(btn, foodPrice, qty, foodId, stat){

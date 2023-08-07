@@ -7,7 +7,7 @@ const { v4: uuidv4 } = require('uuid');
 
 const showFood = async (req,res)=>{
     try {
-        const foodData = await Foods.find({})
+        const foodData = await Foods.find({}).sort({ createdAt: -1 })
         res.status(200).render("admin/food/index", { data : foodData })
     } catch (error) {
         console.log(error.message)
@@ -42,6 +42,11 @@ const updateFood = async (req,res)=>{
         if(!(foodId || prevImage || foodName || categories || foodType || orgPrice || discPrice || foodDescription || foodIngredients)){
             return res.status(400).render("admin/food/edit", {status : "error", msg : "fill all fields"})
         }
+        const slug = foodName.trim().split(" ").join('-')
+        const checkFood = await Foods.findOne({slug : slug})
+        if(checkFood){
+            return res.status(400).render("admin/food/create", {status : "error" , msg : "Food Exist"})
+        }
         if(req.file){
             const uploadDirectory = "./views/uploads/food"
             const fileExtension = path.extname(req.file.originalname);
@@ -70,7 +75,6 @@ const updateFood = async (req,res)=>{
                 return res.status(404).render("admin/food/edit", {status : "error", msg : 'Image not found'});
             }
         }
-        const slug = foodName.split(" ").join('-')
         const updateFood = {
             image: (newFileName === null) ? prevImage : newFileName,
             foodName: foodName,
@@ -81,6 +85,7 @@ const updateFood = async (req,res)=>{
             type: foodType,
             description : foodDescription,
             ingredients : foodIngredients,
+            createdAt : new Date()
         }
         const saveData = await Foods.updateOne({ _id: foodId},{$set : updateFood})
         if(!saveData){
@@ -106,13 +111,17 @@ const deleteFood = async (req,res)=>{
 
 const saveFood = async (req,res)=>{
     try {
-        const {foodName, categories, foodType, orgPrice, discPrice, foodDescription, foodIngredients} = req.body
+        const {foodName, categories, foodType, orgPrice, discPrice, foodDescription, foodIngredients, qtyLimit} = req.body
         
-        if(!(foodName || categories || foodType || orgPrice || discPrice || foodDescription || foodIngredients)){
-            console.log("fill")
+        if(!(foodName || categories || foodType || orgPrice || discPrice || foodDescription || foodIngredients || qtyLimit)){
+            // console.log("fill")
             return res.status(400).render("admin/food/create", {status : "error" , msg : "fill all fields"})
         }
-
+        const slug = foodName.trim().split(" ").join('-')
+        const checkFood = await Foods.findOne({slug : slug})
+        if(checkFood){
+            return res.status(400).render("admin/food/create", {status : "error" , msg : "Food Exist"})
+        }
         const uploadDirectory = "./views/uploads/food"
         const fileExtension = path.extname(req.file.originalname);
         const newFileName = `${uuidv4()}${fileExtension}`;
@@ -128,18 +137,20 @@ const saveFood = async (req,res)=>{
                 return res.status(400).render("admin/food/create", {msg : `Error while processing the image ${err}`})
             } 
         });  
-        const slug = foodName.split(" ").join('-')
+        
         const newFood = new Foods({
             image: newFileName,
             foodName: foodName,
             orgPrice: orgPrice,
             discPrice: discPrice,
             slug : slug,
+            foodLimit : qtyLimit,
             category: categories,
             type: foodType,
             description : foodDescription,
             ingredients : foodIngredients,
-            status : true
+            status : true,
+            createdAt : new Date()
         })
         const saveData = await newFood.save()
         if(!saveData){

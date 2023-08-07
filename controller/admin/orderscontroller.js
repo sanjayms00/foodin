@@ -1,4 +1,5 @@
 const Orders = require("../../models/admin/ordersModel")
+const mongoose = require("mongoose")
 
 const showOrders = async (req,res)=>{
     try {
@@ -9,6 +10,48 @@ const showOrders = async (req,res)=>{
         console.log(error.message)
     }
 }
+
+const cancelOrder = async (req, res) => {
+    try {
+        // console.log(req.body.id)
+        const orderId = new mongoose.Types.ObjectId(req.body.id)
+        if(!orderId){
+            return res.status(404).json({status : "error", msg : "order not Found"})
+        }
+        const cancelOrder = await Orders.updateOne({_id : orderId}, {$set : {status : 'canceled'}})
+        if(!cancelOrder){
+            return res.status(400).json({status : "error", msg : "order Cancel failed"})
+        }
+        res.status(200).json({status : "success", msg : "Order Canceled"})
+    } catch (error) {
+        return res.status(400).json({status : "error", msg : error.message})
+    }
+}
+
+const changeStatus = async (req, res) => {
+    try {
+        // console.log(req.body.id)
+        const orderId = new mongoose.Types.ObjectId(req.body.id)
+        const status = req.body.status
+        if(!orderId){
+            return res.status(404).json({status : "error", msg : "order not Found"})
+        }
+        if(status === "delivered"){
+            var updateStatus = await Orders.updateOne({_id : orderId}, {$set : {status : status, paymentStatus : 'recieved'}})
+        }else{
+            var updateStatus = await Orders.updateOne({_id : orderId}, {$set : {status : status}})
+        }
+        if(!updateStatus){
+            return res.status(400).json({status : "error", msg : "can't change status"})
+        }
+        res.status(200).json({status : "success", msg : "Status Chanaged", value : status})
+    } catch (error) {
+        return res.status(400).json({status : "error", msg : error.message})
+    }
+}
+
+
+
 
 // const createCategory = async (req,res)=>{
 //     try {
@@ -82,6 +125,8 @@ const showOrders = async (req,res)=>{
 //export all functions like objects
 module.exports = {
     showOrders,
+    cancelOrder,
+    changeStatus
     // createCategory,
     // saveCategory,
     // editCategory,

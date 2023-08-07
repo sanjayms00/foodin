@@ -28,7 +28,7 @@ const adminConfigController = require("../../controller/admin/adminConfigControl
 const userController = require("../../controller/admin/userController")
 const foodController = require("../../controller/admin/foodController")
 const categoryController = require("../../controller/admin/categoryController")
-const ordersController = require("../../controller/admin/orderscontroller")
+const ordersController = require("../../controller/admin/ordersController")
 
 const adminMiddleware = require("../../middleware/admin/adminMiddleware")
 
@@ -53,6 +53,7 @@ adminRoute.post("/updateFood", uploads.single('foodImage'), foodController.updat
 adminRoute.get("/editFood",adminMiddleware.adminSessionCheck, foodController.editFood)
 adminRoute.get("/deleteFood",adminMiddleware.adminSessionCheck, foodController.deleteFood)
 adminRoute.get("/foodStatus/:status", adminMiddleware.adminSessionCheck, foodController.foodStatus)
+
 //category routes
 adminRoute.get("/category", adminMiddleware.adminSessionCheck, categoryController.showCategory)
 adminRoute.get("/createCategory",adminMiddleware.adminSessionCheck, categoryController.createCategory)
@@ -60,13 +61,12 @@ adminRoute.post("/saveCategory",adminMiddleware.adminSessionCheck, categoryContr
 adminRoute.get("/editCategory",adminMiddleware.adminSessionCheck, categoryController.editCategory)
 adminRoute.post("/updatecategory",adminMiddleware.adminSessionCheck, categoryController.updateCategory)
 adminRoute.get("/deleteCategory",adminMiddleware.adminSessionCheck, categoryController.deleteCategory)
+adminRoute.get("/categoryStatus/:status",adminMiddleware.adminSessionCheck, categoryController.categoryStatus)
+
 //order routes
 adminRoute.get("/orders", adminMiddleware.adminSessionCheck, ordersController.showOrders)
-// adminRoute.get("/createCategory",adminMiddleware.adminSessionCheck, categoryController.createCategory)
-// adminRoute.post("/saveCategory",adminMiddleware.adminSessionCheck, categoryController.saveCategory)
-// adminRoute.get("/editCategory",adminMiddleware.adminSessionCheck, categoryController.editCategory)
-// adminRoute.post("/updatecategory",adminMiddleware.adminSessionCheck, categoryController.updateCategory)
-// adminRoute.get("/deleteCategory",adminMiddleware.adminSessionCheck, categoryController.deleteCategory)
+adminRoute.patch("/cancel-order", adminMiddleware.adminSessionCheck, ordersController.cancelOrder)
+adminRoute.post("/change-status", adminMiddleware.adminSessionCheck, ordersController.changeStatus)
 
 //export adminRoute
 module.exports = adminRoute

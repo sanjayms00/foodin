@@ -33,16 +33,7 @@
                         <p>
                             <%= locals.data.ingredients %>
                         </p>
-                        <button id="addToCart" onclick="addToCart('<%= isAuthenticated %>', '<%= JSON.stringify(data) %>')" class="btn btn-warning w-25 fs-5 rounded-2">Add to cart</button>
-                        <!-- <form method="post" id="addToCart">
-                            <div class="mb-3">
-                                <input type="hidden" id="foodName" name="foodName" value="<%= locals.data.foodName %>">				
-                                <input type="hidden" id="foodId" name="foodId" value="<%= locals.data._id %>">				
-                                <input type="hidden" id="foodType" name="foodType" value="<%= locals.data.type===1 ? "Veg" : "Non-Veg" %>">				
-                                <input type="hidden" id="price" name="price" value="<%= locals.data.discPrice %>">				
-                            </div>
-                            <button class="btn btn-warning w-25 fs-5 rounded-2">Add to cart</button>
-                        </form> -->
+                        <button id="addToCart" onclick="addToCart(`<%= JSON.stringify(data) %>`, `<%= isAuthenticated %>`) " class="btn btn-warning w-25 fs-5 rounded-2">Add to Cart</button>
                 </div>
             </div>
             <!-- Call to Action-->

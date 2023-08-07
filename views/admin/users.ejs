@@ -20,11 +20,6 @@
                   <div class="alert alert-danger" role="alert">
                       <%= locals.msg %>
                   </div>
-                  <!-- <script>
-                    setTimeout(()=>{
-                      window.location.href = "http://127.0.0.1:3000/admin/users"; 
-                    },800)
-                  </script> -->
               <% } %>
               <thead class="text-dark fs-4">
                 <tr>
@@ -43,9 +38,9 @@
                   <th class="border-bottom-0">
                     <h6 class="fw-semibold mb-0">Mobile Number</h6>
                   </th>
-                  <th class="border-bottom-0">
+                  <!-- <th class="border-bottom-0">
                     <h6 class="fw-semibold mb-0">Addresses</h6>
-                  </th>
+                  </th> -->
                   <th class="border-bottom-0">
                     <h6 class="fw-semibold mb-0">Action</h6>
                   </th>
@@ -72,9 +67,6 @@
                     </td>
                     <td class="border-bottom-0">
                       <h6 class="fw-semibold mb-1"><%= item.phone %></h6>
-                    </td>
-                    <td class="border-bottom-0">
-                      <h6 class="fw-semibold mb-1"><%= item.addresses %></h6>
                     </td>
                     <td class="border-bottom-0">
                       <h6 class="fw-semibold mb-1">

@@ -42,6 +42,10 @@
                         <label for="foodName" id="foodNameLabel">Food Name*</label>
                       </div>
                       <div class="form-floating mb-3">
+                        <input type="hidden" class="form-control border-dark" name="foodName" id="foodName" placeholder="Food Name" value="<%= food.slug %>" readonly>
+                        <label for="foodName" id="foodNameLabel">Slug*</label>
+                      </div>
+                      <div class="form-floating mb-3">
                           <input type="file" class="form-control border-dark" name="foodImage" id="fileInput" placeholder="Select an image">
                           <label for="foodImage" id="foodImageLabel">Image*</label>
                       </div>
@@ -70,6 +74,10 @@
                             </select>
                             <label for="foodType" id="foodTypeLabel">Type*</label>
                           </div>
+                          <div class="form-floating mb-3">
+                                <input type="number" min="1" max="50" class="form-control border-dark" name="qtyLimit" value="<%= food.foodLimit %>" id="qtyLimit" placeholder="Quantity Limit">
+                                <label for="qtyLimit" id="qtyLimitLabel">Food Quantity Limit*</label>
+                              </div>
                           <div class="form-floating mb-3">
                             <input type="text" class="form-control border-dark" name="orgPrice" id="orgPrice" placeholder="Original Price" value="<%= food.orgPrice %>">
                             <label for="orgPrice" id="orgPriceLabel">Original Price*</label>

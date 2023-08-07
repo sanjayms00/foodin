@@ -57,7 +57,7 @@
                       <h6 class="fw-semibold mb-0"><%= item._id %></h6>
                     </th>
                     <th class="border-bottom-0">
-                      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addressModal">
+                      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addressModal<%= i %>">
                         Address
                       </button>
                     </th>
@@ -65,17 +65,17 @@
                       <%=  `${item.user.firstName} ${item.user.lastName}` %></h6>
                     </th>
                     <th class="border-bottom-0">
-                      <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#timeModal">
+                      <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#timeModal<%= i %>">
                         Date & Time
                       </button>
                     </th>
                     <th class="border-bottom-0">
-                      <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#foodQtyModal">
+                      <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#foodQtyModal<%= i %>">
                         Food & Quantity
                       </button>
                     </th>
                     <th class="border-bottom-0">
-                        <% if(item.paymentStatus !== 'delivered'){ %>
+                        <% if(item.status !== 'delivered'){ %>
                           <div class="rounded-circle bg-warning float-start mx-1" style="width: 20px; height: 20px;"></div>
                           <h6 class="fw-semibold mb-0 float-start mx-1"><%= 'Pending' %></h6>
                         <% }else{ %>
@@ -87,21 +87,23 @@
                       <h6 class="fw-semibold mb-0"><%= item.paymentMethod %></h6>
                     </th>
                     <th class="border-bottom-0">
-                      <select class="form-select border-dark" aria-label="Default select example">
-                        <option value="placed" <%= (item.paymentStatus === 'placed') ? "selected" : "" %> >Placed</option>
-                        <option value="confirmed" <%= (item.paymentStatus === 'confirmed') ? "selected" : "" %> >confirmed</option>
-                        <option value="prepared" <%= (item.paymentStatus === 'confirmed') ? "selected" : "" %> >prepared</option>
-                        <option value="delivered" <%= (item.paymentStatus === 'confirmed') ? "selected" : "" %> >Delivered</option>
+                      <select class="form-select border-dark" aria-label="Default select example" onchange="changeStatus(this, '<%= item._id %>')" <%= (item.status === "canceled" || item.status === "delivered") ? 'disabled' : "" %>>
+                        <option value="placed" <%= (item.status === 'placed') ? "selected" : "" %> >Placed</option>
+                        <option value="confirmed" <%= (item.status === 'confirmed') ? "selected" : "" %> >confirmed</option>
+                        <option value="prepared" <%= (item.status === 'prepared') ? "selected" : "" %> >prepared</option>
+                        <option value="delivered" <%= (item.status === 'delivered') ? "selected" : "" %> >Delivered</option>
                       </select>
                     </th>
                     <td class="border-bottom-0">
-                        <a href="/admin/deleteorders?id=<%= item._id %>">
-                          <button type="button" class="btn btn-danger w-100" onclick="return confirm('Are You Sure?')">Cancel Order</button>
-                        </a>
+                      <% if(item.status === "canceled" || item.status === "delivered" || item.status === "prepared"){ %>
+                        <button type="button" class="btn btn-danger w-100" disabled>Cancel Order</button>
+                      <% }else{ %>
+                        <button type="button" class="btn btn-danger w-100" onclick="cancelOrder('<%= item._id %>')">Cancel Order</button>
+                      <% } %>
                     </td>
                   </tr>
 
-                  <div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal fade" id="addressModal<%= i %>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
                       <div class="modal-content">
                         <div class="modal-header">
@@ -118,20 +120,18 @@
                     </div>
                   </div>
 
-                  <div class="modal fade" id="foodQtyModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal fade" id="foodQtyModal<%= i %>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
                       <div class="modal-content">
                         <div class="modal-header">
-                          <h1 class="modal-title fs-5" id="exampleModalLabel">Food Order information</h1>
+                          <h1 class="modal-title fs-5" id="exampleModalLabel">Food Order Information</h1>
                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                          
                           <% item.items.forEach((element)=>{ %>
                             <h6><b>Dish :</b> <%= element.carted.foodName %></h6><h6><b>Qty :</b> <%= element.quantity %></h6><h6><b>Price :</b> <%= element.total %></h6>
-                            <br><hr><br>
+                            <hr>
                           <% }) %>
-                          
                         </div>
                         <div class="modal-footer">
                           <h4>Total : <span class="text-danger">₹ <%= item.subTotal %></span></h4>
@@ -140,7 +140,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="modal fade" id="timeModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal fade" id="timeModal<%= i %>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
                       <div class="modal-content">
                         <div class="modal-header">
@@ -197,7 +197,6 @@
                   </tr>
                 </tfoot>
               </table>
-
               <% }else{ %>
                   <h4 class="text-center text-danger m-5"><%= "No Orders To Show" %></h4>
               <% } %>
@@ -207,5 +206,100 @@
       </div>
     </div>
   </div>
+
+
+<script>
+  async function cancelOrder(orderId) {
+    
+    const data = { id:  orderId};
+
+    try {
+      const response = await fetch("/admin/cancel-order", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json()
+      if(result.status === "success"){
+        Swal.fire(
+          result.status,
+          result.msg,
+          'success'
+        )
+        setTimeout(() => {
+            window.location = "http://127.0.0.1:3000/admin/orders"
+        }, 1000);
+      }else{
+        Toastify({
+          text: result.msg,
+          className: "info",
+          style: {
+              background: "linear-gradient(to right, #ff0000, #dd2a7f)",
+          }
+        }).showToast();
+      }
+      
+    } catch (error) {
+        Toastify({
+          text: error.message,
+          className: "info",
+          style: {
+              background: "linear-gradient(to right, #ff0000, #dd2a7f)",
+          }
+        }).showToast();
+    }
+
+}
+
+async function changeStatus(status, orderId) {
+  
+    const data = { status:  status.value, id : orderId};
+
+    try {
+      const response = await fetch("/admin/change-status", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json()
+      if(result.status === "success"){
+        Swal.fire(
+          result.status,
+          result.msg,
+          'success'
+        )
+        console.log(result.value)
+        setTimeout(() => {
+          status.querySelector(`[value="${result.value}"]`).selected = true;
+        }, 1000);
+      }else{
+        Toastify({
+          text: result.msg,
+          className: "info",
+          style: {
+              background: "linear-gradient(to right, #ff0000, #dd2a7f)",
+          }
+        }).showToast();
+      }
+      
+    } catch (error) {
+        Toastify({
+          text: error.message,
+          className: "info",
+          style: {
+              background: "linear-gradient(to right, #ff0000, #dd2a7f)",
+          }
+        }).showToast();
+    }
+
+}
+
+</script>
 
 

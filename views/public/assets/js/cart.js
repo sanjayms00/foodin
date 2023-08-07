@@ -1,7 +1,6 @@
 
-async function addToCart(auth, foodData){
-
-
+async function addToCart(foodData, auth){
+    const btn = document.getElementById('addToCart');
     if(auth === 'false'){
         Toastify({
             text: "login to acccount",
@@ -15,6 +14,7 @@ async function addToCart(auth, foodData){
             },1000)
     }else if(auth === "true"){
         try {
+            btn.innerText = "Adding to cart..."
             const response = await fetch('/add-to-cart', {
             method: 'POST',
             headers: {
@@ -28,14 +28,19 @@ async function addToCart(auth, foodData){
             const alertDiv = document.getElementById('alertResult');
             
             if (data.status === 'success') { 
-                Swal.fire(
-                    data.status,
-                    data.msg,
-                    'success'
-                    )
+                if(data.length){
+                    document.getElementById('cartCounter').innerText = data.length
+                }
                 setTimeout(()=>{
-                    window.location = "http://localhost:3000/cart"
-                },1000)
+                    btn.innerText = "Add to Cart"
+                },500)
+                Toastify({
+                    text: data.msg,
+                    className: "info",
+                    style: {
+                        background: "linear-gradient(to right, #0b7303, #24c9a3)",
+                    }
+                    }).showToast();
             }else if (data.status === "no-user"){
                 window.location = "http://localhost:3000/login"
             } else {

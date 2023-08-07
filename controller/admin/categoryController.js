@@ -93,13 +93,33 @@ const saveCategory = async (req,res)=>{
     }
 }
 
-//export all functions like objects
+
+const categoryStatus = async (req,res)=>{
+    try {
+        const categoryStatus = req.params.status
+        const categoryStat = categoryStatus.split("-")
+        const [catId, status] = categoryStat
+        const updateStatus = await Category.updateOne({_id : catId}, {$set : {status : status === "true"}})
+        console.log(updateStatus)
+        const categoryData = await Category.find({})
+        if(!updateStatus){
+            return res.status(400).render("admin/users", {data : categoryData, status : "error", msg : "Status Updation Failed"})
+        }
+        res.status(200).render("admin/users", {data : categoryData, status : "success", msg : "Status Updated"})
+    } catch (error) {
+        console.log(error.message)
+    }
+}
+
+
+
 module.exports = {
     showCategory,
     createCategory,
     saveCategory,
     editCategory,
     updateCategory,
-    deleteCategory
+    deleteCategory,
+    categoryStatus
 
 }

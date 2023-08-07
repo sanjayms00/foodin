@@ -75,6 +75,7 @@ publicRoute.put("/update-address", userMiddleWare.isBlocked, addressController.u
 // order routes
 publicRoute.get("/orders", userMiddleWare.isBlocked, orderController.currentOrders)
 publicRoute.get("/order-history", userMiddleWare.isBlocked, orderController.orderHistory)
+publicRoute.get("/canceled-orders", userMiddleWare.isBlocked, orderController.canceledOrders)
 publicRoute.get("/track-order", userMiddleWare.isBlocked, addressController.trackOrder)
 
 //cart routes

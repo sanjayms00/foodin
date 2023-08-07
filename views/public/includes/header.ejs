@@ -54,7 +54,7 @@
           <a href="mailto: sfoodin@gmail.com"><span class="bi bi-envelope-at"></span>&nbsp;foodin@gmail.com</a>
           <a href="tel:+91 1234567890" class="mx-2"><span class="bi bi-telephone"></span>&nbsp;+91 1234567890</a>
           <a href="#" class="mx-3"><span class="bi bi-geo-alt"></span>&nbsp;access your location</a>
-          <a href="/cart" class="mx-3"><span class="bi bi-bag"></span>&nbsp;Cart&nbsp;<span class="badge bg-danger"><%= locals.CartLength ? locals.CartLength : "" %></span></a>
+          <a href="/cart" class="mx-3"><span class="bi bi-bag"></span>&nbsp;Cart&nbsp;<span class="badge bg-danger" id="cartCounter"><%= locals.CartLength ? locals.CartLength : "" %></span></a>
           <% if (!isAuthenticated) { %>
             <a href="/login" class="mx-3"><span class="bi bi-person-circle"></span>&nbsp; Login</a>
             <% } else { %>
@@ -71,7 +71,7 @@
                 <ul class="dropdown-menu">
                   <li><a class="dropdown-item" href="/my-profile">My Profile</a></li>
                   <li><a class="dropdown-item" href="/address-book">Address Book</a></li>
-                  <li><a class="dropdown-item" href="/order-history">Order History</a></li>
+                  <li><a class="dropdown-item" href="/orders">Orders</a></li>
                   <li><a class="dropdown-item" href="/track-order">Track Order</a></li>
                   <hr>
                   <!-- <li><a class="dropdown-item" href="/logout">logout</a></li> -->

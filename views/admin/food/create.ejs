@@ -67,6 +67,10 @@
                                 <label for="foodType" id="foodTypeLabel">Type*</label>
                               </div>
                               <div class="form-floating mb-3">
+                                <input type="number" min="1" max="50" class="form-control border-dark" name="qtyLimit" value="5" id="qtyLimit" placeholder="Quantity Limit">
+                                <label for="qtyLimit" id="qtyLimitLabel">Food Quantity Limit*</label>
+                              </div>
+                              <div class="form-floating mb-3">
                                 <input type="text" class="form-control border-dark" name="orgPrice" id="orgPrice" placeholder="Original Price">
                                 <label for="orgPrice" id="orgPriceLabel">Original Price*</label>
                               </div>
@@ -84,8 +88,9 @@
                               </div>
                         </div>
                     </div>
-                    <div class="gap-2 col-3 mx-auto d-flex justify-content-center text-center my-5">
-                        <button type="submit" class="btn btn-success float-end">Submit</button>
+                    <div class="gap-2 col-3 mx-auto d-flex justify-content-center text-center float-end my-5">
+                      <button type="reset" class="btn btn-danger float-end">Reset</button>
+                      <button type="submit" class="btn btn-success float-end">Submit</button>
                       </div>
                 </form>
             </div>

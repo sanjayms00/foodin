@@ -7,7 +7,6 @@ const jwt = require("jsonwebtoken")
 const nodemailer = require('nodemailer');
 const mailgen = require("mailgen")
 const jwtsecretKey = process.env.JWTSECRETKEY;
-
 const accountSid = process.env.ACCOUNTSID;
 const authToken = process.env.AUTHTOKEN;
 const verifySid = process.env.VERIFYSID;

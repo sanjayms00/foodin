@@ -2,7 +2,7 @@ const Category = require("../../models/admin/categoryModel")
 
 const showCategory = async (req,res)=>{
     try {
-        const categoryData = await Category.find({status : 1})
+        const categoryData = await Category.find({})
         res.status(200).render("admin/category/index", {data : categoryData})
     } catch (error) {
         console.log(error.message)
@@ -103,9 +103,9 @@ const categoryStatus = async (req,res)=>{
         console.log(updateStatus)
         const categoryData = await Category.find({})
         if(!updateStatus){
-            return res.status(400).render("admin/users", {data : categoryData, status : "error", msg : "Status Updation Failed"})
+            return res.status(400).render("admin/category/index", {data : categoryData, status : "error", msg : "Status Updation Failed"})
         }
-        res.status(200).render("admin/users", {data : categoryData, status : "success", msg : "Status Updated"})
+        res.status(200).render("admin/category/index", {data : categoryData, status : "success", msg : "Status Updated"})
     } catch (error) {
         console.log(error.message)
     }

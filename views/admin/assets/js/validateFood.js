@@ -4,6 +4,7 @@ function foodValidate(){
     const categories = document.getElementsByName("categories")[0];
     const foodType = document.getElementsByName("foodType")[0];
     const orgPrice = document.getElementsByName("orgPrice")[0];
+    const qtyLimit = document.getElementsByName("qtyLimit")[0];
     const discPrice = document.getElementsByName("discPrice")[0];
     const foodDescription = document.getElementsByName("foodDescription")[0];
     const foodIngredients = document.getElementsByName("foodIngredients")[0];
@@ -48,6 +49,13 @@ function foodValidate(){
         discPriceLabel.innerHTML = "Discount Price Required"
         discPriceLabel.style.color = "red"
         discPrice.focus();
+        return false;
+    }
+    if (qtyLimit.value.trim() === "") {
+        const qtyLimitLabel = document.getElementById("qtyLimitLabel")
+        qtyLimitLabel.innerHTML = "Food Limit Required"
+        qtyLimitLabel.style.color = "red"
+        qtyLimit.focus();
         return false;
     }
     if (foodDescription.value.trim() === "") {

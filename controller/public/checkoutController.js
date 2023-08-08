@@ -89,10 +89,9 @@ const checkout = async (req,res)=>{
         const cartTotal = await getcartTotal(userId)
         const cartItems = await getcartItems(userId)
         const defAddress = await getDefAddress(user.defaultAddress, userId) 
-
-        console.log(cartItems)
-        console.log(cartTotal)
-        console.log(defAddress)
+        // console.log(cartItems)
+        // console.log(cartTotal)
+        // console.log(defAddress)
         if(cartItems.length < 1){
           res.render("public/errorPage", {status : "eroor", msg : "No items in the Cart"})
         }else if(cartTotal < 1){
@@ -109,6 +108,11 @@ const authCheckout = async (req,res)=>{
     const userId = new mongoose.Types.ObjectId(req.session.isauth);
     // console.log(req.body)
     let { address, cartItems, price, totalPrice, paymentOption } = req.body
+    
+    if(!cartItems.length){
+      res.render("public/errorPage", {status : "eroor", msg : "Address not given"})
+      return
+    }
     if(!address){
       res.render("public/errorPage", {status : "eroor", msg : "Address not given"})
       return

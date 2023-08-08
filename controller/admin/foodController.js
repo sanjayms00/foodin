@@ -38,14 +38,18 @@ const editFood = async (req,res)=>{
 
 const updateFood = async (req,res)=>{
     try {
-        const {foodId, prevImage, foodName, categories, foodType, orgPrice, discPrice, foodDescription, foodIngredients} = req.body
+        const {prevSlug, foodId, prevImage, categories, foodType, orgPrice, discPrice, foodDescription, foodIngredients} = req.body
+        const foodName = req.body.foodupdateName
         if(!(foodId || prevImage || foodName || categories || foodType || orgPrice || discPrice || foodDescription || foodIngredients)){
             return res.status(400).render("admin/food/edit", {status : "error", msg : "fill all fields"})
         }
-        const slug = foodName.trim().split(" ").join('-')
-        const checkFood = await Foods.findOne({slug : slug})
-        if(checkFood){
-            return res.status(400).render("admin/food/create", {status : "error" , msg : "Food Exist"})
+        const slug = foodName.trim().split(" ").join('-').toLocaleLowerCase()
+        
+        if(slug !== prevSlug){
+            const checkFood = await Foods.findOne({slug : slug})
+            if(checkFood){
+                return res.status(400).render("admin/food/create", {status : "error" , msg : "Food Exist"})
+            }
         }
         if(req.file){
             const uploadDirectory = "./views/uploads/food"
@@ -117,7 +121,7 @@ const saveFood = async (req,res)=>{
             // console.log("fill")
             return res.status(400).render("admin/food/create", {status : "error" , msg : "fill all fields"})
         }
-        const slug = foodName.trim().split(" ").join('-')
+        const slug = foodName.trim().split(" ").join('-').toLocaleLowerCase()
         const checkFood = await Foods.findOne({slug : slug})
         if(checkFood){
             return res.status(400).render("admin/food/create", {status : "error" , msg : "Food Exist"})

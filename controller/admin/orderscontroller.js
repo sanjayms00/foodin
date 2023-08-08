@@ -3,7 +3,7 @@ const mongoose = require("mongoose")
 
 const showOrders = async (req,res)=>{
     try {
-        const orders = await Orders.find({}).populate('user').exec();
+        const orders = (await Orders.find({}).populate('user').sort({_id : -1}).exec());
         // console.log(JSON.stringify(orders[0].items));
         res.status(200).render("admin/orders/index", {data : orders})
     } catch (error) {

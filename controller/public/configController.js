@@ -318,21 +318,19 @@ const signupAuthenticate = async (req, res) => {
 
 const logOut = (req,res)=>{
     try {
-        // req.session.destroy((err)=>{
-        //     if(err){
-        //         console.log(err.message)
-        //     }else{
-        //         res.redirect("/login")
-        //     }
-        // })
-        
+        req.session.destroy((err)=>{
+            if(err){
+                console.log(err.message)
+            }else{
+                res.redirect("/login")
+            }
+        })
     } catch (error) {
         console.log(error.message)
     }
 }
 
 
-//export all functions like objects
 module.exports = {
     login,
     loginAuthenticate,

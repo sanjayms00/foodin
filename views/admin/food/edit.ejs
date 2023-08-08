@@ -37,8 +37,9 @@
                     <div class="col-xl-6 text-dark">
                       <input type="hidden" name="foodId" id="foodId" value="<%= food._id %>"> 
                       <input type="hidden" name="prevImage" id="prevImage" value="<%= food.image %>"> 
+                      <input type="hidden" name="prevSlug" id="prevSlug" value="<%= food.slug %>"> 
                       <div class="form-floating mb-3">
-                        <input type="text" class="form-control border-dark" name="foodName" id="foodName" placeholder="Food Name" value="<%= food.foodName %>">
+                        <input type="text" class="form-control border-dark" name="foodupdateName" id="foodName" placeholder="Food Name" value="<%= food.foodName %>">
                         <label for="foodName" id="foodNameLabel">Food Name*</label>
                       </div>
                       <div class="form-floating mb-3">
@@ -96,7 +97,8 @@
                           </div>
                     </div>
                     </div>
-                    <div class="gap-2 col-3 mx-auto d-flex justify-content-center text-center my-5">
+                    <div class="gap-2 col-3 mx-auto d-flex justify-content-center text-center my-5 float-end">
+                        <button type="reset" class="btn btn-danger float-end">Reset</button>
                         <button type="submit" class="btn btn-success float-end">Submit</button>
                       </div>
                 </form>

@@ -38,6 +38,7 @@ async function getCartTotal(userId){
 
 //get cart items
 async function getCartItems(userId){
+  //console.log("user id:"+userId)
   const cartItems = await Cart.aggregate([
     {
       $match: {userId: new mongoose.Types.ObjectId(userId)}
@@ -64,22 +65,26 @@ async function getCartItems(userId){
     }
   ]);
   return cartItems
+  //console.log(cartItems)
 }
 
 //show cart
 const showCart = async (req, res) => {
   try {
     const userId = req.session.isauth;
+    //console.log(userId)
     if (!userId) {
-      res.render("public/cart", {data : null});
+      res.render("public/errorPage", {msg : "No user found"});
+      return
     } else {
         const cart = await getCartItems(userId)
         const cartTotal = await getCartTotal(userId);
-        console.log(cart)
+        // console.log(cart)
+        // return
         res.render("public/cart", { cart, cartTotal });
       }
   } catch (error) {
-    console.log(error.message);
+    res.render("public/errorPage", {msg : "Cart Not Available"});
   }
 };
 
@@ -160,35 +165,6 @@ const addToCart = async (req, res) => {
       res.status(500).json({status : "error", msg : error.message})
     }
 };
-
-//updateCartBuQuantity
-// const updateCartBuQuantity = async (req, res) => {
-//    try {
-//     let {total, value, foodId} = req.body
-//     const foodIdAsObjectId = new mongoose.Types.ObjectId(foodId);
-//     const userId = req.session.isauth;
-//     if (!userId) {
-//       return res.status(400).json({ status: "error", msg: "user not found" });
-//     }
-
-//     const findUser = await Cart.findOne({userId : userId})
-//     console.log(findUser)
-//     if(!findUser){
-//       return res.status(400).json({ status: "error", msg: "user not found" });
-//     }
-//     const result = await Cart.findOneAndUpdate({userId : userId, "items.foodId" : foodIdAsObjectId})
-
-//     // const result = await Cart.updateOne(
-//     //   { userId: new mongoose.Types.ObjectId(userId), 'items.foodId': foodIdAsObjectId },
-//     //   { $set: { 'items.$.quantity': value , "items.$.total" : total} }
-//     // );
-//     console.log("result is : ")
-//     console.log(result)
-    
-//    } catch (error) {
-//       res.status(500).json({ status: "error", msg: error.message });
-//    }
-// }
 
 const updateCartByQuantity = async (req, res) => {
   try {

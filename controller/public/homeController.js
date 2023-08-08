@@ -4,8 +4,8 @@ const Category =  require("../../models/admin/categoryModel")
 const home = async (req,res)=>{
     try {
         const foodData = await Food.find({status : true})
-        const categoryData = await Category.find({})
-        console.log(foodData, categoryData)
+        const categoryData = await Category.find({status : 1})
+        //console.log(foodData, categoryData)
         res.render("public/index", {food : foodData, categories : categoryData})
     } catch (error) {
         console.log(error.message)

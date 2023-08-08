@@ -8,7 +8,7 @@ const addressBook = async (req, res) => {
             res.status(400).json({status : "error", msg : "failed to add address at the moment "})
         }else{
             const userId = req.session.isauth
-            addressData = await Users.findOne({_id : userId}, {addresses : 1})
+            addressData = await Users.findOne({_id : userId}, {addresses : 1, defaultAddress : 1})
             res.render("public/addressBook", {address : addressData})
         }
         
@@ -21,21 +21,23 @@ const addressBook = async (req, res) => {
 const saveAddress = async (req, res) => {
     try {
         if(!req.session.isauth){
-            res.status(400).json({status : "error", msg : "failed to add address at the moment "})
+            return res.status(400).json({status : "error", msg : "failed to add address at the moment "})
         }else{
-            const userId = req.session.isauth
+            const userId = new mongoose.Types.ObjectId(req.session.isauth)
             const address = {fullName, mobileNumber, pinCode, addressLine, city, state, addressType } = req.body
             // console.log(fullName, mobileNumber, pinCode, addressLine, city, state, addressType)
             const saveData = await Users.updateOne({_id : userId},{$push : {addresses : address} })
             if(!saveData){
-                res.status(400).json({status : "error", msg : "can't add address at the moment "})
+                return res.status(400).json({status : "error", msg : "can't add address at the moment "})
             }else{
+                const defaulAddress = await Users.find({_id : userId}, { _id: 1, addresses: { $slice: -1 } });
+                await Users.updateOne({_id : userId}, {$set : { defaultAddress : defaulAddress[0].addresses[0]._id}})
                 res.status(200).json({status : "success", msg : "address added successfully"})
             }
         }
         
     } catch (error) {
-        res.status(400).json({status : "error", msg : error.message})
+        return res.status(400).json({status : "error", msg : error.message})
     }
 }
 

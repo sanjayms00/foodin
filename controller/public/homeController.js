@@ -5,6 +5,7 @@ const home = async (req,res)=>{
     try {
         const foodData = await Food.find({status : true})
         const categoryData = await Category.find({})
+        console.log(foodData, categoryData)
         res.render("public/index", {food : foodData, categories : categoryData})
     } catch (error) {
         console.log(error.message)

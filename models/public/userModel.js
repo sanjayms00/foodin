@@ -66,9 +66,6 @@ const userSchema = new  mongoose.Schema({
     addresses : {
         type : [addressSchema]
     },
-    cart : {
-        type : [Object]
-    },
     confirmSecret : {
         type : String,
     },

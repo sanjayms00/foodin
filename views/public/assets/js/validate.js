@@ -43,6 +43,14 @@ function validateSignup() {
         mobile.focus();
         return false;
     }
+    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+    if (!passwordPattern.test(signupPassword.value)) {
+        const passowrdLabel = document.getElementById("passwordLabel")
+        passowrdLabel.innerHTML = "Please use a Strong Password."
+        passowrdLabel.style.color = "red"
+        signupPassword.focus();
+        return false;
+    }
     if (signupPassword.value.length < 6) {
         const passowrdLabel = document.getElementById("passwordLabel")
         passowrdLabel.innerHTML = "Password should be at least 6 characters long."
@@ -52,7 +60,7 @@ function validateSignup() {
     }
     if(signupPassword.value !== confirmPassword.value){
         const confirmPasswordLabel = document.getElementById("confirmPasswordLabel")
-        confirmPasswordLabel.innerHTML = "Password Doe's not match"
+        confirmPasswordLabel.innerHTML = "Password not match"
         confirmPasswordLabel.style.color = "red"
         confirmPassword.focus();
         return false;

@@ -2,13 +2,18 @@
 <%- include("includes/header") %>
 
   <div class="container padd-top">
-      <form action="/authCheckout" method="POST">
+      <form action="/authCheckout" method="POST" onsubmit="return checkOut()">
         <div class="row">
         <div class="col-md-8">
           <h4 class="mb-3">Delivery Address*</h4>
           <div class="form-floating">
-            <textarea class="form-control" id="floatingAddress" name="address" style="height: 150px" placeholder="Address" readonly><%= `${defAddress.fullName}, \n${defAddress.addressLine},  ${defAddress.pinCode},  ${defAddress.city},  ${defAddress.state}, \n${defAddress.mobileNumber}, \n${defAddress.addressType}  ` %></textarea>
-            <label for="floatingAddress">Address</label>
+            <% if (Object.keys(locals.defAddress).length === 0 || defAddress.fullName === undefined ) { %>
+              <textarea class="form-control" id="floatingAddress" name="address" style="height: 150px" placeholder="Delivery Address..." readonly required></textarea>
+              <label for="floatingAddress" id="floatingAddressId">Address</label>
+            <% }else{ %>
+              <textarea class="form-control" id="floatingAddress" name="address" style="height: 150px" placeholder="Address" readonly required><%= `${defAddress.fullName}, \n${defAddress.addressLine},  ${defAddress.pinCode},  ${defAddress.city},  ${defAddress.state}, \n${defAddress.mobileNumber}, \n${defAddress.addressType}  ` %></textarea>
+              <label for="floatingAddress" id="floatingAddressId">Address</label>
+            <% } %>
           </div>
           <br>
           <div class="row">
@@ -82,25 +87,6 @@
               <input class="form-check-input border-dark" type="radio" name="paymentOption" id="cashOnDelivery" value="cod" checked>
               <label class="form-check-label" for="cashOnDelivery">Cash on Delivery</label>
             </li>
-            <!-- <li class="list-group-item d-flex justify-content-between lh-condensed">
-              <div>
-                <h6 class="my-0">Offer Price</h6>
-              </div>
-              <span class="text-muted">$8</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between lh-condensed">
-              <div>
-                <h6 class="my-0">Delivery fee</h6>
-              </div>
-              <span class="text-muted">$5</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between bg-light">
-              <div class="text-success">
-                <h6 class="my-0">Coupon discount</h6>
-                <small>EXAMPLECODE</small>
-              </div>
-              <span class="text-success">-$5</span>
-            </li> -->
             <li class="list-group-item py-4">
               <input class="form-check-input border-dark" type="radio" name="paymentOption" id="onlinePayment" value="onlinePay">
                 <label class="form-check-label " for="onlinePayment">Online Payment</label>
@@ -195,25 +181,21 @@
     </div>
   </div>
 
-
-
   <script>
-      async function checkOut(cartItems, defAddressId){
-        // console.log(JSON.stringify(cartItems), defAddressId)
-        const response = await fetch("/authCheckout", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({cartItems, defAddressId}),
-            });
-
-            const result = await response.json();
-            if(result.status === "success"){
-                window.location = "http://localhost:3000/payment"
-            } 
+    function checkOut(){
+      const floatingAddress = document.getElementById('floatingAddress').value;
+      const floatingAddressId = document.getElementById('floatingAddressId');
+      if(floatingAddress === ""){
+        floatingAddressId.innerText = "Address is Required"
+        floatingAddressId.style.color = "red"
+        floatingAddressId.focus()
+        return false
       }
+      return true
+    }
   </script>
+
+
 
   <script src="./assets/js/addressBook.js"></script>
 

@@ -16,10 +16,24 @@ deleteCartItem.forEach(element => {
                 const data = await response.json();
                 
                 if (data.status === 'success') {
-                    alert(data.msg);
+                  Toastify({
+                    text: data.msg,
+                    className: "info",
+                    style: {
+                        background: "linear-gradient(to right, #0b7303, #24c9a3)",
+                    }
+                    }).showToast();
+                  setTimeout(() => {
                     window.location.reload();
+                  }, 500);
                 }else{
-                    alert(data.msg);
+                  Toastify({
+                    text: data.msg,
+                    className: "info",
+                    style: {
+                        background: "linear-gradient(to right, #ff0000, #dd2a7f)",
+                    }
+                    }).showToast();
                 }
         } catch (error) {
             console.log(error.message) 

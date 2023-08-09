@@ -7,10 +7,12 @@ const jwt = require("jsonwebtoken")
 const nodemailer = require('nodemailer');
 const mailgen = require("mailgen")
 const jwtsecretKey = process.env.JWTSECRETKEY;
-
-const accountSid = process.env.ACCOUNTSID;
-const authToken = process.env.AUTHTOKEN;
-const verifySid = process.env.VERIFYSID;
+const accountSid = 'ACfd21e83a558ab9b0d9c73cc71bb002ef';
+const authToken = 'f5aac186bd398803cca40e9f4535fd43';
+const verifySid = 'VA8e0ea6799c23571da34b083cd23147d4';
+// const accountSid = process.env.ACCOUNTSID;
+// const authToken = process.env.AUTHTOKEN;
+// const verifySid = process.env.VERIFYSID;
 const client = require("twilio")(accountSid, authToken);
 const fromEmailId = process.env.EMAILID;
 const emailPassword = process.env.EMAilPASSWORD;

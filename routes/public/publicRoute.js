@@ -84,7 +84,7 @@ publicRoute.get("/track-order", userMiddleWare.isBlocked, addressController.trac
 //cart routes
 publicRoute.post("/add-to-cart", userMiddleWare.isBlocked, cartController.addToCart)
 publicRoute.post("/delete-cart-item", userMiddleWare.isBlocked, cartController.deleteCartItem)
-publicRoute.get("/cart", userMiddleWare.isBlocked, cartController.showCart)
+publicRoute.get("/cart", cartController.showCart)
 publicRoute.patch("/update-cart-data", userMiddleWare.isBlocked, cartController.updateCartByQuantity)
 
 

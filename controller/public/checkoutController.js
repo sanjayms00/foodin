@@ -1,8 +1,14 @@
+
 const mongoose = require('mongoose')
 const Users = require("../../models/public/userModel")
 const Cart = require("../../models/public/cartModel");
 const Orders = require("../../models/admin/ordersModel")
+const PaymentHelper = require("../../helper/paymentHelper")
 
+
+
+
+//find cart Total
 async function getcartTotal(userId){
   const cart = await Cart.aggregate([
     {
@@ -36,6 +42,8 @@ async function getcartTotal(userId){
   ]);
   return cart
 }
+
+//find cart items
 async function getcartItems(userId){
   const cart = await Cart.aggregate([
     {
@@ -64,6 +72,7 @@ async function getcartItems(userId){
   return cart
 }
 
+//find deafault adderss
 async function getDefAddress(addressId, userId){
   try{
     const address = await Users.aggregate([
@@ -89,36 +98,33 @@ const checkout = async (req,res)=>{
         const cartTotal = await getcartTotal(userId)
         const cartItems = await getcartItems(userId)
         const defAddress = await getDefAddress(user.defaultAddress, userId) 
-        // console.log(cartItems)
-        // console.log(cartTotal)
-        // console.log(defAddress)
         if(cartItems.length < 1){
           res.render("public/errorPage", {status : "eroor", msg : "No items in the Cart"})
         }else if(cartTotal < 1){
           res.render("public/errorPage", {status : "eroor", msg : "No items in the Cart"})
         }
+        
         res.render("public/checkOut", {subTotal : cartTotal, user, cartItems, defAddress})
     } catch (error) {
-        console.log(error.message)
+      res.render("public/errorPage", {status : "eroor", msg : "No items in the Cart"})
     }
     
 }
 
 const authCheckout = async (req,res)=>{
-    const userId = new mongoose.Types.ObjectId(req.session.isauth);
-    // console.log(req.body)
-    let { address, cartItems, price, totalPrice, paymentOption } = req.body
     
-    if(!cartItems.length){
-      res.render("public/errorPage", {status : "eroor", msg : "Address not given"})
-      return
-    }
-    if(!address){
-      res.render("public/errorPage", {status : "eroor", msg : "Address not given"})
-      return
-    }
-    cartItems = JSON.parse(cartItems)
-    if(paymentOption === 'cod'){
+    try {
+      const userId = new mongoose.Types.ObjectId(req.session.isauth);
+      // console.log(req.body)
+      let { address, cartItems, price, totalPrice, paymentOption } = req.body
+      
+      if(!cartItems.length){
+        return res.status(400).json({status : "eroor", msg : "No items in the Cart"})
+      }
+      if(!address){
+        return res.status(404).json({status : "eroor", msg : "Address Not Found"})
+      }
+      cartItems = JSON.parse(cartItems)
       const orderData = new Orders({
         items : cartItems,
         user : userId,
@@ -133,17 +139,25 @@ const authCheckout = async (req,res)=>{
       const orderResult = await orderData.save()
       if(orderResult){
         await Cart.deleteOne({userId })
-        // console.log(true)
-        res.render("public/ordePlaced")
+        if(paymentOption === 'cod'){
+          return res.status(200).json({status : "success", msg : "Order Placed", paymentMethod : paymentOption })
+        }else if(paymentOption === 'onlinePay')
+        {
+          const razorpayOrder = await PaymentHelper.generateRazorPay(orderResult._id, price)
+          console.log(razorpayOrder)
+          return res.status(200).json({status : "success", msg : "Order Placed", paymentMethod : paymentOption, razorpayOrder  })
+        }else
+        {
+          return res.status(500).json({status : "eroor", msg : "Invalid Payment Option"})
+        }
       }else{
-        // console.log(false)
+        return res.status(500).json({status : "eroor", msg : "Cannot place Order"})
       }
-      
-    }else{
-      res.redirect("/payment")
+    } catch (error) {
+      return res.status(500).json({status : "eroor", msg : error.message})
     }
     // let { cartItems, defAddressId } = req.body 
-    // cartItems = JSON.parse(cartItems);
+    // cartItems = json.parse(cartItems);
   
     // console.log(req.body.length, userId)
 
@@ -155,13 +169,46 @@ const authCheckout = async (req,res)=>{
     // res.status(200).json({status : "success", msg : "success"})
 }
 
-const payment = (req,res)=>{
-    console.log("here")
-    res.render("public/paymentMethods")
+
+//payment verificatiion
+const verifyPayment = async (req,res) => {
+    try {
+        const {response, order} = req.body
+        await PaymentHelper.verifyRazorPayPayment(response, order)
+        .then(async (result)=>{
+        
+          await Orders.updateOne(
+                  {_id : new mongoose.Types.ObjectId(order.razorpayOrder.receipt)},
+                  {$set : {paymentStatus : "recieved"}})
+                  .then((updateResponse)=>{
+                    res.status(200).json({status : "success", msg : "Payment successfull"})
+                  })
+                  .catch((err)=>{
+                    res.status(500).json({status : "error", msg : "failed to upload the order status"})
+                  })
+        })
+        .catch((err)=>{
+          res.status(500).json({status : "error", msg : err.message})
+        })
+    } catch (error) {
+      res.status(500).json({status : "error", msg : error.message})
+    }
 }
+
+
+const success = (req, res) =>{
+  res.render("public/orderPlaced")
+}
+
+const failed = (req, res) =>{
+  res.render("public/errorPage", {status : 'error', msg : "Payment Failed"})
+}
+
 
 module.exports = {
     checkout,
-    payment,
-    authCheckout
+    verifyPayment,
+    authCheckout,
+    success,
+    failed
 }

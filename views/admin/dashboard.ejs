@@ -1,98 +1,139 @@
+<style>
+  .dropdown {
+      position: relative;
+      display: inline-block;
+  }
 
-        <!--  Row 1 -->
-            <div class="row py-4">
-                <div class="col-lg-8 d-flex align-items-strech">
-                <div class="card w-100">
-                    <div class="card-body">
-                    <div class="d-sm-flex d-block align-items-center justify-content-between mb-9">
-                        <div class="mb-3 mb-sm-0">
-                        <h5 class="card-title fw-semibold">Sales Overview</h5>
-                        </div>
-                        <div>
-                        <select class="form-select">
-                            <option value="1">March 2023</option>
-                            <option value="2">April 2023</option>
-                            <option value="3">May 2023</option>
-                            <option value="4">June 2023</option>
-                        </select>
-                        </div>
-                    </div>
-                    <div id="chart"></div>
-                    </div>
-                </div>
-                </div>
-                <div class="col-lg-4">
-                <div class="row">
-                    <div class="col-lg-12">
-                    <!-- Yearly Breakup -->
-                    <div class="card overflow-hidden">
-                        <div class="card-body p-4">
-                        <h5 class="card-title mb-9 fw-semibold">Yearly Breakup</h5>
-                        <div class="row align-items-center">
-                            <div class="col-8">
-                            <h4 class="fw-semibold mb-3">$36,358</h4>
-                            <div class="d-flex align-items-center mb-3">
-                                <span
-                                class="me-1 rounded-circle bg-light-success round-20 d-flex align-items-center justify-content-center">
-                                <i class="ti ti-arrow-up-left text-success"></i>
-                                </span>
-                                <p class="text-dark me-1 fs-3 mb-0">+9%</p>
-                                <p class="fs-3 mb-0">last year</p>
-                            </div>
-                            <div class="d-flex align-items-center">
-                                <div class="me-4">
-                                <span class="round-8 bg-primary rounded-circle me-2 d-inline-block"></span>
-                                <span class="fs-2">2023</span>
-                                </div>
-                                <div>
-                                <span class="round-8 bg-light-primary rounded-circle me-2 d-inline-block"></span>
-                                <span class="fs-2">2023</span>
-                                </div>
-                            </div>
-                            </div>
-                            <div class="col-4">
-                            <div class="d-flex justify-content-center">
-                                <div id="breakup"></div>
-                            </div>
-                            </div>
-                        </div>
-                        </div>
-                    </div>
-                    </div>
-                    <div class="col-lg-12">
-                    <!-- Monthly Earnings -->
-                    <div class="card">
-                        <div class="card-body">
-                        <div class="row alig n-items-start">
-                            <div class="col-8">
-                            <h5 class="card-title mb-9 fw-semibold"> Monthly Earnings </h5>
-                            <h4 class="fw-semibold mb-3">$6,820</h4>
-                            <div class="d-flex align-items-center pb-1">
-                                <span
-                                class="me-2 rounded-circle bg-light-danger round-20 d-flex align-items-center justify-content-center">
-                                <i class="ti ti-arrow-down-right text-danger"></i>
-                                </span>
-                                <p class="text-dark me-1 fs-3 mb-0">+9%</p>
-                                <p class="fs-3 mb-0">last year</p>
-                            </div>
-                            </div>
-                            <div class="col-4">
-                            <div class="d-flex justify-content-end">
-                                <div
-                                class="text-white bg-secondary rounded-circle p-6 d-flex align-items-center justify-content-center">
-                                <i class="ti ti-currency-dollar fs-6"></i>
-                                </div>
-                            </div>
-                            </div>
-                        </div>
-                        </div>
-                        <div id="earning"></div>
-                    </div>
-                    </div>
-                </div>
-                </div>
-            </div>
-            <div class="py-6 px-6 text-center">
-                <p class="mb-0 fs-4">Design and Developed by <a href="http://127.0.0.1/" target="_blank" class="pe-1 text-primary text-decoration-underline">foodin</a> Distributed by <a href="http://127.0.0.1">foodin</a></p>
-            </div>
+  .dropbtn {
+      background-color: #d6d6d6;
+      color: black;
+      padding: 5px 10px;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+  }
+
+  .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f9f9f9;
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1;
+  }
+
+  .dropdown-content a {
+      color: black;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+  }
+
+  .dropdown-content a:hover {
+      background-color: #f1f1f1;
+  }
+
+  .dropdown:hover .dropdown-content {
+      display: block;
+  }
+
+  .dropdown:hover .dropbtn {
+      background-color: #b7b7b7;
+  }
+</style>
+<div class="row">
+    <div class="col-md-12">
+        <h4>Today</h4>
+        <hr>
+        <div class="my-4">
+          
+        </div>
+        <canvas id="myChart" class="w-100" height="350px"></canvas>
+        <div class="my-5" style="height: 20px;">
+            <span class="float-end">Total Sale : 10000</span>
+        </div>
+        <div class="dropdown my-2">
+          <button class="dropbtn">Sales Report</button>
+          <div class="dropdown-content">
+              <a href="/admin/Dashboard?sale=year">Year</a>
+              <a href="/admin/Dashboard?sale=month">Month</a>
+              <a href="/admin/Dashboard?sale=today">Today</a>
+          </div>
+        </div>
+        <div class="dropdown show w-100">
+        </div>
+        <div class="table-responsive">
+          <%= monthlyOrderPrices %>
+            <table class="table table-striped table-sm text-center">
+                <thead>
+                    <tr>
+                    <th>#</th>
+                    <th>orderId</th>
+                    <th>Customer</th>
+                    <th style="min-width: 200px;">payment Method</th>
+                    <th>address</th>
+                    <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                  <% 
+                    let i = 1
+                    orderReport.forEach(element => { 
+                  %>
+                    <tr>
+                    <td><%= i %></td>
+                    <td><%= element._id %></td>
+                    <td><%= element.user %></td>
+                    <td><%= element.paymentMethod %></td>
+                    <td><%= element.address %></td>
+                    <td><%= element.subTotal %></td>
+                    </tr>
+                  <% i++ }); %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var ctx = document.getElementById("myChart").getContext('2d');
+      var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"],
+          datasets: [{
+            label: 'Total sales',
+            data: newArr,
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.2)',
+              'rgba(54, 162, 235, 0.2)',
+              'rgba(255, 206, 86, 0.2)',
+              'rgba(75, 192, 192, 0.2)',
+              'rgba(153, 102, 255, 0.2)',
+              'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+              'rgba(255,99,132,1)',
+              'rgba(54, 162, 235, 1)',
+              'rgba(255, 206, 86, 1)',
+              'rgba(75, 192, 192, 1)',
+              'rgba(153, 102, 255, 1)',
+              'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            yAxes: [{
+              ticks: {
+                beginAtZero: true
+              }
+            }]
+          }
+        }
+      });
+    });
+</script>
 

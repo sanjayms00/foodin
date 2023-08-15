@@ -31,7 +31,8 @@ const editCategory = async (req,res)=>{
 
 const updateCategory = async (req,res)=>{
     try {
-        const{updateCategoryName, categoryId} = req.body
+        let {updateCategoryName, categoryId} = req.body
+        updateCategoryName = updateCategoryName.toLowerCase().trim()
         if(!updateCategoryName){
             return res.status(400).json({status : "error", msg : "Category required"})
         }
@@ -58,20 +59,20 @@ const updateCategory = async (req,res)=>{
 
 const deleteCategory = async (req,res)=>{
     try {
-        const deleteCategoryData = await Category.deleteOne({_id : req.query.id})
-        if(!deleteCategoryData){
-            return res.status(400).redirect("admin/category")
-        }
-        res.status(200).redirect("/admin/category")
+        const{ orderId } = req.body
+        await Category.deleteOne({_id : orderId})
+        .then((response)=>{
+            return res.status(200).json({status : "success", msg : "Category Deleted"})
+        })
     } catch (error) {
-        console.log(error.message)
+        return res.status(500).json({status : "error", msg : "Cannot delete category"})
     }
 }
 
 const saveCategory = async (req,res)=>{
     try {
-        const {categoryName} = req.body
-        console.log(categoryName)
+        let {categoryName} = req.body
+        categoryName = categoryName.toLowerCase().trim()
         if(!categoryName){
             return res.status(400).json({status : "error", msg : "Category required"})
         }
@@ -96,18 +97,13 @@ const saveCategory = async (req,res)=>{
 
 const categoryStatus = async (req,res)=>{
     try {
-        const categoryStatus = req.params.status
-        const categoryStat = categoryStatus.split("-")
-        const [catId, status] = categoryStat
-        const updateStatus = await Category.updateOne({_id : catId}, {$set : {status : status === "true"}})
-        console.log(updateStatus)
-        const categoryData = await Category.find({})
-        if(!updateStatus){
-            return res.status(400).render("admin/category/index", {data : categoryData, status : "error", msg : "Status Updation Failed"})
-        }
-        res.status(200).render("admin/category/index", {data : categoryData, status : "success", msg : "Status Updated"})
+        const {status, orderId} = req.body
+        await Category.updateOne({_id : orderId}, {$set : {status : status}})
+        .then((response)=>{
+            return res.status(200).json({status : "success", msg : "Status Changed", btnStatus: status})
+        })
     } catch (error) {
-        console.log(error.message)
+        return res.status(400).json({status : "error", msg : "can't change status"})
     }
 }
 

@@ -7,20 +7,6 @@
         <div class="card-body p-0">
           <div class="table-responsive">
             <table class="table text-nowrap text-center mb-0 align-middle">
-              <% if (locals.status === "success") { %>
-                  <div class="alert alert-success" role="alert">
-                      <%= locals.msg %>
-                  </div>
-                  <script>
-                    setTimeout(()=>{
-                      window.location.href = "http://127.0.0.1:3000/admin/users"; 
-                    },800)
-                  </script>
-              <% } if(locals.status === "error"){ %>
-                  <div class="alert alert-danger" role="alert">
-                      <%= locals.msg %>
-                  </div>
-              <% } %>
               <thead class="text-dark fs-4">
                 <tr>
                   <th class="border-bottom-0">
@@ -71,13 +57,9 @@
                     <td class="border-bottom-0">
                       <h6 class="fw-semibold mb-1">
                         <% if (!item.blocked) { %>
-                          <a href="/admin/userStatus/<%= item._id %>-true">
-                            <button type="button" class="btn btn-danger w-100">Block User</button>
-                          </a>
+                            <button type="button" class="btn btn-danger w-100" onclick="blockUser(this, `<%= item._id %>`, 'true')">Block User</button>
                         <% } else { %> 
-                          <a href="/admin/userStatus/<%= item._id %>-false">
-                            <button type="button" class="btn btn-success w-100">Unblock User</button>
-                          </a>
+                            <button type="button" class="btn btn-success w-100" onclick="blockUser(this, `<%= item._id %>`, 'false')">Unblock User</button>
                         <% } %>
                       </h6>
                     </td>
@@ -93,3 +75,58 @@
     </div>
   </div>
 </div>
+
+
+<script>
+
+async function blockUser(btn, userId, status){
+
+  const foodData = {
+    userId: userId, 
+    status: status
+  };
+
+  try {
+    const response = await fetch('/admin/userStatus', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(foodData)
+    });
+      const data = await response.json();
+      if (data.status === 'success') { 
+          Toastify({
+              text: data.msg,
+              className: "info",
+              style: {
+                  background: "linear-gradient(to right, #0b7303, #24c9a3)",
+              }
+              }).showToast();
+              setTimeout(()=>{
+                location.reload()
+              }, 800)
+      }
+      else {
+          Toastify({
+              text: data.msg,
+              className: "info",
+              style: {
+                  background: "linear-gradient(to right, #ff0000, #dd2a7f)",
+              }
+              }).showToast();
+      }
+  }catch (error) {
+      Toastify({
+          text: "Unable to change status",
+          className: "info",
+          style: {
+              background: "linear-gradient(to right, #ff0000, #dd2a7f)",
+          }
+          }).showToast();
+  }
+}
+
+
+
+</script>

@@ -29,8 +29,13 @@ a {
   text-decoration: none;
 }
 .padd-top{
-  padding: 150px 0 100px 0;
+  padding: 150px 0 70px 0;
 }
+
+.header-color {
+  background-color: #001a4a;
+}
+
 a:hover {
   color: var(--color-links-hover);
   text-decoration: none;
@@ -180,9 +185,9 @@ section {
 }
 
 .search-form-wrap .search-form .form-control {
-  width: 420px;
+  width: 800px;
   height: 50px;
-  background-color: rgb(230, 193, 144);
+  background-color: #e8f0fe;
   border: none;
   box-shadow: 0 15px 10px -8px rgba(var(--color-black-rgb), 0.3);
   padding-left: 40px;
@@ -198,19 +203,20 @@ section {
 .search-form-wrap .search-form .icon {
   position: absolute;
   left: 0;
-  top: 14px;
-  opacity: 0.5;
-  left: 10px;
+  top: 7px;
+  left: -61px;
+  font-size: 20px;
 }
 
 .search-form-wrap .search-form .btn {
   position: absolute;
-  top: 10px;
+  top: 8px;
   right: 4px;
   padding: 0;
   margin: 0;
   line-height: 1;
-  font-size: 30px;
+  font-size: 35px;
+  color: #83735c;
 }
 
 .search-form-wrap .search-form .btn:active,

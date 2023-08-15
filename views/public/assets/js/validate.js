@@ -68,7 +68,6 @@ function validateSignup() {
     return true;
 }
 
-
 function validateLogin() {
     const emailId = document.getElementsByName("emailId")[0];
     const loginPassword = document.getElementsByName("loginPassword")[0];
@@ -97,3 +96,127 @@ function validateLogin() {
     }
     return true;
 }
+
+function validateMobileNumber() {
+    const mobileNumber = document.getElementsByName("mobileNumber")[0];
+    
+    if (mobileNumber.value.trim() === "") {
+        const mobileNumberLabel = document.getElementById("mobileNumberLabel")
+        mobileNumberLabel.innerHTML = "Mobile Number Required"
+        mobileNumberLabel.style.color = "red"
+        mobileNumber.focus();
+        return false;
+    }
+    
+    
+    return true;
+}
+
+//normal login
+document.getElementById('loginForm').addEventListener('submit', async (event)=>{
+    event.preventDefault();
+
+    if(validateLogin()){
+        
+        const form = document.getElementById('loginForm');
+        const formData = new FormData(form);
+
+        const emailId = formData.get('emailId');
+        const loginPassword = formData.get('loginPassword');
+
+        const data ={
+            emailId,
+            loginPassword
+        }
+        try {
+            
+        } catch (error) {
+            
+        }
+        const response = await fetch("/loginAuthenticate", {
+        method: "POST", // or 'PUT'
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+        });
+
+        const result = await response.json();
+        if(result.status === "success"){
+            Toastify({
+                text: result.msg,
+                className: "info",
+                style: {
+                    background: "linear-gradient(to right, #0b7303, #24c9a3)",
+                }
+                }).showToast();
+            setTimeout(() => {
+                window.location.href = "/"
+            }, 800);
+        }else{
+            Toastify({
+                text: result.msg,
+                className: "info",
+                style: {
+                    background: "linear-gradient(to right, #ff0000, #dd2a7f)",
+                }
+                }).showToast();
+        }
+    }
+
+})
+
+//otp login
+document.getElementById('mobileNumberValidateForm').addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    if(validateMobileNumber()){
+        const formData = new FormData(event.target);
+        const mobileNumber = formData.get('mobileNumber');
+        
+        try {
+            const response = await fetch('/validateNumber', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ mobileNumber })
+            });
+            
+            const data = await response.json();
+            
+            if (data.status === 'success') { 
+                Toastify({
+                    text: data.msg,
+                    className: "info",
+                    style: {
+                        background: "linear-gradient(to right, #0b7303, #24c9a3)",
+                    }
+                    }).showToast();
+                setTimeout(() => {
+                    window.location.href = `/verifyOtp?userMobileNumber=${mobileNumber}`
+                }, 800);
+            } else {
+                Toastify({
+                    text: data.msg,
+                    className: "info",
+                    style: {
+                        background: "linear-gradient(to right, #ff0000, #dd2a7f)",
+                    }
+                    }).showToast();
+            }
+        }catch (error) {
+            Toastify({
+                text: data.msg,
+                className: "info",
+                style: {
+                    background: "linear-gradient(to right, #ff0000, #dd2a7f)",
+                }
+                }).showToast();
+        }
+    }
+
+    
+});
+
+

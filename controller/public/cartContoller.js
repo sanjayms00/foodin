@@ -114,6 +114,7 @@ const deleteCartItem = async (req, res) => {
 //add to cart
 const addToCart = async (req, res) => {
     try {
+      
       if(!req.session.isauth){
         return  res.status(404).json({status : "no-user", msg : "User not Found"})
       }

@@ -27,6 +27,8 @@
   <link href="../assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
   <link href="../assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
   <link href="../assets/vendor/aos/aos.css" rel="stylesheet">
+  <link href="./assets/css/login.css" rel="stylesheet">
+  <link href="./assets/css/preloader.css" rel="stylesheet">
 
   <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.20/dist/sweetalert2.min.css" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
@@ -35,11 +37,26 @@
   <link href="../assets/css/variables.css" rel="stylesheet">
   <link href="../assets/css/main.css" rel="stylesheet">
   <link href="../assets/css/cart.css" rel="stylesheet">
-
+  <link href="../assets/css/slider.css" rel="stylesheet">
 
 </head>
 
 <body>
+
+  <!--CSS Spinner-->
+  <div class="spinner-wrapper">
+    <div class="sk-cube-grid">
+      <div class="sk-cube sk-cube1"></div>
+      <div class="sk-cube sk-cube2"></div>
+      <div class="sk-cube sk-cube3"></div>
+      <div class="sk-cube sk-cube4"></div>
+      <div class="sk-cube sk-cube5"></div>
+      <div class="sk-cube sk-cube6"></div>
+      <div class="sk-cube sk-cube7"></div>
+      <div class="sk-cube sk-cube8"></div>
+      <div class="sk-cube sk-cube9"></div>
+    </div>
+  </div>
 
   <!-- ======= Header ======= -->
   <header id="header" class="header d-flex align-items-center fixed-top">
@@ -73,6 +90,7 @@
                   <li><a class="dropdown-item" href="/address-book">Address Book</a></li>
                   <li><a class="dropdown-item" href="/orders">Orders</a></li>
                   <li><a class="dropdown-item" href="/track-order">Track Order</a></li>
+                  <li><a class="dropdown-item" href="/wallet">Wallet</a></li>
                   <hr>
                   <li><a class="dropdown-item" href="/logout">logout</a></li>
                 </ul>
@@ -87,9 +105,9 @@
             <!-- ======= Search Form ======= -->
             <div class="search-form-wrap js-search-form-wrap">
               <form action="/search-result" class="search-form">
-                <span class="icon bi-search"></span>
-                <input type="text" placeholder="Search" class="form-control">
+                <input type="text" placeholder="Search" name="search" id="search" class="form-control">
                 <button class="btn js-search-close"><span class="bi-x"></span></button>
+                <button class="btn" type="submit"><span class="icon bi-search"></span></button>
               </form>
             </div>
             <!-- End Search Form -->

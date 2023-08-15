@@ -24,6 +24,18 @@ const isBlocked = async (req,res,next) => {
     }
 }
 
+const checkUserBlocked = async (req,res,next) => {
+    try {
+        const checkBlockedUser = await Users.findOne({_id : req.session.isauth})
+        if(checkBlockedUser.blocked){
+            return res.status(403).json({status : "blocked", msg : "User is Blocked"})
+        }
+        next()
+    } catch (error) {
+        console.log(error.message)
+    }
+}
+
 const sessionCheck = async (req, res, next) => {
 
     const cart = await Cart.findOne({ userId: req.session.isauth });
@@ -52,5 +64,6 @@ module.exports = {
     isloggedIn,
     sessionCheck,
     loginCheck,
-    isBlocked
+    isBlocked,
+    checkUserBlocked
 }

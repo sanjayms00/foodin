@@ -79,7 +79,7 @@
                       </button>
                     </th>
                     <th class="border-bottom-0">
-                        <% if(item.status !== 'delivered'){ %>
+                        <% if(item.paymentStatus !== 'recieved'){ %>
                           <div class="rounded-circle bg-warning float-start mx-1 payment-status-color" style="width: 20px; height: 20px;"></div>
                           <h6 class="fw-semibold mb-0 float-start mx-1 payment-status-text"><%= 'Pending' %></h6>
                         <% }else{ %>

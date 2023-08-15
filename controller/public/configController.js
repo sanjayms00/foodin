@@ -7,12 +7,13 @@ const jwt = require("jsonwebtoken")
 const nodemailer = require('nodemailer');
 const mailgen = require("mailgen")
 const jwtsecretKey = process.env.JWTSECRETKEY;
-const accountSid = 'ACfd21e83a558ab9b0d9c73cc71bb002ef';
-const authToken = 'f5aac186bd398803cca40e9f4535fd43';
-const verifySid = 'VA8e0ea6799c23571da34b083cd23147d4';
-// const accountSid = process.env.ACCOUNTSID;
-// const authToken = process.env.AUTHTOKEN;
-// const verifySid = process.env.VERIFYSID;
+// const accountSid = 'ACfd21e83a558ab9b0d9c73cc71bb002ef';
+// const authToken = 'a636d602474a897f2d898b55ea5c7c8c';
+// const verifySid = 'VA8e0ea6799c23571da34b083cd23147d4';
+const config = require('../../config/config')
+const accountSid = config.ACCOUNTSID;
+const authToken = config.AUTHTOKEN;
+const verifySid = config.VERIFYSID;
 const client = require("twilio")(accountSid, authToken);
 const fromEmailId = process.env.EMAILID;
 const emailPassword = process.env.EMAilPASSWORD;
@@ -21,7 +22,7 @@ const emailPassword = process.env.EMAilPASSWORD;
 const login = async (req, res) => {
     try {
         const categoryData = await Category.find({})
-        res.render("public/login", {categories : categoryData})
+        res.render("public/loginMobile", {categories : categoryData})
     } catch (error) {
         console.log(error.message)
     }
@@ -30,33 +31,37 @@ const login = async (req, res) => {
 //login authenticate
 const loginAuthenticate = async (req, res) => {
     try {
+        
         const { emailId, loginPassword } = req.body
         //validate all fields
         if (!emailId) {
-            return res.status(400).render("public/login", {status : "error", msg : "Email Id Required"});
+            return res.status(400).json({status : "error", msg : "Email Id Required"});
         } 
         else if(!loginPassword){
-            return res.status(400).render("public/login", {status : "error", msg : "Password Required"});
+            return res.status(400).json({status : "error", msg : "Password Required"});
         }
         else 
         {
             const checkUser = await Users.findOne({email : emailId})
             if(!checkUser){
-                return res.status(401).render("public/login",{status : "error", msg : "username and password is incorrect"})
-            }
-            if(checkUser.blocked === true){
-                return res.status(401).render("public/login",{status : "error", msg : "User is temporarily blocked. Contact the web site owner for assistance"}) 
+                return res.status(401).json({status : "error", msg : "username and password is incorrect"})
             }
             const checkPassword = await bcrypt.compare(loginPassword, checkUser.password)
             if(!checkPassword){
-                return res.status(401).render("public/login",{status : "error", msg : "username and password is incorrect"})
+                return res.status(401).json({status : "error", msg : "username and password is incorrect"})
+            }
+            if(checkUser.blocked === true){
+                return res.status(401).json({status : "error", msg : "User is temporarily blocked. Contact the web site owner for assistance"}) 
             }
             req.session.isloggedIn = true
-            
-            res.render("public/ShowNumber")
+            req.session.isauth = checkUser._id;
+            req.session.email = checkUser.email;
+            req.session.isBlocked = checkUser.blocked;
+            req.session.userName = checkUser.firstName;
+            res.status(200).json({status : "success", msg : "successfull login"})
         }
     } catch (error) {
-        console.log(error.message)
+        res.status(500).json({status : "error", msg : "Unable to login"})
     }
 }
 
@@ -76,25 +81,28 @@ const validateOtp = async (req, res) => {
         const { otp , mobileNumber } = req.body;
         const getUser = await Users.findOne({phone : mobileNumber})
         if(!getUser){
-            res.json({status : "error", msg : "unauthorozed User"})
+            return res.status(403).json({status : "error", msg : "Unauthorozed User"})
         }
-
+        if(getUser.blocked === true){
+            return res.status(401).json({status : "error", msg : "User is temporarily blocked. Contact the web site owner for assistance"}) 
+        }
         client.verify.v2
                     .services(verifySid)
                     .verificationChecks.create({ to: `+91${mobileNumber}`, code: otp })
                     .then((verification_check) => {
-                        console.log(verification_check.status)
                         req.session.isauth = getUser._id;
                         req.session.email = getUser.email;
                         req.session.isBlocked = getUser.blocked;
                         req.session.userName = getUser.firstName;
-                        res.json({status : "success", msg : "OTP Verified"})
+                        res.status(200).json({status : "success", msg : "OTP Verified"})
                     })
                     .catch((err)=>{
-                        console.log(err.message)
+                        return res.status(500).json({status : "error", msg : "Unable to login"}) 
+
                     })
     } catch (error) {
-        console.log(error.message)
+        return res.status(500).json({status : "error", msg : "Unable to login"}) 
+
     }
 }
 
@@ -297,7 +305,8 @@ const signupAuthenticate = async (req, res) => {
                         phone: mobileNumber,
                         password: strongPassword,
                         isVarified: false,
-                        blocked : false
+                        blocked : false,
+                        wallet : 0
                     })
                     await newUser.save()
                     .then(() => {

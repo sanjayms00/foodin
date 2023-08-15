@@ -76,7 +76,7 @@
 		<!-- ======= Post Grid Section ======= -->
 		<section id="posts" class="posts">
 			<div class="container" data-aos="fade-up">
-				<div class="row g-5">
+				<div class="row">
 					<div class="col-lg-2">
 						<div class="post-entry-1 lg">
 							<!-- <a href="single-post.html"><img src="assets/img/post-landscape-1.jpg" alt="" class="img-fluid"></a> -->
@@ -95,29 +95,38 @@
 						</div>
 					</div>
 					<div class="col-lg-10">
-						<div class="row g-5">
+						<div class="row">
 							<% 
 								if (locals.food) { 
 									food.forEach((item)=>{
 							%>
-								<div class="col-lg-3 border-start custom-border bg-light pt-4">
-									<div class="post-entry-1">
-										<a href="/foodDetail/<%= item.slug %>">
-											<% if(item.image){ %>
-												<img src="/food/<%= item.image %>" alt="food image" class="img-fluid">
-											<% }else{ %>
-												<img src="/no-image.jpg" class="img-fluid" alt="food image">
-											<% } %>
-										</a>
-										<small class="text-secondary"><%= item.type === 1 ? "Veg" : "Non-Veg" %> &nbsp;<i class="bi bi-circle-fill text-<%= item.type === 1 ? "success" : "danger" %>"></i></small>
-										<h2 style="height: 50px; padding-top: 10px;"><a href="/foodDetail/<%= item.slug %>"><%= item.foodName %></a></h2>
-										<a href="/foodDetail/<%= item.slug %>"><button type="button" class="btn btn-danger float-end">Show Details</button></a>
-										<h2 class="pt-2"><a href="/foodDetail/" class="text-success"><b>₹ <%= item.discPrice %></b></a>&nbsp;&nbsp;<small class="text-secondary"><del>₹ <%= item.orgPrice %></del></small></h2>
-									</div>
+								<div class="col-md-3 border-start custom-border">
+									<div class="p-3 bg-light mb-4">
+										<div class="post-entry-1">
+											<a href="/foodDetail/<%= item.slug %>">
+												<% if(item.image){ %>
+													<img src="/food/<%= item.image %>" alt="food image" class="img-fluid">
+												<% }else{ %>
+													<img src="/no-image.jpg" class="img-fluid" alt="food image">
+												<% } %>
+											</a>
+											<small class="text-secondary"><%= item.type === 1 ? "Veg" : "Non-Veg" %> &nbsp;<i class="bi bi-circle-fill text-<%= item.type === 1 ? "success" : "danger" %>"></i></small>
+											<h2 style="height: 50px; padding-top: 10px;" class=""><a href="/foodDetail/<%= item.slug %>"><%= item.foodName %></a></h2>
+											<a href="/foodDetail/<%= item.slug %>"><button type="button" class="btn btn-danger float-end">Show Details</button></a>
+											<h2 class="pt-2"><a href="/foodDetail/" class="text-success"><b>₹ <%= item.discPrice %></b></a>&nbsp;&nbsp;<small class="text-secondary"><del>₹ <%= item.orgPrice %></del></small></h2>
+										</div>
+										</div>
 								</div>
 							<% }) }else{ %>
 								<p class="text-secondary">No products to display</p>
 							<% } %>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<a href="/foods">
+									<button class="btn btn-primary w-25 float-end">Show More >>></button>
+								</a>
+							</div>
 						</div>
 					</div>
 				</div> 

@@ -20,6 +20,10 @@ publicRoute.use(session({
     //cookie : {maxAge : 1000 * 60 * 60 * 24} //24 hours life
 }))
 
+
+
+
+
 // get controllers
 const homeController = require("../../controller/public/homeController")
 const configController = require("../../controller/public/configController");
@@ -29,6 +33,7 @@ const addressController = require("../../controller/public/addressController")
 const orderController = require("../../controller/public/orderController")
 const cartController = require("../../controller/public/cartContoller")
 const checkoutController = require("../../controller/public/checkoutController")
+const walletController = require("../../controller/public/walletController")
 
 //include middleware
 const userMiddleWare = require("../../middleware/public/userMiddleware")
@@ -37,6 +42,7 @@ publicRoute.use(userMiddleWare.sessionCheck)
 
 //home route
 publicRoute.get("/",homeController.home)
+publicRoute.get("/foods",homeController.showAllFoods)
 
 //config routes
 publicRoute.get("/login",userMiddleWare.isloggedIn, configController.login)
@@ -81,17 +87,37 @@ publicRoute.delete("/cancel-order", userMiddleWare.isBlocked, orderController.ca
 //order tacking routes
 publicRoute.get("/track-order", userMiddleWare.isBlocked, addressController.trackOrder)
 
+//order tacking routes
+publicRoute.get("/wallet", userMiddleWare.isBlocked, walletController.wallet)
+
 //cart routes
-publicRoute.post("/add-to-cart", userMiddleWare.isBlocked, cartController.addToCart)
+publicRoute.post("/add-to-cart", userMiddleWare.checkUserBlocked, cartController.addToCart)
 publicRoute.post("/delete-cart-item", userMiddleWare.isBlocked, cartController.deleteCartItem)
-publicRoute.get("/cart", cartController.showCart)
+publicRoute.get("/cart", userMiddleWare.isBlocked, cartController.showCart)
 publicRoute.patch("/update-cart-data", userMiddleWare.isBlocked, cartController.updateCartByQuantity)
 
 
 //checkout Routes
 publicRoute.get("/checkout",userMiddleWare.isBlocked, checkoutController.checkout)
 publicRoute.post("/authCheckout",userMiddleWare.isBlocked,  checkoutController.authCheckout)
-publicRoute.get("/payment",userMiddleWare.isBlocked, checkoutController.payment)
+publicRoute.post("/success",userMiddleWare.isBlocked,  checkoutController.success)
+publicRoute.get("/search-result", homeController.search)
+
+
+//Payment Routes
+publicRoute.post("/verify-payment",userMiddleWare.isBlocked, checkoutController.verifyPayment)
+publicRoute.get("/success",userMiddleWare.isBlocked, checkoutController.success)
+publicRoute.get("/failed",userMiddleWare.isBlocked, checkoutController.failed)
+
+
+
+
+
+
+
+
+
+
 
 
 //export publicRoute

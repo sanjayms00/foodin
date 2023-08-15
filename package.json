@@ -14,6 +14,7 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
     "connect-mongodb-session": "^3.1.1",
+    "cropit": "^0.5.1",
     "dotenv": "^16.3.1",
     "ejs": "^3.1.9",
     "express": "^4.18.2",
@@ -26,8 +27,8 @@
     "multer": "^1.4.5-lts.1",
     "nocache": "^4.0.0",
     "nodemailer": "^6.9.4",
-    "noty": "^3.2.0-beta-deprecated",
     "otplib": "^12.0.1",
+    "razorpay": "^2.9.1",
     "sharp": "^0.32.4",
     "twilio": "^4.14.0"
   },

@@ -2,99 +2,98 @@
 <%- include("includes/header") %>
 
   <div class="container padd-top">
-      <form action="/authCheckout" method="POST" onsubmit="return checkOut()">
+      <form id="checkOutForm">
         <div class="row">
-        <div class="col-md-8">
-          <h4 class="mb-3">Delivery Address*</h4>
-          <div class="form-floating">
-            <% if (Object.keys(locals.defAddress).length === 0 || defAddress.fullName === undefined ) { %>
-              <textarea class="form-control" id="floatingAddress" name="address" style="height: 150px" placeholder="Delivery Address..." readonly required></textarea>
-              <label for="floatingAddress" id="floatingAddressId">Address</label>
-            <% }else{ %>
-              <textarea class="form-control" id="floatingAddress" name="address" style="height: 150px" placeholder="Address" readonly required><%= `${defAddress.fullName}, \n${defAddress.addressLine},  ${defAddress.pinCode},  ${defAddress.city},  ${defAddress.state}, \n${defAddress.mobileNumber}, \n${defAddress.addressType}  ` %></textarea>
-              <label for="floatingAddress" id="floatingAddressId">Address</label>
-            <% } %>
-          </div>
-          <br>
-          <div class="row">
-            <div class="col-md-12 mb-4">
-              <button type="button" class="btn btn-dark float-end" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                Change Address
-              </button>
-              <button type="button" class="btn btn-warning float-end" style="margin-right: 15px;" data-bs-toggle="modal" data-bs-target="#addressModal">
-                Add new address
-              </button>
+          <div class="col-md-8">
+            <h4 class="mb-3">Delivery Address*</h4>
+            <div class="form-floating">
+              <% if (Object.keys(locals.defAddress).length === 0 || defAddress.fullName === undefined ) { %>
+                <textarea class="form-control" id="floatingAddress" name="address" style="height: 150px" placeholder="Delivery Address..." readonly required></textarea>
+                <label for="floatingAddress" id="floatingAddressId">Address</label>
+              <% }else{ %>
+                <textarea class="form-control" id="floatingAddress" name="address" style="height: 150px" placeholder="Address" readonly required><%= `${defAddress.fullName}, \n${defAddress.addressLine},  ${defAddress.pinCode},  ${defAddress.city},  ${defAddress.state}, \n${defAddress.mobileNumber}, \n${defAddress.addressType}  ` %></textarea>
+                <label for="floatingAddress" id="floatingAddressId">Address</label>
+              <% } %>
             </div>
-          </div>
-          
-          <div class="row">
-            <h4 class="mb-3">Current Orders</h4>
-            <input type="hidden" name="cartItems" value="<%= JSON.stringify(cartItems) %>" readonly>
-            <% cartItems.forEach(element => { %>
-            <div class="col-md-6 mb-4">
-              <div class="bg-white p-3 d-flex align-items-center">
-                <img src="food/<%= element.carted.image ? element.carted.image : "" %>" alt="<%= element.carted.foodName %>" class="img-fluid mr-3" style="max-width: 100px;">
-                <div class="mx-3">
-                  <p class="mb-2"><%= element.carted.foodName %>.</p>
-                  <span><b>₹<%= element.carted.orgPrice %></b></span>
-                  <span class="mx-4"><b><%= element.quantity %></b></span>
-                  <span class="mx-4 text-danger"><b>₹<%= element.total %></b></span>
+            <br>
+            <div class="row">
+              <div class="col-md-12 mb-4">
+                <button type="button" class="btn btn-dark float-end" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                  Change Address
+                </button>
+                <button type="button" class="btn btn-warning float-end" style="margin-right: 15px;" data-bs-toggle="modal" data-bs-target="#addressModal">
+                  Add new address
+                </button>
+              </div>
+            </div>
+            
+            <div class="row">
+              <h4 class="mb-3">Current Orders</h4>
+              <input type="hidden" name="cartItems" value="<%= JSON.stringify(cartItems) %>" readonly>
+              <% cartItems.forEach(element => { %>
+              <div class="col-md-6 mb-4">
+                <div class="bg-white p-3 d-flex align-items-center">
+                  <img src="food/<%= element.carted.image ? element.carted.image : "" %>" alt="<%= element.carted.foodName %>" class="img-fluid mr-3" style="max-width: 100px;">
+                  <div class="mx-3">
+                    <p class="mb-2"><%= element.carted.foodName %>.</p>
+                    <span><b>₹<%= element.carted.discPrice %></b></span>
+                    <span class="mx-4"><b><%= element.quantity %></b></span>
+                    <span class="mx-4 text-danger"><b>₹<%= element.total %></b></span>
+                  </div>
                 </div>
               </div>
+              <% }) %> 
             </div>
-            <% }) %> 
+          </div>
+          <div class="col-md-4">
+            <h4 class="mb-3">Order Details</h4>
+            <ul class="list-group mb-3">
+              <li class="list-group-item d-flex justify-content-between lh-condensed py-4">
+                <div>
+                  <h6 class="my-0">Original Price</h6>
+                </div>
+                <span class="text-muted">₹ <%= locals.subTotal[0].subTotal   %></span>
+                <input type="hidden" name="price" value="<%= locals.subTotal[0].subTotal %>" readonly>
+              </li>
+              <!-- <li class="list-group-item d-flex justify-content-between lh-condensed">
+                <div>
+                  <h6 class="my-0">Offer Price</h6>
+                </div>
+                <span class="text-muted">$8</span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between lh-condensed">
+                <div>
+                  <h6 class="my-0">Delivery fee</h6>
+                </div>
+                <span class="text-muted">$5</span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between bg-light">
+                <div class="text-success">
+                  <h6 class="my-0">Coupon discount</h6>
+                  <small>EXAMPLECODE</small>
+                </div>
+                <span class="text-success">-$5</span>
+              </li> -->
+              <li class="list-group-item d-flex justify-content-between py-4">
+                <span>Total Amount</span>
+                <strong class="text-danger">₹ <%= locals.subTotal[0].subTotal %></strong>
+                <input type="hidden" name="totalPrice" value="<%= locals.subTotal[0].subTotal %>" readonly>
+              </li>
+            </ul>
+            <h4 class="py-2">Payment Options</h4>
+            <ul class="list-group mb-3">
+              <li class="list-group-item py-4">
+                <input class="form-check-input border-dark" type="radio" name="paymentOption" id="cashOnDelivery" value="cod" checked>
+                <label class="form-check-label" for="cashOnDelivery">Cash on Delivery</label>
+              </li>
+              <li class="list-group-item py-4">
+                <input class="form-check-input border-dark" type="radio" name="paymentOption" id="onlinePayment" value="onlinePay">
+                  <label class="form-check-label " for="onlinePayment">Online Payment</label>
+              </li>
+            </ul>
+            <button type="submit" id="checkout-btn" class="btn btn-primary btn-lg btn-block w-100" type="button">Place Order</button>
           </div>
         </div>
-
-        <div class="col-md-4">
-          <h4 class="mb-3">Order Details</h4>
-          <ul class="list-group mb-3">
-            <li class="list-group-item d-flex justify-content-between lh-condensed py-4">
-              <div>
-                <h6 class="my-0">Original Price</h6>
-              </div>
-              <span class="text-muted">₹ <%= locals.subTotal[0].subTotal %></span>
-              <input type="hidden" name="price" value="<%= locals.subTotal[0].subTotal %>" readonly>
-            </li>
-            <!-- <li class="list-group-item d-flex justify-content-between lh-condensed">
-              <div>
-                <h6 class="my-0">Offer Price</h6>
-              </div>
-              <span class="text-muted">$8</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between lh-condensed">
-              <div>
-                <h6 class="my-0">Delivery fee</h6>
-              </div>
-              <span class="text-muted">$5</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between bg-light">
-              <div class="text-success">
-                <h6 class="my-0">Coupon discount</h6>
-                <small>EXAMPLECODE</small>
-              </div>
-              <span class="text-success">-$5</span>
-            </li> -->
-            <li class="list-group-item d-flex justify-content-between py-4">
-              <span>Total Amount</span>
-              <strong class="text-danger">₹ <%= locals.subTotal[0].subTotal %></strong>
-              <input type="hidden" name="totalPrice" value="<%= locals.subTotal[0].subTotal %>" readonly>
-            </li>
-          </ul>
-          <h4 class="py-2">Payment Options</h4>
-          <ul class="list-group mb-3">
-            <li class="list-group-item py-4">
-              <input class="form-check-input border-dark" type="radio" name="paymentOption" id="cashOnDelivery" value="cod" checked>
-              <label class="form-check-label" for="cashOnDelivery">Cash on Delivery</label>
-            </li>
-            <li class="list-group-item py-4">
-              <input class="form-check-input border-dark" type="radio" name="paymentOption" id="onlinePayment" value="onlinePay">
-                <label class="form-check-label " for="onlinePayment">Online Payment</label>
-            </li>
-          </ul>
-          <button type="submit" id="checkout-btn" class="btn btn-primary btn-lg btn-block w-100" type="button">Place Order</button>
-        </div>
-      </div>
       </form>
   </div>
 
@@ -180,7 +179,7 @@
         </div>
     </div>
   </div>
-
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <script>
     function checkOut(){
       const floatingAddress = document.getElementById('floatingAddress').value;
@@ -193,9 +192,95 @@
       }
       return true
     }
+    
+    const form = document.getElementById("checkOutForm")
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if(checkOut()){
+        const formData = {
+              address: form.address.value,
+              cartItems: form.cartItems.value,
+              price: form.price.value,
+              totalPrice: form.totalPrice.value,
+              paymentOption: form.paymentOption.value,
+            };
+        try {
+            const response = await fetch("/authCheckout", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          });
+
+          const result = await response.json();
+          if(result.status === 'success'){
+            if(result.paymentMethod === 'cod'){
+              window.location.href = "/success"
+            }else if(result.paymentMethod === 'onlinePay'){
+              razorPay(result)
+            }else{
+              throw new Error("Invalid Payment Option")
+            }
+          }else{
+            alert("error", result.msg)
+          }
+        } catch (error) {
+          alert(error.message)
+        }
+      }
+    })
+
+    function razorPay(order){
+      var options = {
+          "key": "rzp_test_VKYrvNHj11eGIQ", // Enter the Key ID generated from the Dashboard
+          "amount": order.razorpayOrder.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+          "currency": order.razorpayOrder.currency,
+          "name": "FOODIN",
+          "description": "Test Transaction",
+          "image": "https://example.com/your_logo",
+          "order_id": order.razorpayOrder.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+          "handler": function (response){
+              // alert(response.razorpay_payment_id);
+              // alert(response.razorpay_order_id);
+              // alert(response.razorpay_signature)
+              verifyPayment(response, order)
+          },
+          "prefill": {
+              "name": "Sanjay M S",
+              "email": "Sanjayms1321999@gmail.com",
+              "contact": "7025903817"
+          },
+          "notes": {
+              "address": "Razorpay Corporate Office"
+          },
+          "theme": {
+              "color": "#3399cc"
+          }
+      };
+      const rzp1 = new Razorpay(options);
+      rzp1.open();
+      
+    }
+
+    async function verifyPayment(response, order){
+      const paymentResponse = await fetch("/verify-payment", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({response, order}),
+          });
+
+          const result = await paymentResponse.json();
+          if(result.status === "success"){
+            window.location.href = "/success"
+          }else{
+            window.location.href = "/failed"
+          }
+    }
+
   </script>
-
-
 
   <script src="./assets/js/addressBook.js"></script>
 

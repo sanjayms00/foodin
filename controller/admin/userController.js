@@ -10,18 +10,15 @@ const showusers = async (req,res)=>{
 }
 const userStatus = async (req,res)=>{
     try {
-        const userStatus = req.params.status
-        const userStat = userStatus.split("-")
-        const [userId, status] = userStat
+        
+        const {userId, status} = req.body
         const updateStatus = await Users.updateOne({_id : userId}, {$set : {blocked : status === "true"}})
-        console.log(updateStatus)
-        const userData = await Users.find({})
         if(!updateStatus){
-            return res.status(400).render("admin/users", {data : userData, status : "error", msg : "Status Updation Failed"})
+            return res.status(400).json({status : "error", msg : "Status Updation Failed"})
         }
-        res.status(200).render("admin/users", {data : userData, status : "success", msg : "Status Updated"})
+        res.status(200).json({status : "success", msg : "Status Updated"})
     } catch (error) {
-        console.log(error.message)
+        return res.status(400).json( {status : "error", msg : "Unable to change the status"})
     }
 }
 

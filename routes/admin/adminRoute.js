@@ -44,7 +44,7 @@ adminRoute.get("/logout",adminConfigController.logout)
 adminRoute.get("/dashboard", adminMiddleware.adminSessionCheck, dashboardController.dashboard)
 //user routes
 adminRoute.get("/users", adminMiddleware.adminSessionCheck, userController.showusers)
-adminRoute.get("/userStatus/:status", adminMiddleware.adminSessionCheck, userController.userStatus)
+adminRoute.post("/userStatus", adminMiddleware.adminSessionCheck, userController.userStatus)
 //food routes
 adminRoute.get("/food", adminMiddleware.adminSessionCheck, foodController.showFood)
 adminRoute.get("/createFood",adminMiddleware.adminSessionCheck, foodController.createFood)
@@ -60,8 +60,8 @@ adminRoute.get("/createCategory",adminMiddleware.adminSessionCheck, categoryCont
 adminRoute.post("/saveCategory",adminMiddleware.adminSessionCheck, categoryController.saveCategory)
 adminRoute.get("/editCategory",adminMiddleware.adminSessionCheck, categoryController.editCategory)
 adminRoute.post("/updatecategory",adminMiddleware.adminSessionCheck, categoryController.updateCategory)
-adminRoute.get("/deleteCategory",adminMiddleware.adminSessionCheck, categoryController.deleteCategory)
-adminRoute.get("/categoryStatus/:status",adminMiddleware.adminSessionCheck, categoryController.categoryStatus)
+adminRoute.delete("/deleteCategory",adminMiddleware.adminSessionCheck, categoryController.deleteCategory)
+adminRoute.post("/categoryStatus",adminMiddleware.adminSessionCheck, categoryController.categoryStatus)
 
 //order routes
 adminRoute.get("/orders", adminMiddleware.adminSessionCheck, ordersController.showOrders)

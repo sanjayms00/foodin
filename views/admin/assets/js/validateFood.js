@@ -1,6 +1,17 @@
+function foodValidateCreate(){
+    const foodImage = document.getElementsByName("file_photo")[0];
+    if (foodImage.value.trim() === "") {
+        const foodImageLabel = document.getElementById("foodImageLabel")
+        foodImageLabel.innerHTML = "Image Required"
+        foodImageLabel.style.color = "red"
+        foodImage.focus();
+        return false;
+    }
+    return foodValidate()
+}
+
 function foodValidate(){
     const foodName = document.getElementsByName("foodName")[0];
-    //const foodImage = document.getElementsByName("foodImage")[0];
     const categories = document.getElementsByName("categories")[0];
     const foodType = document.getElementsByName("foodType")[0];
     const orgPrice = document.getElementsByName("orgPrice")[0];
@@ -9,20 +20,8 @@ function foodValidate(){
     const foodDescription = document.getElementsByName("foodDescription")[0];
     const foodIngredients = document.getElementsByName("foodIngredients")[0];
 
-    if (foodName.value.trim() === "") {
-        const foodNameLabel = document.getElementById("foodNameLabel")
-        foodNameLabel.innerHTML = "Food Name Required"
-        foodNameLabel.style.color = "red"
-        foodName.focus();
-        return false;
-    }
-    // if (foodImage.value.trim() === "") {
-    //     const foodImageLabel = document.getElementById("foodImageLabel")
-    //     foodImageLabel.innerHTML = "Image Required"
-    //     foodImageLabel.style.color = "red"
-    //     foodImage.focus();
-    //     return false;
-    // }
+    
+   
     if (categories.value.trim() === "") {
         const categoriesLabel = document.getElementById("categoriesLabel")
         categoriesLabel.innerHTML = "Category Required"
@@ -37,6 +36,20 @@ function foodValidate(){
         foodType.focus();
         return false;
     }
+    if (foodName.value.trim() === "") {
+        const foodNameLabel = document.getElementById("foodNameLabel")
+        foodNameLabel.innerHTML = "Food Name Required"
+        foodNameLabel.style.color = "red"
+        foodName.focus();
+        return false;
+    }
+    if (qtyLimit.value.trim() === "") {
+        const qtyLimitLabel = document.getElementById("qtyLimitLabel")
+        qtyLimitLabel.innerHTML = "Food Limit Required"
+        qtyLimitLabel.style.color = "red"
+        qtyLimit.focus();
+        return false;
+    }
     if (orgPrice.value.trim() === "") {
         const orgPriceLabel = document.getElementById("orgPriceLabel")
         orgPriceLabel.innerHTML = "Original Price Required"
@@ -49,13 +62,6 @@ function foodValidate(){
         discPriceLabel.innerHTML = "Discount Price Required"
         discPriceLabel.style.color = "red"
         discPrice.focus();
-        return false;
-    }
-    if (qtyLimit.value.trim() === "") {
-        const qtyLimitLabel = document.getElementById("qtyLimitLabel")
-        qtyLimitLabel.innerHTML = "Food Limit Required"
-        qtyLimitLabel.style.color = "red"
-        qtyLimit.focus();
         return false;
     }
     if (foodDescription.value.trim() === "") {
@@ -76,10 +82,12 @@ function foodValidate(){
 }
 
 
+
+
+
 function foodUpdateValidate(){
     const foodId = document.getElementById("foodId")
     const prevImage = document.getElementById("prevImage")
-    
 
     if (foodId.value.trim() === "") {
         alert("food Id is Required")
@@ -89,7 +97,6 @@ function foodUpdateValidate(){
         alert("food Id is Required")
         return false;
     }
-    
     return foodValidate()
     
 }

@@ -1,51 +1,5 @@
 <%- include("includes/header") %>
 
-<style>
-    .accordion.accordion-flush .accordion-button {
-        background-color: transparent;
-        border: none;
-    }
-</style>
-<!-- 
-    <div class="container p-0 text-center my-3 pt-5 mt-5">
-        <div class="row mx-auto my-auto justify-content-center">
-            <div id="recipeCarousel" class="carousel slide" data-bs-ride="carousel">
-                <div class="carousel-inner" role="listbox">
-                    <%  if (locals.food) { 
-                        let first = true
-                        food.forEach((item)=>{ 
-                    %>
-                        <div class="carousel-item <%= first === true ? 'active' : '' %>">
-                            <div class="col-md-3">
-                                <div class="card">
-                                    <div class="card-img">
-                                        <img src="/food/<%= item.image %>"
-                                            class="img-fluid">
-                                    </div>
-                                    <div class="card-img-overlay">Slide 1</div>
-                                </div>
-                            </div>
-                        </div>
-                    <%  
-                        first = false
-                        }) 
-                        }else{ 
-                    %>
-						<p class="text-secondary">No products to display</p>
-					<% } %>
-                </div>
-                <a class="carousel-control-prev bg-transparent w-aut" href="#recipeCarousel" role="button"
-                    data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                </a>
-                <a class="carousel-control-next bg-transparent w-aut" href="#recipeCarousel" role="button"
-                    data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                </a>
-            </div>
-        </div>
-    </div> -->
-
     <div class="container padd-top">
         <div class="row">
             <aside class="col-md-3">
@@ -63,42 +17,59 @@
                                 </h2>
                                 <div id="flush-collapseOne" class="accordion-collapse collapse show" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
                                     <div class="accordion-body">
-                                        <div class="form-check my-3">
-                                            <input class="form-check-input border-black" type="radio" name="pricingFilter" id="lowToHigh" value="lowToHigh">
-                                            <label class="form-check-label" for="lowToHigh">
-                                                Low - High
-                                            </label>
-                                        </div>
-                                        <div class="form-check my-3">
-                                            <input class="form-check-input border-black" type="radio" name="pricingFilter" id="lowToHigh" value="lowToHigh">
-                                            <label class="form-check-label" for="lowToHigh">
-                                                High - Low
-                                            </label>
-                                        </div>
-                                        <div class="form-check my-3">
-                                            <input class="form-check-input border-black" type="radio" name="pricingFilter" id="lowToHigh" value="lowToHigh">
-                                            <label class="form-check-label" for="lowToHigh">
-                                                Below 500
-                                            </label>
-                                        </div>
-                                        <div class="form-check my-3">
-                                            <input class="form-check-input border-black" type="radio" name="pricingFilter" id="lowToHigh" value="lowToHigh">
-                                            <label class="form-check-label" for="lowToHigh">
-                                                Below 1000
-                                            </label>
-                                        </div>
-                                        <div class="form-check my-3">
-                                            <input class="form-check-input border-black" type="radio" name="pricingFilter" id="lowToHigh" value="lowToHigh">
-                                            <label class="form-check-label" for="lowToHigh">
-                                                100 to 500 
-                                            </label>
-                                        </div>
-                                        <div class="form-check my-3">
-                                            <input class="form-check-input border-black" type="radio" name="pricingFilter" id="lowToHigh" value="lowToHigh">
-                                            <label class="form-check-label" for="lowToHigh">
-                                                Low - High
-                                            </label>
-                                        </div>
+                                        
+                                            
+                                            <div class="form-check">
+                                                <label class="form-check-label" for="lowToHigh">
+                                                    <p>
+                                                         <a href="/foods?page=1&sort=1">
+                                                            <i class="bi bi-chevron-right my-3"></i>
+                                                             Low - High
+                                                         </a>
+                                                    </p>
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <label class="form-check-label" for="lowToHigh">
+                                                    <p>
+                                                        <a href="/foods?page=1&sort=-1">
+                                                            <i class="bi bi-chevron-right my-3"></i>
+                                                             High - Low
+                                                        </a>
+                                                    </p>
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <label class="form-check-label" for="lowToHigh">
+                                                    <p>
+                                                        <a href="/foods?page=1&price=-500">
+                                                            <i class="bi bi-chevron-right my-3"></i>
+                                                             Below 500 
+                                                        </a> 
+                                                    </p>
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <label class="form-check-label" for="lowToHigh">
+                                                    <p>
+                                                        <a href="/foods?page=1&price=-1000">
+                                                            <i class="bi bi-chevron-right my-3"></i>
+                                                             Below 1000 
+                                                        </a>
+                                                    </p>
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <label class="form-check-label" for="lowToHigh">
+                                                    <p>
+                                                        <a href="/foods?page=1&price=100-500">
+                                                            <i class="bi bi-chevron-right my-3"></i>
+                                                             100 to 500
+                                                        </a>
+                                                    </p>
+                                                </label>
+                                            </div>
+                                        
                                     </div>
                                 </div>
                             </div>
@@ -110,16 +81,23 @@
                                 </h2>
                                 <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
                                     <div class="accordion-body">
-                                        <div class="form-check my-3">
-                                            <input class="form-check-input border-black" type="radio" name="pricingFilter" id="lowToHigh" value="lowToHigh">
+                                        <div class="form-check">
+                                            
                                             <label class="form-check-label" for="lowToHigh">
-                                                veg
+                                                <p>
+                                                    <a href="/foods?page=1&type=veg">
+                                                        <i class="bi bi-chevron-right my-3"></i>Veg
+                                                    </a>
+                                                </p>
                                             </label>
                                         </div>
-                                        <div class="form-check my-3">
-                                            <input class="form-check-input border-black" type="radio" name="pricingFilter" id="lowToHigh" value="lowToHigh">
+                                        <div class="form-check">
                                             <label class="form-check-label" for="lowToHigh">
-                                                Non-Veg
+                                                <p>
+                                                    <a href="/foods?page=1&type=non-veg">
+                                                        <i class="bi bi-chevron-right my-3"></i>Non-Veg
+                                                    </a>
+                                                </p>
                                             </label>
                                         </div>
                                     </div>
@@ -133,109 +111,98 @@
                                 </h2>
                                 <div id="flush-collapseThree" class="accordion-collapse collapse" aria-labelledby="flush-headingThree" data-bs-parent="#accordionFlushExample">
                                     <div class="accordion-body">
-                                        <ul class="footer-links list-unstyled">
+
+                                        <label class="form-check-label" for="lowToHigh">
                                             <% 
                                                 if (locals.categories) { 
                                                     categories.forEach((item)=>{
                                             %>
-                                                <li><a href="categories/<%= item.categoryName %>"><i class="bi bi-chevron-right my-3"></i> <%= item.categoryName %></a></li>
+                                            <p>
+                                                <a href="/foods?page=1&category=<%= item.categoryName %>">
+                                                    <i class="bi bi-chevron-right my-3"></i>
+                                                    <%= item.categoryName %>
+                                                </a>
+                                            </p>
                                             <% }) }else{ %>
                                                 <p class="text-secondary">No Categories</p>
                                             <% } %>
-                                        </ul>
+                                            
+                                        </label>
+                                        <br>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </article>
-                    <div class="py-4" id="priceRangeAccordion" style="background-color: rgb(179, 179, 179);">
-                        <div class="px-4 pt-4">
-                            <h5 class="title">Price Range</h5>
-                        </div>
-                        <input type="range" class="form-range px-4" min="0" max="1000" step="100" id="customRange3">
-                    </div>
                 </div> 
             </aside>
             <main class="col-md-9">
                 <div class="border-bottom mb-4 pb-3">
                     <div class="d-flex justify-content-between align-items-center bg-white p-3">
-                        <h5 class="mb-0 w-50">32 Items</h5>
-                        <select class="form-select">
-                            <option>Latest items</option>
-                            <option>Trending</option>
-                            <option>Most Popular</option>
-                            <option>Cheapest</option>
-                        </select>
+                        <h5 class="mb-0 w-50">Total <%= totalSize %> Items</h5>
+                        
                     </div>
                 </div>
-                <div class="row">
+                <div class="row mb-5">
                     <% 
-                if (locals.food.length > 0) { 
-                    food.forEach((item)=>{
-            %>
-                <div class="col-md-3 border-start custom-border bg-light pt-4">
-                    <div class="post-entry-1">
-                        <a href="/foodDetail/<%= item.slug %>">
-                            <% if(item.image){ %>
-                                <img src="/food/<%= item.image %>" alt="food image" class="img-fluid">
-                            <% }else{ %>
-                                <img src="/no-image.jpg" class="img-fluid" alt="food image">
-                            <% } %>
-                        </a>
-                        <small class="text-secondary"><%= item.type === 1 ? "Veg" : "Non-Veg" %> &nbsp;<i class="bi bi-circle-fill text-<%= item.type === 1 ? "success" : "danger" %>"></i></small>
-                        <h2 style="height: 50px; padding-top: 10px;" class="m-0"><a href="/foodDetail/<%= item.slug %>"><%= item.foodName %></a></h2>
-                        <a href="/foodDetail/<%= item.slug %>"><button type="button" class="btn btn-danger float-end">Show Details</button></a>
-                        <h2 ><a href="/foodDetail/" class="text-success"><b>₹ <%= item.discPrice %></b></a><br><small class="text-secondary"><del>₹ <%= item.orgPrice %></del></small></h2>
+                        if (locals.food.length > 0) { 
+                            food.forEach((item)=>{
+                    %>
+                    <div class="col-md-3 border-start custom-border">
+                        <div class="bg-light mb-4">
+                            <div class="post-entry-1">
+                                <a href="/foodDetail/<%= item.slug %>">
+                                    <% if(item.image){ %>
+                                        <img src="/food/<%= item.image %>" alt="food image" class="img-fluid mb-0">
+                                    <% }else{ %>
+                                        <img src="/no-image.jpg" class="img-fluid" alt="food image">
+                                    <% } %>
+                                </a>
+                                <div class="p-2">
+                                    <small class="text-secondary"><%= item.type === 1 ? "Veg" : "Non-Veg" %> &nbsp;<i class="bi bi-circle-fill text-<%= item.type === 1 ? "success" : "danger" %>"></i></small>
+                                    <h2 style="height: 50px; padding-top: 10px;" class=""><a href="/foodDetail/<%= item.slug %>"><%= item.foodName %></a></h2>
+                                    <a href="/foodDetail/<%= item.slug %>"><button type="button" class="btn btn-danger float-end">Show Details</button></a>
+                                    <h2 class="pt-2"><a href="/foodDetail/" class="text-success"><b>₹ <%= item.discPrice %></b></a>&nbsp;&nbsp;<small class="text-secondary"><del>₹ <%= item.orgPrice %></del></small></h2>
+                                </div>
+                            </div>
+                            </div>
                     </div>
-                </div>
-            <% }) }else{ %>
-                <p class="text-secondary text-center p-5">No products to display</p>
-            <% } %>
-                    <div class="pagination justify-content-center mt-4">
-                        <% if (currentPage > 1) { %>
-                        <a href="?page=1" class="page-link btn btn-dark">First</a>
-                        <a href="?page=<%= currentPage - 1 %>" class="page-link btn btn-dark">Previous</a>
-                        <% } %>
+                    <% }) }else{ %>
+                        <p class="text-secondary text-center p-5">No products to display</p>
+                    <% } %>
+                        
                     
+                </div>
+                
+                <% if (totalSize > limit) { %>
+                
+                    <nav aria-label="Page navigation example mt-3">
+                        <ul class="pagination justify-content-center">
+                        <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+                            <a class="page-link" href="<%= currentPage > 1 ? '/foods?page=' + (currentPage - 1) + '&' + serializeQuery(query) : '#' %>" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
                         <% for (let i = 1; i <= totalPages; i++) { %>
-                        <% if (i === currentPage) { %>
-                            <span class="page-link btn btn-secondary current-page"><%= i %></span>
-                        <% } else { %>
-                            <a href="?page=<%= i %>" class="page-link btn btn-dark"><%= i %></a>
+                            <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                            <a class="page-link" href="/foods?page=<%= i %>&<%= serializeQuery(query) %>"><%= i %></a>
+                            </li>
                         <% } %>
-                        <% } %>
-                    
-                        <% if (currentPage < totalPages) { %>
-                        <a href="?page=<%= currentPage + 1 %>" class="page-link btn btn-dark">Next</a>
-                        <a href="?page=<%= totalPages %>" class="page-link btn btn-dark">Last</a>
-                        <% } %>
-                    </div>
-
-
-                </div>
+                        <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                            <a class="page-link" href="<%= currentPage < totalPages ? '/foods?page=' + (currentPage + 1) + '&' + serializeQuery(query) : '#' %>" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                        </ul>
+                    </nav>
+              <% } %>
             </main>
-
         </div>
     </div>
 
-
-    <script>
-        let items = document.querySelectorAll(".carousel .carousel-item");
-
-        items.forEach((el) => {
-            const minPerSlide = 4;
-            let next = el.nextElementSibling;
-            for (var i = 1; i < minPerSlide; i++) {
-                if (!next) {
-                    // wrap carousel by using first child
-                    next = items[0];
-                }
-                let cloneChild = next.cloneNode(true);
-                el.appendChild(cloneChild.children[0]);
-                next = next.nextElementSibling;
-            }
-        });
-    </script>
+    <% function serializeQuery(query) { %>
+    <% return Object.keys(query).map(key => key + '=' + encodeURIComponent(query[key])).join('&'); %>
+    <% } %>
 
 
-    <%- include("includes/footer") %>
+<%- include("includes/footer") %>

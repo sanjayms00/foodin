@@ -8,14 +8,14 @@
 } */
 
 .login-mobile{
-    height: 717px;
+    height: 600px;
 }
 
 .backRight {
   position: absolute;
   right: 0;
   width: 50%;
-  height: 717px;
+  height: 600px;
   background: #45494C url('/login-right.jpg');
   background-size: cover;
   background-position: 50% 50%;
@@ -25,7 +25,7 @@
   position: absolute;
   left: 0;
   width: 50%;
-  height: 717px;
+  height: 600px;
   background:  white url('/login-left.jpg');
   background-size: cover;
   background-position: 50% 50%;
@@ -33,7 +33,7 @@
 
 #back {
   width: 100%;
-  height: 717px;
+  height: 600px;
   position: absolute;
   z-index: -999;
 }
@@ -41,7 +41,7 @@
 #slideBox {
   width: 50%;
   max-height: 100%;
-  height: 717px;
+  height: 600px;
   overflow: hidden;
   margin-left: 50%;
   position: absolute;
@@ -49,7 +49,7 @@
 }
 .topLayer {
   width: 200%;
-  height: 717px;
+  height: 600px;
   position: relative;
   left: 0;
   left: -100%;
@@ -57,7 +57,7 @@
 
 .left {
   width: 50%;
-  height: 717px;
+  height: 600px;
   background: white;
   left: 0;
   position: absolute;
@@ -65,7 +65,7 @@
 
 .right {
   width: 50%;
-  height: 717px;
+  height: 600px;
   background: white;
   right: 0;
   position: absolute;
@@ -74,7 +74,7 @@
 .content {
   width: 250px;
   margin: 0 auto;
-  top: 30%;
+  top: 28%;
   position: absolute;
   left: 50%;
   margin-left: -125px;

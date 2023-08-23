@@ -41,6 +41,7 @@
                                         <p class="mb-0 px-3">Order Id : <%= item._id %></p>
                                         <p class="mb-0 px-3">Payment Method : <%= item.paymentMethod %></p>
                                         <p class="mb-0 px-3">Payment Status : <%= item.paymentStatus %></p>
+                                        <p class="mb-0 px-3">Wallet Amount : <%= item.walletAmount ? item.walletAmount : 'None' %></p>
                                         <p class="mb-0 px-3">status : <%= item.status %></p>
                                         <p class="mb-0 px-3">Address : <%= item.address %></p>
                                         <p class="mb-0 px-3">Date : <%= item.time.toLocaleString("en-US", {day: "numeric", month: "short", year: "numeric"}) %></p>
@@ -63,51 +64,63 @@
     </section>
 
     <script>
-  async function cancelOrder(orderId) {
-    
-    const data = { id:  orderId};
+  function cancelOrder(orderId) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, cancel it!'
+        }).then(async (result) => {
+        if (result.isConfirmed) {
+            const data = { id:  orderId};
+            try {
+            const response = await fetch("/cancel-order", {
+                method: "DELETE",
+                headers: {
+                "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            });
 
-    try {
-      const response = await fetch("/cancel-order", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      const result = await response.json()
-      if(result.status === "success"){
-        Toastify({
-            text: result.msg,
-            className: "info",
-            style: {
-                background: "linear-gradient(to right, #0b7303, #24c9a3)",
+            const result = await response.json()
+            if(result.status === "success"){
+                Swal.fire(
+                    'Deleted!',
+                     result.msg,
+                    'success'
+                    )
+                setTimeout(() => {
+                    location.reload()
+                }, 800);
+            }else{
+                Toastify({
+                text: result.msg,
+                className: "info",
+                style: {
+                    background: "linear-gradient(to right, #ff0000, #dd2a7f)",
+                }
+                }).showToast();
             }
-            }).showToast();
-        setTimeout(() => {
-            location.reload()
-        }, 800);
-      }else{
-        Toastify({
-          text: result.msg,
-          className: "info",
-          style: {
-              background: "linear-gradient(to right, #ff0000, #dd2a7f)",
-          }
-        }).showToast();
-      }
-      
-    } catch (error) {
-        Toastify({
-          text: error.message,
-          className: "info",
-          style: {
-              background: "linear-gradient(to right, #ff0000, #dd2a7f)",
-          }
-        }).showToast();
-    }
+            
+            } catch (error) {
+                Toastify({
+                text: error.message,
+                className: "info",
+                style: {
+                    background: "linear-gradient(to right, #ff0000, #dd2a7f)",
+                }
+                }).showToast();
+            }
+        }
+    })
 
+
+
+
+    
 }
 
 </script>

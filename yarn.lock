@@ -1317,13 +1317,6 @@ core-util-is@~1.0.0:
   resolved "https://registry.npmjs.org/core-util-is/-/core-util-is-1.0.3.tgz"
   integrity sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==
 
-cropit@^0.5.1:
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/cropit/-/cropit-0.5.1.tgz#c3a2263d8ead45510711854bf23613baae809805"
-  integrity sha512-dmH7RAVrv+Y8YfXhnZTkAWTSDSCDNrnpIbtucZcPDFXQzQ6ximnwWtiZzdBvKtnBZn9OfaaYw3aCwCdvItNSgQ==
-  dependencies:
-    jquery ">=1.9"
-
 css-select@^4.3.0:
   version "4.3.0"
   resolved "https://registry.npmjs.org/css-select/-/css-select-4.3.0.tgz"
@@ -1896,11 +1889,6 @@ jake@^10.8.5:
     chalk "^4.0.2"
     filelist "^1.0.4"
     minimatch "^3.1.2"
-
-jquery@>=1.9:
-  version "3.7.0"
-  resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.7.0.tgz#fe2c01a05da500709006d8790fe21c8a39d75612"
-  integrity sha512-umpJ0/k8X0MvD1ds0P9SfowREz2LenHsQaxSohMZ5OMNEU2r0tf8pdeEFTHMFxWVxKNyU9rTtK3CWzUCTKJUeQ==
 
 jsbn@~0.1.0:
   version "0.1.1"

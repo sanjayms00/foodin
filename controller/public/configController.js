@@ -7,13 +7,7 @@ const jwt = require("jsonwebtoken")
 const nodemailer = require('nodemailer');
 const mailgen = require("mailgen")
 const jwtsecretKey = process.env.JWTSECRETKEY;
-// const accountSid = 'ACfd21e83a558ab9b0d9c73cc71bb002ef';
-// const authToken = 'a636d602474a897f2d898b55ea5c7c8c';
-// const verifySid = 'VA8e0ea6799c23571da34b083cd23147d4';
-const config = require('../../config/config')
-const accountSid = config.ACCOUNTSID;
-const authToken = config.AUTHTOKEN;
-const verifySid = config.VERIFYSID;
+
 const client = require("twilio")(accountSid, authToken);
 const fromEmailId = process.env.EMAILID;
 const emailPassword = process.env.EMAilPASSWORD;
@@ -87,21 +81,27 @@ const validateOtp = async (req, res) => {
             return res.status(401).json({status : "error", msg : "User is temporarily blocked. Contact the web site owner for assistance"}) 
         }
         client.verify.v2
-                    .services(verifySid)
-                    .verificationChecks.create({ to: `+91${mobileNumber}`, code: otp })
-                    .then((verification_check) => {
+            .services(verifySid)
+            .verificationChecks.create({ to: `+91${mobileNumber}`, code: otp })
+            .then((verification_check) => {
+                console.log(verification_check.status)
+                if (verification_check.status === "approved") {
+                    console.log(verification_check);
                         req.session.isauth = getUser._id;
                         req.session.email = getUser.email;
                         req.session.isBlocked = getUser.blocked;
                         req.session.userName = getUser.firstName;
-                        res.status(200).json({status : "success", msg : "OTP Verified"})
-                    })
-                    .catch((err)=>{
-                        return res.status(500).json({status : "error", msg : "Unable to login"}) 
+                    res.status(200).json({status : "success", msg : "OTP Verified"});
+                } else {
+                    res.status(400).json({status : "error", msg : "OTP Verification Failed"});
+                }
+            })
+            .catch((err)=>{
+                return res.status(500).json({status : "error", msg : "Unable to login"}) 
 
-                    })
+            })
     } catch (error) {
-        return res.status(500).json({status : "error", msg : "Unable to login"}) 
+        return res.status(500).json({status : "error", msg : error.message}) 
 
     }
 }
@@ -112,22 +112,24 @@ const validateNumber = async (req, res) => {
         const { mobileNumber } = req.body
         const userData = await Users.findOne({phone : mobileNumber})
         if(!userData){
-            res.json({status : "error", msg : "Wrong Mobile Number"})
-        }else{
-            client.verify.v2
-                .services(verifySid)
-                .verifications.create({ to: `+91${mobileNumber}`, channel: "sms" })
-                .then((verification) => {
-                    console.log(verification.status)
-                    console.log("haii")
-                    res.json({status : "success", msg : "mobile number verified"})
-                })
-                .catch((err)=>{
-                    console.log(err.message)
-                });
+            return res.status(404).json({status : "error", msg : "Wrong Mobile Number"})
         }
+        if(userData.blocked === true){
+            return res.status(401).json({status : "error", msg : "User is temporarily blocked. Contact the web site owner for assistance"}) 
+        }
+        client.verify.v2
+        .services(verifySid)
+        .verifications.create({ to: `+91${mobileNumber}`, channel: "sms" })
+        .then((verification) => {
+            console.log(verification.status)
+            res.json({status: "success", msg : 'number validated'})
+        })
+        .catch((err)=>{
+            res.status(200).json({status : "error", msg : "Issue sending otp"})
+        });
+        
     } catch (error) {
-        res.json({status : "error", msg : error.message})
+        res.status(500).json({status : "error", msg : error.message})
     }
 }
 
@@ -143,6 +145,7 @@ const forgotPassword = (req, res) => {
 //fogot password authenticate
 const forgotPasswordAuth = async (req, res) => {
     try {
+        console.log("haii")
         const {forgotEmail} = req.body
         const findUser = await Users.findOne({email : forgotEmail})
         if(!findUser){

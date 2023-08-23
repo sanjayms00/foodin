@@ -9,7 +9,8 @@ const wallet = async (req, res) => {
             res.render("public/errorPage", {msg : "No user found"});
         }
         const data = await Users.find({_id : new mongoose.Types.ObjectId(userId)}, {wallet : 1})
-        res.render('public/wallet', {data})
+        console.log(data[0].wallet.balance)
+        res.render('public/wallet', {wallet : data[0].wallet.balance})
     } catch (error) {
         res.render("public/errorPage", {msg : "Something went wrong!"});
     }

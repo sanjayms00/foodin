@@ -43,60 +43,32 @@
 </style>
 <div class="row">
     <div class="col-md-12">
-        <h4>Today</h4>
+        <h4 class="float-start">Today</h4>
+        <a href="/admin/sales-report">
+          <button class="btn btn-secondary float-end">Sales Report</button>
+        </a>
+        <br>
+        <br>
         <hr>
-        <div class="my-4">
-          
-        </div>
+        <!-- <div class="my-4">
+            <span><b>Sale:</b> 1000</span>
+            <span class="mx-5"><b>Total Orders:</b> 50</span>
+            <span class="mx-5"><b>Canceled Orders:</b> 3</span>
+            
+        </div> -->
         <canvas id="myChart" class="w-100" height="350px"></canvas>
-        <div class="my-5" style="height: 20px;">
-            <span class="float-end">Total Sale : 10000</span>
-        </div>
-        <div class="dropdown my-2">
-          <button class="dropbtn">Sales Report</button>
-          <div class="dropdown-content">
-              <a href="/admin/Dashboard?sale=year">Year</a>
-              <a href="/admin/Dashboard?sale=month">Month</a>
-              <a href="/admin/Dashboard?sale=today">Today</a>
-          </div>
-        </div>
-        <div class="dropdown show w-100">
-        </div>
-        <div class="table-responsive">
-          <%= monthlyOrderPrices %>
-            <table class="table table-striped table-sm text-center">
-                <thead>
-                    <tr>
-                    <th>#</th>
-                    <th>orderId</th>
-                    <th>Customer</th>
-                    <th style="min-width: 200px;">payment Method</th>
-                    <th>address</th>
-                    <th>Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                  <% 
-                    let i = 1
-                    orderReport.forEach(element => { 
-                  %>
-                    <tr>
-                    <td><%= i %></td>
-                    <td><%= element._id %></td>
-                    <td><%= element.user %></td>
-                    <td><%= element.paymentMethod %></td>
-                    <td><%= element.address %></td>
-                    <td><%= element.subTotal %></td>
-                    </tr>
-                  <% i++ }); %>
-                </tbody>
-            </table>
-        </div>
+        <!-- <div class="my-5" style="height: 20px;">
+            <span class="float-end"><b>Total Sale :</b> 10000</span>
+        </div> -->
+        
     </div>
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', async function () {
+      const response = await fetch("/admin/get-sale-data")
+      const data = await response.json()
+      
       var ctx = document.getElementById("myChart").getContext('2d');
       var myChart = new Chart(ctx, {
         type: 'bar',
@@ -104,7 +76,7 @@
           labels: ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"],
           datasets: [{
             label: 'Total sales',
-            data: newArr,
+            data: data.item,
             backgroundColor: [
               'rgba(255, 99, 132, 0.2)',
               'rgba(54, 162, 235, 0.2)',

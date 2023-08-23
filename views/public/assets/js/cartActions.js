@@ -4,7 +4,7 @@ const deleteCartItem = document.querySelectorAll(".cart-delete-btn")
 deleteCartItem.forEach(element => {
     element.addEventListener('click', async (event) => {
         const foodId = element.dataset.item
-        const deleteData = { foodId,  }
+        const deleteData = { foodId }
         try {
             const response = await fetch('/delete-cart-item', {
                 method: 'POST',
@@ -46,7 +46,7 @@ function increment(btn) {
   const foodId = btn.parentElement.querySelector('input[name="foodId"]').getAttribute('value');
   const foodLimit = btn.parentElement.querySelector('input[name="foodLimit"]').getAttribute('value');
   let input = document.getElementById(foodId).value
-  if(foodLimit === input){
+  if(input >= foodLimit){
     Toastify({
       text: "Limit Reached",
       className: "info",

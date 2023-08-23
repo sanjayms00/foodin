@@ -1,4 +1,5 @@
 
+const { Double } = require('mongodb');
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
@@ -24,6 +25,12 @@ const orderSchema = new Schema({
         type : Date,
         require : true 
     },
+    deliveredTime: {
+        type : Date
+    },
+    canceledTime: {
+        type : Date
+    },
     status: {
         type : String,
         require : true 
@@ -35,6 +42,9 @@ const orderSchema = new Schema({
     paymentMethod: {
         type : String,
         require : true 
+    },
+    walletAmount: {
+        type : Number,
     },
     subTotal: {
         default: 0,

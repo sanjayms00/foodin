@@ -20,6 +20,11 @@ body {
   color: rgba(var(--color-primary-rgb), 1);
 }
 
+.accordion.accordion-flush .accordion-button {
+  background-color: transparent;
+  border: none;
+}
+
 .dropdown-toggle::after {
   display: none;
 }

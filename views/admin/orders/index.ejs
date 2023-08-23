@@ -213,7 +213,7 @@
 
 
 <script>
-  async function cancelOrder(orderId) {
+  function cancelOrder(orderId) {
     Swal.fire({
     title: 'Are you sure?',
     text: "You won't be able to revert this!",
@@ -238,11 +238,11 @@
         if(result.status === "success"){
           Swal.fire(
             'Canceled!',
-            'Your order has been Canceled.',
+            'Order has been Canceled.',
             'success'
           )
           setTimeout(() => {
-              window.location = "http://127.0.0.1:3000/admin/orders"
+              window.location.reload()
           }, 1000);
         }else{
           Toastify({

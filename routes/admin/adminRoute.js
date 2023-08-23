@@ -42,14 +42,16 @@ adminRoute.get("/auth",adminConfigController.login)
 adminRoute.get("/logout",adminConfigController.logout)
 //dashboard routes
 adminRoute.get("/dashboard", adminMiddleware.adminSessionCheck, dashboardController.dashboard)
+adminRoute.get("/sales-report", adminMiddleware.adminSessionCheck, dashboardController.showSalesDataGet)
+adminRoute.get("/get-sale-data", adminMiddleware.adminSessionCheck, dashboardController.getSaleData)
 //user routes
 adminRoute.get("/users", adminMiddleware.adminSessionCheck, userController.showusers)
 adminRoute.post("/userStatus", adminMiddleware.adminSessionCheck, userController.userStatus)
 //food routes
 adminRoute.get("/food", adminMiddleware.adminSessionCheck, foodController.showFood)
 adminRoute.get("/createFood",adminMiddleware.adminSessionCheck, foodController.createFood)
-adminRoute.post("/saveFood", uploads.single('foodImage'), foodController.saveFood)
-adminRoute.post("/updateFood", uploads.single('foodImage'), foodController.updateFood)
+adminRoute.post("/save-food", uploads.single('file_photo'), foodController.saveFood)
+adminRoute.post("/updateFood", uploads.single('file_photo'), foodController.updateFood)
 adminRoute.get("/editFood",adminMiddleware.adminSessionCheck, foodController.editFood)
 adminRoute.get("/deleteFood",adminMiddleware.adminSessionCheck, foodController.deleteFood)
 adminRoute.get("/foodStatus/:status", adminMiddleware.adminSessionCheck, foodController.foodStatus)

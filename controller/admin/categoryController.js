@@ -2,7 +2,7 @@ const Category = require("../../models/admin/categoryModel")
 
 const showCategory = async (req,res)=>{
     try {
-        const categoryData = await Category.find({})
+        const categoryData = await Category.find({}).sort({_id : -1})
         res.status(200).render("admin/category/index", {data : categoryData})
     } catch (error) {
         console.log(error.message)

@@ -79,52 +79,62 @@
 
 <script>
 
-async function blockUser(btn, userId, status){
+function blockUser(btn, userId, status){
 
-  const foodData = {
-    userId: userId, 
-    status: status
-  };
+  Swal.fire({
+  title: 'Are you sure?',
+  text: "Block / Unblock User",
+  icon: 'warning',
+  showCancelButton: true,
+  confirmButtonColor: '#3085d6',
+  cancelButtonColor: '#d33',
+  confirmButtonText: 'Yes'
+}).then(async (result) => {
+  if (result.isConfirmed) {
+    const foodData = {
+      userId: userId, 
+      status: status
+    };
 
-  try {
-    const response = await fetch('/admin/userStatus', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(foodData)
-    });
-      const data = await response.json();
-      if (data.status === 'success') { 
-          Toastify({
-              text: data.msg,
-              className: "info",
-              style: {
-                  background: "linear-gradient(to right, #0b7303, #24c9a3)",
-              }
-              }).showToast();
-              setTimeout(()=>{
-                location.reload()
-              }, 800)
-      }
-      else {
-          Toastify({
-              text: data.msg,
-              className: "info",
-              style: {
-                  background: "linear-gradient(to right, #ff0000, #dd2a7f)",
-              }
-              }).showToast();
-      }
-  }catch (error) {
-      Toastify({
-          text: "Unable to change status",
-          className: "info",
-          style: {
-              background: "linear-gradient(to right, #ff0000, #dd2a7f)",
-          }
-          }).showToast();
+    try {
+      const response = await fetch('/admin/userStatus', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(foodData)
+      });
+        const data = await response.json();
+        if (data.status === 'success') { 
+            Swal.fire(
+              'status chaged!',
+                data.msg,
+              'success'
+            )
+            setTimeout(()=>{
+              location.reload()
+            }, 800)
+        }
+        else {
+            Toastify({
+                text: data.msg,
+                className: "info",
+                style: {
+                    background: "linear-gradient(to right, #ff0000, #dd2a7f)",
+                }
+                }).showToast();
+        }
+    }catch (error) {
+        Toastify({
+            text: "Unable to change status",
+            className: "info",
+            style: {
+                background: "linear-gradient(to right, #ff0000, #dd2a7f)",
+            }
+            }).showToast();
+    }
   }
+})
 }
 
 

@@ -4,6 +4,7 @@ const Users = require("../../models/public/userModel")
 const Cart = require("../../models/public/cartModel");
 const Orders = require("../../models/admin/ordersModel")
 const PaymentHelper = require("../../helper/paymentHelper")
+const orderHelper = require("../../helper/orderHelper")
 
 
 
@@ -112,12 +113,13 @@ const checkout = async (req,res)=>{
 }
 
 const authCheckout = async (req,res)=>{
-    
     try {
       const userId = new mongoose.Types.ObjectId(req.session.isauth);
-      // console.log(req.body)
       let { address, cartItems, price, totalPrice, paymentOption } = req.body
-      
+      let walletAmount = 0
+      if(req.body.walletAmount){
+        walletAmount = req.body.walletAmount
+      }
       if(!cartItems.length){
         return res.status(400).json({status : "eroor", msg : "No items in the Cart"})
       }
@@ -125,48 +127,62 @@ const authCheckout = async (req,res)=>{
         return res.status(404).json({status : "eroor", msg : "Address Not Found"})
       }
       cartItems = JSON.parse(cartItems)
-      const orderData = new Orders({
-        items : cartItems,
-        user : userId,
-        address : address,
-        time : new Date(),
-        status : "placed",
-        subTotal : price,
-        paymentStatus : "pending",
-        paymentMethod : paymentOption
-      });
-
-      const orderResult = await orderData.save()
-      if(orderResult){
-        await Cart.deleteOne({userId })
         if(paymentOption === 'cod'){
-          return res.status(200).json({status : "success", msg : "Order Placed", paymentMethod : paymentOption })
-        }else if(paymentOption === 'onlinePay')
+          const data = {
+            cartItems,
+            userId,
+            address,
+            totalPrice,
+            paymentOption
+          }
+          const saveOrder = orderHelper.makeOrder(data)
+          const deleteCart = orderHelper.emptyCart(userId)
+          Promise.all([saveOrder, deleteCart]).then((values)=>{
+            return res.status(200).json({status : "success", msg : "Order Placed", paymentMethod : paymentOption })
+          })
+        }
+        else if(paymentOption === 'onlinePay')
+        { 
+          const data = {
+            cartItems,
+            userId,
+            address,
+            totalPrice,
+            paymentOption,
+            walletAmount
+          }
+          const saveOrder = orderHelper.makeOrder(data)
+          const deleteCart = orderHelper.emptyCart(userId)
+          const updateWallet = orderHelper.updateWallet(userId, walletAmount)
+          Promise.all([saveOrder, deleteCart, updateWallet]).then(async (values)=>{
+            const razorpayOrder = await PaymentHelper.generateRazorPay(values[0]._id, totalPrice)
+            // console.log(razorpayOrder)
+            return res.status(200).json({status : "success", msg : "Order Placed", paymentMethod : paymentOption, razorpayOrder  })  
+          })
+        }
+        else if(paymentOption === 'wallet')
         {
-          const razorpayOrder = await PaymentHelper.generateRazorPay(orderResult._id, price)
-          console.log(razorpayOrder)
-          return res.status(200).json({status : "success", msg : "Order Placed", paymentMethod : paymentOption, razorpayOrder  })
-        }else
-        {
+          const data = {
+            cartItems,
+            userId,
+            address,
+            totalPrice,
+            paymentOption,
+            walletAmount
+          }
+          const saveOrder = orderHelper.makeOrder(data)
+          const deleteCart = orderHelper.emptyCart(userId)
+          const updateWallet = orderHelper.updateWallet(userId, walletAmount)
+          Promise.all([saveOrder, deleteCart, updateWallet]).then((values)=>{
+            return res.status(200).json({status : "success", msg : "Order Placed", paymentMethod : paymentOption })
+          })
+        }else{
           return res.status(500).json({status : "eroor", msg : "Invalid Payment Option"})
         }
-      }else{
-        return res.status(500).json({status : "eroor", msg : "Cannot place Order"})
-      }
+
     } catch (error) {
       return res.status(500).json({status : "eroor", msg : error.message})
     }
-    // let { cartItems, defAddressId } = req.body 
-    // cartItems = json.parse(cartItems);
-  
-    // console.log(req.body.length, userId)
-
-
-    // if(!req.body.length > 0){
-    //     return res.status(400).json({status : "error", msg : "No foods are added to cart"})
-    // }
-    
-    // res.status(200).json({status : "success", msg : "success"})
 }
 
 

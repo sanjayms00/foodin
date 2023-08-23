@@ -80,10 +80,14 @@ const userSchema = new  mongoose.Schema({
         type : Boolean,
         required : true
     },
-    wallet : {
-        type : Number,
-        required : true,
-        dafault : 0
+    wallet: {
+        balance: {
+            type: Number,
+            default: 0 
+        },
+        lastUpdated: {
+            type: Date
+        }
     }
 })
 

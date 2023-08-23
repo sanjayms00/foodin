@@ -71,7 +71,6 @@
 
 async function changeStatus(orderId, status, btn) {
     try {
-      console.log(btn)
       const response = await fetch("/admin/categoryStatus", {
         method: "POST",
         headers: {
@@ -96,7 +95,13 @@ async function changeStatus(orderId, status, btn) {
 
         
       }else{
-        
+        Toastify({
+          text: result.msg,
+          className: "info",
+          style: {
+              background: "linear-gradient(to right, #ff0000, #dd2a7f)",
+          }
+        }).showToast();
       }
       
     } catch (error) {

@@ -2,8 +2,9 @@ const Foods = require("../../models/admin/foodModel")
 const Category = require("../../models/admin/categoryModel")
 const sharp = require("sharp")
 const fs = require("fs")
-const path = require("path")
+const path = require('path')
 const { v4: uuidv4 } = require('uuid');
+const { rejects } = require("assert")
 
 const showFood = async (req,res)=>{
     try {
@@ -36,49 +37,76 @@ const editFood = async (req,res)=>{
     }
 }
 
-const updateFood = async (req,res)=>{
+const saveFood = async (req, res) => {
     try {
-        const {prevSlug, foodId, prevImage, categories, foodType, orgPrice, discPrice, foodDescription, foodIngredients} = req.body
-        const foodName = req.body.foodupdateName
-        if(!(foodId || prevImage || foodName || categories || foodType || orgPrice || discPrice || foodDescription || foodIngredients)){
-            return res.status(400).render("admin/food/edit", {status : "error", msg : "fill all fields"})
-        }
-        const slug = foodName.trim().split(" ").join('-').toLocaleLowerCase()
-        
-        if(slug !== prevSlug){
-            const checkFood = await Foods.findOne({slug : slug})
-            if(checkFood){
-                return res.status(400).render("admin/food/create", {status : "error" , msg : "Food Exist"})
-            }
-        }
-        if(req.file){
-            const uploadDirectory = "./views/uploads/food"
-            const fileExtension = path.extname(req.file.originalname);
-            var newFileName = `${uuidv4()}${fileExtension}`;
-            const filePath = path.join(uploadDirectory, newFileName);
+      const {
+        foodName, categories, foodType, orgPrice, discPrice, foodDescription, foodIngredients, qtyLimit} = req.body;
+  
+      if (!(foodName && categories && foodType && orgPrice && discPrice && foodDescription && foodIngredients && qtyLimit)) {
+        return res.status(400).json({ status: "error", msg: "Fill all fields" });
+      }
+      const slug = foodName.trim().split(" ").join('-').toLowerCase();
+      const checkFood = await Foods.findOne({ slug: slug });
+      if (checkFood) {
+        return res.status(400).json({ status: "error", msg: "Food Exists" });
+      }
+  
+      const base64Image = req.body.croppedImage;
+      const dataStartIndex = base64Image.indexOf(',') + 1;
+      const imageBinaryData = base64Image.substring(dataStartIndex);
+  
+      // Decode the base64 data
+      const decodedImage = Buffer.from(imageBinaryData, 'base64');
+  
+      const uploadDirectory = "./views/uploads/food"; // Update with your directory
+      const fileExtension = '.jpg'; // Update with your desired extension
+      const newFileName = `${uuidv4()}${fileExtension}`;
+      const filePath = path.join(uploadDirectory, newFileName);
+  
+      // Make the directory if it doesn't exist
+      if (!fs.existsSync(uploadDirectory)) {
+        fs.mkdirSync(uploadDirectory, { recursive: true });
+      }
+  
+      await sharp(req.file.buffer)
+        .resize({ width: 720, height: 720 })
+        .toFile(filePath, (err, info) => {
+          if (err) {
+            return res.status(400).json({ msg: `Error while processing the image ${err}` });
+          }
+        });
+  
+      const newFood = new Foods({
+        image: newFileName,
+        foodName: foodName,
+        orgPrice: orgPrice,
+        discPrice: discPrice,
+        slug: slug,
+        foodLimit: qtyLimit,
+        category: categories,
+        type: foodType,
+        description: foodDescription,
+        ingredients: foodIngredients,
+        status: true,
+        createdAt: new Date()
+      });
+  
+      const saveData = await newFood.save();
+      if (!saveData) {
+        return res.status(500).json({ msg: "Food insertion failed" });
+      }
+  
+      res.status(200).json({ status: "success", msg: "Added Food Successfully" });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ status: "error", msg: "Food creation failed" });
+    }
+}
 
-            //make directory it its does not exist
-            if (!fs.existsSync(uploadDirectory)) {
-                fs.mkdirSync(uploadDirectory, { recursive: true });
-            }
-            await sharp(req.file.buffer)
-            .resize({ width: 720, height: 720 })
-            .toFile(filePath, (err, info) => {
-                if (err) {
-                    return res.status(400).render("admin/food/edit", {status : "error", msg : `Error while processing the image ${err}`})
-                } 
-            });  
-            const prevImagePath = path.join(uploadDirectory, prevImage);
 
-            // Check if the file exists before attempting to delete
-            if (fs.existsSync(prevImagePath)) {
-                // Delete the file
-                fs.unlinkSync(prevImagePath);
-                // res.send(`Image ${prevImage} deleted successfully.`);
-            } else {
-                return res.status(404).render("admin/food/edit", {status : "error", msg : 'Image not found'});
-            }
-        }
+
+function saveData(foodName, foodId, newFileName, prevImage, categories, foodType, orgPrice, discPrice, foodDescription, foodIngredients){
+    return new Promise(async (resolve, reject)=>{
         const updateFood = {
             image: (newFileName === null) ? prevImage : newFileName,
             foodName: foodName,
@@ -91,15 +119,101 @@ const updateFood = async (req,res)=>{
             ingredients : foodIngredients,
             createdAt : new Date()
         }
-        const saveData = await Foods.updateOne({ _id: foodId},{$set : updateFood})
-        if(!saveData){
-            return res.status(500).render("admin/food/edit", {status : "error", msg : "Food cannot be Updated"})
-        }
-        res.status(200).render("admin/food/edit",{status : "success", msg : "Updated Successfully"})
-    } catch (error) {
-        console.log(error.message)
-    }
+        await Foods.updateOne({ _id: foodId},{$set : updateFood})
+        .then((response)=>{
+            resolve(response)
+        })
+        .catch((err)=>{
+            reject(err)
+        })
+    })
 }
+
+
+const updateFood = async (req, res) => {
+  try {
+    const {prevSlug, foodName, croppedImage, foodId, prevImage, categories, foodType, orgPrice, discPrice, foodDescription, foodIngredients} = req.body
+       
+    if(!(foodId || prevImage || foodName || categories || foodType || orgPrice || discPrice || foodDescription || foodIngredients)){
+        return res.status(400).json({status : "error", msg : "fill all fields"})
+    }
+    const slug = foodName.trim().split(" ").join('-').toLocaleLowerCase()
+    
+    if(slug !== prevSlug){
+        const checkFood = await Foods.findOne({slug : slug})
+        if(checkFood){
+            return res.status(400).json({status : "error" , msg : "Food Exist"})
+        }
+    }
+    //split image
+    const parts = croppedImage.split('/food/');
+    const fileName = parts[1];
+
+    //work if they match
+    if(fileName !== prevImage){
+      const base64Image = croppedImage;
+      const dataStartIndex = base64Image.indexOf(',') + 1;
+      const imageBinaryData = base64Image.substring(dataStartIndex);
+
+      // Decode the base64 data
+      const decodedImage = Buffer.from(imageBinaryData, 'base64');
+
+      const uploadDirectory = "./views/uploads/food"; // Update with your directory
+      const fileExtension = '.jpg'; // Update with your desired extension
+      var newFileName = `${uuidv4()}${fileExtension}`;
+      const filePath = path.join(uploadDirectory, newFileName);
+
+      // Make the directory if it doesn't exist
+      if (!fs.existsSync(uploadDirectory)) {
+        fs.mkdirSync(uploadDirectory, { recursive: true });
+      }
+
+      await sharp(req.file.buffer)
+        .resize({ width: 720, height: 720 })
+        .toFile(filePath, (err, info) => {
+          if (err) {
+            return res.status(400).json({ msg: `Error while processing the image ${err}` });
+          }
+        });
+      const prevImagePath = path.join(uploadDirectory, prevImage);
+
+      // Check if the file exists before attempting to delete
+      if (fs.existsSync(prevImagePath)) {
+          // Delete the file
+          fs.unlinkSync(prevImagePath);
+          console.log(`Image ${prevImage} deleted successfully.`);
+      } else {
+          return res.status(404).json({status : "error", msg : 'Image not found'});
+      }
+    }
+    const updateFood = {
+        image: (newFileName === null) ? prevImage : newFileName,
+        foodName: foodName,
+        orgPrice: orgPrice,
+        discPrice: discPrice,
+        slug : slug,
+        category: categories,
+        type: foodType,
+        description : foodDescription,
+        ingredients : foodIngredients,
+        createdAt : new Date()
+    };
+    console.log("upload...")
+    const saveData = await Foods.updateOne({ _id: foodId},{$set : updateFood})
+    if (!saveData) {
+    return res.status(500).json({ msg: "Food updation failed" });
+    }
+    res.status(200).json({ status: "success", msg: "updated Food Successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: "error", msg: "Food creation failed" });
+  }
+}
+
+
+
+
+
 
 const deleteFood = async (req,res)=>{
     try {
@@ -113,59 +227,7 @@ const deleteFood = async (req,res)=>{
     }
 }
 
-const saveFood = async (req,res)=>{
-    try {
-        const {foodName, categories, foodType, orgPrice, discPrice, foodDescription, foodIngredients, qtyLimit} = req.body
-        
-        if(!(foodName || categories || foodType || orgPrice || discPrice || foodDescription || foodIngredients || qtyLimit)){
-            // console.log("fill")
-            return res.status(400).render("admin/food/create", {status : "error" , msg : "fill all fields"})
-        }
-        const slug = foodName.trim().split(" ").join('-').toLocaleLowerCase()
-        const checkFood = await Foods.findOne({slug : slug})
-        if(checkFood){
-            return res.status(400).render("admin/food/create", {status : "error" , msg : "Food Exist"})
-        }
-        const uploadDirectory = "./views/uploads/food"
-        const fileExtension = path.extname(req.file.originalname);
-        const newFileName = `${uuidv4()}${fileExtension}`;
-        const filePath = path.join(uploadDirectory, newFileName);
-        //make directory it its does not exist
-        if (!fs.existsSync(uploadDirectory)) {
-            fs.mkdirSync(uploadDirectory, { recursive: true });
-        }
-        await sharp(req.file.buffer)
-        .resize({ width: 720, height: 720 })
-        .toFile(filePath, (err, info) => {
-            if (err) {
-                return res.status(400).render("admin/food/create", {msg : `Error while processing the image ${err}`})
-            } 
-        });  
-        
-        const newFood = new Foods({
-            image: newFileName,
-            foodName: foodName,
-            orgPrice: orgPrice,
-            discPrice: discPrice,
-            slug : slug,
-            foodLimit : qtyLimit,
-            category: categories,
-            type: foodType,
-            description : foodDescription,
-            ingredients : foodIngredients,
-            status : true,
-            createdAt : new Date()
-        })
-        const saveData = await newFood.save()
-        if(!saveData){
-            console.log("500 eror")
-            return res.status(500).render("admin/food/create", {msg : "food insertion failed"})
-        }
-        res.status(200).render("admin/food/create",{status : "success", msg : "Added Food Successfully"})
-    } catch (error) {
-        console.log(error.message)
-    }
-}
+
 
 const foodStatus = async (req, res)=>{
     try {

@@ -15,7 +15,6 @@ const nocache = require("nocache")
 //get port from environment variables
 const PORT = process.env.PORT || 3001;
 
-
 //view engine, views settinng
 app.set('view engine', "ejs");
 app.set("views","./views")
@@ -25,6 +24,7 @@ app.set('layout', 'admin/layout');
 app.use(express.static(path.join(__dirname, 'views/public')));
 app.use(express.static(path.join(__dirname, 'views/admin')));
 app.use(express.static(path.join(__dirname, 'views/uploads')));
+
 
 app.use(express.urlencoded({extended : true}))
 app.use(express.json())

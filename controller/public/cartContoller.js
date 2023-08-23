@@ -114,7 +114,6 @@ const deleteCartItem = async (req, res) => {
 //add to cart
 const addToCart = async (req, res) => {
     try {
-      
       if(!req.session.isauth){
         return  res.status(404).json({status : "no-user", msg : "User not Found"})
       }
@@ -122,7 +121,6 @@ const addToCart = async (req, res) => {
       const foodId = req.body._id;
       const foodPrice = req.body.discPrice;
       const foodLimit = req.body.foodLimit;
-      
       
       const findUser = await Cart.findOne({userId})
       if(!findUser){

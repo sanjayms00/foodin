@@ -20,10 +20,44 @@
                                     <p class="mb-0">Balance : </p>
                                 </div>
                                 <div class="col-sm-9">
-                                    <p class="text-muted mb-0">₹ <%= locals.wallet ? wallet : 0 %></p>
+                                    <p class="text-muted mb-0">₹ <%= locals.data[0].wallet %></p>
                                 </div>
                             </div>
                             <hr>
+                            <table class="table table-striped text-center">
+                                <thead>
+                                  <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Order Id</th>
+                                    <th scope="col">Time</th>
+                                    <th scope="col">Transaction</th>
+                                    <th scope="col">Amount</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                    <% 
+                                        let i = 1; 
+                                        locals.data[0].walletTransactions.forEach(element => { 
+                                    %>
+                                        <tr>
+                                            <th scope="row"><%= i %></th>
+                                            <td><%= element.orderId %></td>
+                                            <td>
+                                                <%= element.time.toLocaleString("en-US", {day: "numeric", month: "short", year: "numeric"}) %> <br>
+                                                <%= element.time.toLocaleString("en-US", {hour: "numeric", minute: "numeric", second: "numeric", hour12: true}); %> 
+                                            </td>
+                                            <td><%= element.TransactionType %></td>
+                                            <% if (element.TransactionType === 'credit') { %>
+                                                <td class="text-success">+<%= element.amount %></td>
+                                            <% }else if(element.TransactionType === 'debit'){ %>
+                                                <td class="text-danger">-<%= element.amount %></td>
+                                            <% } %>
+                                            
+                                            
+                                        </tr>
+                                    <% i++ }) %>
+                                </tbody>
+                              </table>
                         </div>
                     </div>
                 </div>

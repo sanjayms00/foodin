@@ -36,7 +36,13 @@ deleteCartItem.forEach(element => {
                     }).showToast();
                 }
         } catch (error) {
-            console.log(error.message) 
+          Toastify({
+            text: error.message,
+            className: "info",
+            style: {
+                background: "linear-gradient(to right, #ff0000, #dd2a7f)",
+            }
+            }).showToast();
         }
     })
 })
@@ -44,11 +50,11 @@ deleteCartItem.forEach(element => {
 
 function increment(btn) {
   const foodId = btn.parentElement.querySelector('input[name="foodId"]').getAttribute('value');
-  const foodLimit = btn.parentElement.querySelector('input[name="foodLimit"]').getAttribute('value');
+  const totalStock = btn.parentElement.querySelector('input[name="totalStock"]').getAttribute('value');
   let input = document.getElementById(foodId).value
-  if(input >= foodLimit){
+  if(totalStock <= 0){
     Toastify({
-      text: "Limit Reached",
+      text: "Out of Stock",
       className: "info",
       style: {
           background: "linear-gradient(to right, #ff0000, #dd2a7f)",
@@ -62,7 +68,7 @@ function increment(btn) {
   let foodPrice = btn.parentElement.querySelector('input[name="foodPrice"]').getAttribute('value');
   
   if (foodId && foodPrice) {
-    updateQtyInDb(btn, foodPrice, input, foodId, 1)
+    updateQtyInDb(btn, foodPrice, input, foodId, 1, -1)
   }
 }
 
@@ -97,30 +103,32 @@ function decrement(btn) {
     let foodPrice = btn.parentElement.querySelector('input[name="foodPrice"]').getAttribute('value');
     foodPrice = -1*foodPrice;
     if (foodId && foodPrice) {
-      updateQtyInDb(btn, foodPrice, input, foodId, -1)
+      updateQtyInDb(btn, foodPrice, input, foodId, -1, 1)
     }
   }
   
 }
   
-async function updateQtyInDb(btn, foodPrice, qty, foodId, stat){
+async function updateQtyInDb(btn, foodPrice, qty, foodId, stat, stock){
   try {
-
     const response = await fetch('/update-cart-data', {
       method: 'PATCH',
       headers: {
           'Content-Type': 'application/json'
       },
-      body: JSON.stringify({foodId, foodPrice, qty, stat})
+      body: JSON.stringify({foodId, foodPrice, qty, stat, stock})
     });
       const data = await response.json();
-      // alert(JSON.stringify(data))
+      console.log(JSON.stringify(data.items))
       if(data.status === "success"){
         const input = btn.parentElement.querySelector('input[type="number"]');
+        console.log(input)
         input.value = data.items[0].quantity;
         const itemPrice = btn.parentElement.parentElement.querySelector('.total-price');
         itemPrice.innerText = data.items[0].total;
         document.getElementById('subTotal').innerText = data.subTotal[0].subTotal;
+        const totalStock = btn.parentElement.querySelector('input[name="totalStock"]');
+        totalStock.value = data.items[0].totalStoke
       }else if(data.removed === true){
         Swal.fire(
           'Removed!',
@@ -137,76 +145,3 @@ async function updateQtyInDb(btn, foodPrice, qty, foodId, stat){
     alert(error.message)
   }
 }
-
-
-// async function checkOut(cart){
-//   try {
-//     if(cart){
-//       const response = await fetch("/authCheckout", {
-//         method: "POST", 
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: cart,
-//       });
-      
-//       const result = await response.json();
-//       console.log("Success:", result);
-//     }
-//   } catch (error) {
-//     console.error("Error:", error);
-//   }
-  
-
-// }
-
-
-
-
-
-
-
-  // async function decrement(btn) {
-  //   const input = btn.parentElement.querySelector('input[type="number"]');
-  //   let foodId = btn.parentElement.querySelector('input[name="foodId"]').getAttribute('value');
-  //   if (input && foodId) {
-  //       //foodId = parseInt(foodId.value)
-  //       let currentValue = parseInt(input.value);
-  //     if (currentValue > 1) {
-  //       currentValue--;
-  //       input.value = currentValue;
-  //       const value = await updateAmount(input, currentValue)
-  //       updateQtyInDb(value[0], value[1], foodId, -1)
-  //     }
-  //   }
-  // }
-  
-
-  //  async function updateAmount(input, currentValue){
-  //   //alert(input)
-  //   const itemContainer = input.closest('.cart-items-list');
-  //   const orgPrice = itemContainer.querySelector('.org-price');
-  //   const priceElement = itemContainer.querySelector('.item-price');
-  //   const total = parseInt(orgPrice.innerHTML)*currentValue;
-  //   priceElement.innerHTML = total
-    
-  //   return [orgPrice, currentValue]
-  // }
-
-
-
-  // try{
-  //   alert("hello")
-  //   const data = {currentValue, total}
-  //   const response = await fetch ("/update-cart-data", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify(data),
-  //   });
-  //   const result = await response.json();
-  //   alert(result)
-  // } catch (error) {
-  //   console.error("Error:", error);
-  // }

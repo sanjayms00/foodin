@@ -1,16 +1,26 @@
 <!--  Header End -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
+
 <style>
+  .selectize-input>input  {
+    min-height:  46px !important;
+  }
+  .item  {
+    line-height:  46px !important;
+  }
+  .selectize-input{
+    border-radius: 7px;
+    border-color: black;
+  }
   img {
     display: block;
-
     /* This rule is very important, please don't ignore this */
     max-width: 100%;
   }
-
   label.cabinet {
     display: block;
     cursor: pointer;
-    height: 380px;
+    height: 200px;
     margin-bottom: 25px;
   }
 
@@ -31,12 +41,10 @@
   }
 </style>
 
-
-
 <div class="container-fluid">
   <div class="card">
     <div class="card-body">
-      <h5 class="card-title fw-semibold mb-4 float-start">Create Food</h5>
+      <h5 class="card-title fw-semibold mb-4 float-start">Create Banner</h5>
       <button type="button" onclick="history.back(-1)" class="btn btn-outline-primary float-end">
         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrow-back-up" width="24"
           height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
@@ -48,13 +56,13 @@
       </button>
       <div class="card w-100" style="box-shadow: none;">
         <div class="card-body p-0">
-          <form id="foodform">
+          <form id="Bannerform">
             <div class="row">
               <div class="col-xl-4 text-dark">
                 <div class="row">
                   <div class="col-md-12">
                     <label class="cabinet center-block">
-                      <label for="foodImage"><b id="foodImageLabel">Upload Image*</b> <br>(supported formats : jpg | jpeg | png)</label>
+                      <label for="BannerImage"><b id="bannerImageLabel">Upload Image*</b> <br>(supported formats : jpg | jpeg | png)</label>
                       <figure>
                         <input type="file" class="item-img file center-block" name="file_photo" id="filePhoto"/>
                         <img src="" class="gambar img-responsive img-thumbnail mt-2 img-fluid" id="item-img-output" />
@@ -63,57 +71,24 @@
                     </label>
                   </div>
                 </div>
-                <div class="form-floating mb-3">
-                  <select class="form-select border-dark" name="categories" id="Categories" aria-label="Food Category">
-                    <option selected value=" ">Select Categories*</option>
-                    <% if (locals.category) { category.forEach((item)=> {
-                      %>
-                      <option value="<%= item.categoryName %>">
-                        <%= item.categoryName %>
-                      </option>
-                      <% }) } %>
-                  </select>
-                  <label for="Categories" id="categoriesLabel">Categories*</label>
-                </div>
-                <div class="form-floating mb-3">
-                  <select class="form-select border-dark" name="foodType" id="foodType" aria-label="Food Type">
-                    <option selected value="">Select Type*</option>
-                    <option value="1">Veg</option>
-                    <option value="0">Non-Veg</option>
-                  </select>
-                  <label for="foodType" id="foodTypeLabel">Type*</label>
-                </div>
               </div>
               <div class="col-xl-8 text-dark">
-                <div class="form-floating mb-3 mt-5">
-                  <input type="text" class="form-control border-dark" name="foodName" id="foodName"
-                    placeholder="Food Name">
-                  <label for="foodName" id="foodNameLabel">Food Name*</label>
+                <label for="BannerUrl" id="bannerUrlLabel"></label>
+                <select id="select-state" placeholder="Pick a Product*" class="mb-3" name="productUrl">
+                  <option value="">Select a Product...</option>
+                  <% food.forEach(element => { %>
+                    <option value="http://127.0.0.1:3000/foodDetail/<%= element.slug %>"><%= element.foodName %></option>
+                  <% }) %>
+                </select>
+                <div class="form-floating mb-3">
+                  <input type="text" class="form-control border-dark" name="bannerName" id="bannerName"
+                    placeholder="Banner Name">
+                  <label for="BannerName" id="bannerNameLabel">Banner Heading*</label>
                 </div>
                 <div class="form-floating mb-3">
-                  <input type="number" min="1" max="200" class="form-control border-dark" name="totalStoke"
-                    id="totalStoke" placeholder="Total Stoke">
-                  <label for="Total Stoke" id="totalStokeLabel">Total Stoke* (maximun 200)</label>
-                </div>
-                <div class="form-floating mb-3">
-                  <input type="text" class="form-control border-dark" name="orgPrice" id="orgPrice"
-                    placeholder="Original Price">
-                  <label for="orgPrice" id="orgPriceLabel">Original Price*</label>
-                </div>
-                <div class="form-floating mb-3">
-                  <input type="text" class="form-control border-dark" name="discPrice" id="discPrice"
-                    placeholder="Discount Price">
-                  <label for="discPrice" id="discPriceLabel">Discount Price*</label>
-                </div>
-                <div class="form-floating mb-3">
-                  <textarea class="form-control border-dark" style="height: 90px" placeholder="Description..."
-                    name="foodDescription" id="foodDescription"></textarea>
-                  <label for="foodDescription" id="foodDescriptionLabel">Description*</label>
-                </div>
-                <div class="form-floating mb-3">
-                  <textarea class="form-control border-dark" style="height: 88px" placeholder="Ingredients..."
-                    name="foodIngredients" id="foodIngredients"></textarea>
-                  <label for="foodIngredients" id="foodIngredientsLabel">Ingredients*</label>
+                  <textarea class="form-control border-dark" style="height: 195px" maxlength="500" minlength="100" placeholder="Description..."
+                    name="bannerDescription" id="bannerDescription"></textarea>
+                  <label for="BannerDescription" id="bannerDescriptionLabel">Description*</label>
                 </div>
               </div>
             </div>
@@ -154,18 +129,6 @@
     rawImg,
     imageId;
   function readFile(input) {
-    const filePath = input.value
-    const allowedExtensions = /(\.jpg|\.jpeg|\.png)/i
-    if(!allowedExtensions.exec(filePath)){
-      Toastify({
-          text: "Image Format not Supported",
-          className: "info",
-          style: {
-              background: "linear-gradient(to right, #ff0000, #dd2a7f)",
-          }
-          }).showToast();
-      return 
-    }
     if (input.files && input.files[0]) {
       var reader = new FileReader();
       reader.onload = function (e) {
@@ -182,8 +145,8 @@
 
   $uploadCrop = $('#upload-demo').croppie({
     viewport: {
-      width: 300,
-      height: 300,
+      width: 700,
+      height: 305,
     },
     enforceBoundary: false,
     enableExif: true
@@ -205,7 +168,7 @@
     $uploadCrop.croppie('result', {
       type: 'base64',
       format: 'jpeg',
-      size: { width: 300, height: 300 }
+      size: { width: 1947, height: 850 }
     }).then(function (resp) {
       $('#item-img-output').attr('src', resp);
       $('#cropImagePop').modal('hide');
@@ -213,20 +176,18 @@
   });
 	
   
-  document.getElementById('foodform').addEventListener('submit', async (event) => {
+  document.getElementById('Bannerform').addEventListener('submit', async (event) => {
     event.preventDefault();
-    if(foodValidateCreate()){
+    if(bannerValidateCreate()){
       const croppedImageSrc = $('#item-img-output').attr('src');
 
       const formData = new FormData(event.currentTarget);
       formData.append('croppedImage', croppedImageSrc);
-
       try {
-        const response = await fetch("/admin/save-food", {
+        const response = await fetch("/admin/save-banner", {
           method: "POST",
           body: formData
         });
-
         const result = await response.json()
         if(result.status === "success"){
         Toastify({
@@ -237,10 +198,8 @@
             }
             }).showToast();
             setTimeout(() => {
-              location.href = '/admin/food'
+              location.href = '/admin/banner'
             }, 1000);
-
-        
       }else{
         Toastify({
           text: result.msg,
@@ -256,8 +215,17 @@
     }
     
 });
+
+$(document).ready(function () {
+      $('select').selectize({
+          sortField: 'text'
+      });
+  });
+
 </script>
 
 
-<script src="/assets/js/validateFood.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
+<script src="/assets/js/bannerValidate.js"></script>
 <script src="/assets/js/filePreview.js"></script>

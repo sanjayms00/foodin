@@ -1,13 +1,19 @@
 const Food =  require("../../models/admin/foodModel")
 const Category =  require("../../models/admin/categoryModel")
+const Banner =  require("../../models/admin/bannerModel")
 const categoryController = require("./categoryController");
+// const { response } = require("express");
+
 const home = async (req,res)=>{
     try {
-        const foodData = await Food.find({status : true}).sort({_id : -1}).limit(12)
-        const categories = await categoryController.categoryData()
-        res.render("public/index", {food : foodData, categories})
+        const foodData =  Food.find({status : true}).sort({_id : -1}).limit(12)
+        const categories = categoryController.categoryData()
+        const banner = Banner.find({status : true}).sort({position : 1})
+        Promise.all([foodData, categories, banner]).then((response)=>{
+            res.render("public/index", {food : response[0], categories : response[1], banner : response[2]})
+        })
     } catch (error) {
-        console.log(error.message)
+        res.status(500).render({msg : "Unable load the home page"})
     }
 }
 

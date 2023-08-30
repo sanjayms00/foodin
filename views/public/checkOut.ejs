@@ -1,5 +1,5 @@
 <%- include("includes/header") %>
-
+  
   <div class="container padd-top">
     <form id="checkOutForm">
       <div class="row">
@@ -20,14 +20,20 @@
           <br>
           <div class="row">
             <div class="col-md-12 mb-4">
-              <button type="button" class="btn btn-dark float-end" data-bs-toggle="modal"
+              
+              <button type="button" class="btn btn-primary float-end ms-2" data-bs-toggle="modal"
+                data-bs-target="#couponModal">
+                  Coupons
+              </button>
+              <button type="button" class="btn btn-dark float-end mx-2" data-bs-toggle="modal"
                 data-bs-target="#exampleModal">
                 Change Address
               </button>
-              <button type="button" class="btn btn-warning float-end" style="margin-right: 15px;" data-bs-toggle="modal"
+              <button type="button" class="btn btn-warning float-end mx-2" data-bs-toggle="modal"
                 data-bs-target="#addressModal">
                 Add new address
               </button>
+              
             </div>
           </div>
 
@@ -57,7 +63,7 @@
         <div class="col-md-4">
           <h4 class="mb-3">Order Details</h4>
           <ul class="list-group mb-3">
-            <li class="list-group-item d-flex justify-content-between lh-condensed py-4">
+            <li class="list-group-item d-flex justify-content-between lh-condensed py-3">
               <div>
                 <h6 class="my-0">Price</h6>
               </div>
@@ -66,38 +72,31 @@
                 </span></span>
               <input type="hidden" name="price" id="SubTotal" value="<%= subTotal[0].subTotal %>" readonly>
             </li>
-            <!-- <li class="list-group-item d-flex justify-content-between lh-condensed">
-                <div>
-                  <h6 class="my-0">Offer Price</h6>
-                </div>
-                <span class="text-muted">₹ 8</span>
-              </li>
-              <li class="list-group-item d-flex justify-content-between lh-condensed">
-                <div>
-                  <h6 class="my-0">Delivery fee</h6>
-                </div>
-                <span class="text-muted">₹ 5</span>
-              </li>
-              <li class="list-group-item d-flex justify-content-between bg-light">
+            
+              <li class="list-group-item d-flex justify-content-between bg-light py-3">
                 <div class="text-success">
                   <h6 class="my-0">Coupon discount</h6>
-                  <small>EXAMPLECODE</small>
+                  <small id="couponCode"></small>
                 </div>
-                <span class="text-success">-₹5</span>
-              </li> -->
-            <li class="list-group-item d-flex justify-content-between bg-light">
+                <span class="text-success"><b id="discountPercentage">0</b>%</span>
+                <span class="text-success">₹ <b id="discTotal">0</b></span>
+                <input type="hidden" name="discount" id="discount" value="0" readonly>
+                <input type="hidden" name="discountedPrice" id="discountedPrice" value="0" readonly>
+              </li>
+            <li class="list-group-item d-flex justify-content-between bg-light py-3">
               <div class="text-success">
                 <h6 class="my-0">Wallet Amount</h6>
               </div>
               <span class="text-success">-₹ <b id="walletAmount">0</b></span>
-              <input type="hidden" name="wallAmount" id="wallAmount" value="" readonly>
+              <input type="hidden" name="wallAmount" id="wallAmount" value="0" readonly>
             </li>
-            <li class="list-group-item d-flex justify-content-between py-4">
+            <li class="list-group-item d-flex justify-content-between py-3">
               <span>Amount Payable</span>
               <strong class="text-danger">₹ <span id="amountPayable">
                   <%= locals.subTotal[0].subTotal %>
                 </span></strong>
-              <input type="hidden" name="totalPrice" id="totalPrice" value="<%= locals.subTotal[0].subTotal %>" readonly>
+                <span class="d-none" id="orgTotalPrice"><%= locals.subTotal[0].subTotal %></span>
+                <input type="hidden" name="totalPrice" id="totalPrice" value="<%= locals.subTotal[0].subTotal %>" readonly>
             </li>
           </ul>
           <h4 class="py-2">Payment Options</h4>
@@ -112,21 +111,20 @@
                 value="onlinePay">
               <label class="form-check-label " for="onlinePayment">Online Payment</label>
             </li>
-            <% if (user.wallet.balance > 0) { %>
+            <% if (user.wallet > 0) { %>
               <li class="list-group-item py-3" id="walletList">
                 <input class="form-check-input border-dark" type="radio" onclick="showWallet(this);" name="paymentOption"
                   id="wallet" value="wallet" data-toggle="modal" data-target="#walletModal">
                 <label class="form-check-label " for="onlinePayment">Wallet </label>
-                <p class="text-center float-end <%= user.wallet.balance ? `text-success` : '' %>">
-                  <%= user.wallet.balance > 0 ? `you have ${user.wallet.balance} balance in your wallet` : '' %>
+                <p class="text-center float-end <%= user.wallet ? `text-success` : '' %>">
+                  <%= user.wallet > 0 ? `you have ${user.wallet} balance in your wallet` : '' %>
                 </p>
               </li>
             <% } %>
               
             
           </ul>
-          <button type="submit" id="checkout-btn" class="btn btn-primary btn-lg btn-block w-100" type="button">Place
-            Order</button>
+          <button type="submit" id="checkout-btn" class="btn btn-primary btn-lg btn-block w-100" type="button">Place Order</button>
         </div>
       </div>
     </form>
@@ -172,6 +170,50 @@
       </div>
     </div>
   </div>
+  
+  <!-- Coupon Modal -->
+  <div class="modal fade" id="couponModal" tabindex="-1" aria-labelledby="couponModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-secondary text-light">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Available Coupons</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="container">
+            <div class="row">
+              <div class="col-md-12">
+                <!-- Radio buttons for addresses -->
+                <div class="list-group">
+                  
+                  <% 
+                    if(coupons.length > 0){
+                    let active = true 
+                    coupons.forEach((coup)=>{ 
+                  %> 
+                      <a href="#" class="list-group-item coupons list-group-item-action my-1 active" aria-current="true">
+                        <div class="d-flex w-100 justify-content-between">
+                          <h5 class="mb-1"><span class="code"><%= coup.couponName %></span></h5>
+                          <h5 class="mb-1"><span class="discount"><%= coup.discount %></span> % </h5>
+                          <small>Till <%= coup.validity.toLocaleString("en-US", {day: "numeric", month: "short", year: "numeric"}) %></small>
+                        </div>
+                      </a> 
+                  <% 
+                    active = false
+                    }) }else{
+                  %>
+                  <p class="text-center"><%= 'No coupons Available' %></p>
+                  <%  
+                    }
+                  %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- wallet modal -->
   <div class="modal fade" id="walletModal" tabindex="-1" aria-labelledby="walletModalLabel" aria-hidden="true">
@@ -184,8 +226,8 @@
         <div class="modal-body">
           <!-- Wallet information content goes here -->
           <h5>Wallet Balance: ₹
-            <span class=" <%= user.wallet.balance ? `text-success` : '' %>" id="walletInPrice">
-              <%= user.wallet.balance ? user.wallet.balance : '' %>
+            <span class=" <%= user.wallet ? `text-success` : '' %>" id="walletInPrice">
+              <%= user.wallet ? user.wallet : '' %>
             </span>
           </h5>
           <button class="btn btn-success float-end" onclick="useWallet()">Use wallet</button>
@@ -395,62 +437,109 @@
     }
 
     function useWallet() {
-    const price = parseInt(document.getElementById('price').innerHTML);
-    const wallet = parseInt(document.getElementById('walletInPrice').innerHTML);
-    let amountPayable = document.getElementById('amountPayable');
-    let walletAmount = document.getElementById('walletAmount');
-  
-    try {
-      if (wallet >= price) {
-        walletAmount.innerHTML = price; 
-        document.getElementById('wallAmount').value = price;
-        // Update wallet amount
-        document.getElementById('walletInPrice').innerHTML = (wallet - price);
-        if(wallet - price > 0){
-          amountPayable.innerHTML = 0
-          document.getElementById('totalPrice').value = 0
+      const discountedPrice = document.getElementById('discountedPrice').value
+      let price
+      if(discountedPrice > 0){
+        price = discountedPrice
+      }else{
+        price = parseInt(document.getElementById('price').innerHTML);
+      }
+      const wallet = parseInt(document.getElementById('walletInPrice').innerHTML);
+      let amountPayable = document.getElementById('amountPayable');
+      let walletAmount = document.getElementById('walletAmount');
+    
+      try {
+        if (wallet >= price) {
+          walletAmount.innerHTML = price; 
+          document.getElementById('wallAmount').value = price;
+          // Update wallet amount
+          document.getElementById('walletInPrice').innerHTML = (wallet - price);
+          if(wallet - price > 0){
+            amountPayable.innerHTML = 0
+            document.getElementById('totalPrice').value = 0
+          }else{
+            amountPayable.innerHTML = price - wallet
+            document.getElementById('totalPrice').value = price - wallet
+          }
+          $('#codList').hide()
+          $('#payList').hide()
+          $('#walletList').hide()
+          Toastify({
+                text: 'Wallet Payment Activated',
+                className: "info",
+                style: {
+                  background: "linear-gradient(to right, #00b09b, #96c93d)",
+                }
+              }).showToast();
         }else{
+          //use wallet amount
+          walletAmount.innerHTML = wallet;
+          document.getElementById('wallAmount').value = wallet
+          //update wallet amount
           amountPayable.innerHTML = price - wallet
           document.getElementById('totalPrice').value = price - wallet
+          $('input[name="paymentOption"][value="onlinePay"]').prop('checked', true);
+          document.getElementById('walletInPrice').innerHTML = 0
+          $('#codList').hide()
+          $('#walletList').hide()
         }
-        $('#codList').hide()
-        $('#payList').hide()
-        $('#walletList').hide()
-        Toastify({
-              text: 'Wallet Payment Activated',
-              className: "info",
-              style: {
-                background: "linear-gradient(to right, #00b09b, #96c93d)",
-              }
-            }).showToast();
-      }else{
-        //use wallet amount
-        walletAmount.innerHTML = wallet;
-        document.getElementById('wallAmount').value = wallet
-        //update wallet amount
-        amountPayable.innerHTML = price - wallet
-        document.getElementById('totalPrice').value = price - wallet
-        $('input[name="paymentOption"][value="onlinePay"]').prop('checked', true);
-        document.getElementById('walletInPrice').innerHTML = 0
-        $('#codList').hide()
-        $('#walletList').hide()
+        // Close the modal
+        $('#walletModal').modal('hide'); 
+      } catch (error) {
+          Toastify({
+                text: error.msg,
+                className: "info",
+                style: {
+                  background: "linear-gradient(to right, #00b09b, #96c93d)",
+                }
+              }).showToast();
       }
-      
-      // Close the modal
-      $('#walletModal').modal('hide'); 
-      
-    } catch (error) {
-        Toastify({
-              text: error.msg,
-              className: "info",
-              style: {
-                background: "linear-gradient(to right, #00b09b, #96c93d)",
-              }
-            }).showToast();
-    }
   }
-  </script>
 
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const couponLinks = document.querySelectorAll('.coupons');
+
+    couponLinks.forEach(link => {
+    link.addEventListener('click', function(event) {
+      event.preventDefault();
+
+      // Get coupon details from the clicked link
+      const couponDiscount = link.querySelector('.discount').innerHTML
+      const code = link.querySelector('.code').innerHTML;
+      document.getElementById('couponCode').innerHTML = code
+
+      // Update the displayed discount
+      const discountField = document.getElementById('discountPercentage');
+      discountField.textContent = couponDiscount;
+
+      // Get the initial subtotal, coupon discount, and wallet amount
+      const initialSubtotal = parseFloat(document.getElementById('SubTotal').value);
+      const walletAmount = parseFloat(document.getElementById('wallAmount').value);
+      
+      // Discount Amount = Total Value * (Discount Percentage / 100)
+      const discountAmount = initialSubtotal * (couponDiscount / 100)
+      //Final Price = Total Value - Discount Amount
+      const totalValue = initialSubtotal - discountAmount
+
+      // Update the displayed amount payable
+      const amountPayableField = document.getElementById('amountPayable');
+      amountPayableField.textContent = totalValue
+      document.getElementById('discountedPrice').value = totalValue;
+
+      document.getElementById('discTotal').innerHTML = totalValue
+      document.getElementById('totalPrice').value = totalValue
+
+
+      // Update hidden input field for discount
+      const discountInput = document.getElementById('discount');
+      discountInput.value = couponDiscount
+      $('#couponModal').modal('hide')
+    });
+  });
+    });
+
+  </script>
 
 
   <script src="./assets/js/addressBook.js"></script>

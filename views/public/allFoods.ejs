@@ -1,13 +1,57 @@
 <%- include("includes/header") %>
 
+<style>
+    @import url(//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css);
+
+    fieldset, label { margin: 0; padding: 0; }
+    body{ margin: 20px; }
+    h1 { font-size: 1.5em; margin: 10px; }
+
+
+    /****** Style Star Rating Widget *****/
+
+    .rating { 
+    border: none;
+    float: left;
+    }
+
+    .rating > input { display: none; } 
+    .rating > label:before { 
+    margin: 5px;
+    font-size: 1.25em;
+    font-family: FontAwesome;
+    display: inline-block;
+    content: "\f005";
+    }
+
+    .rating > .half:before { 
+    content: "\f089";
+    position: absolute;
+    }
+
+    .rating > label { 
+    color: #ddd; 
+    float: right; 
+    }
+
+    /***** CSS Magic to Highlight Stars on Hover *****/
+
+    .rating > input:checked ~ label, /* show gold star when clicked */
+    .rating:not(:checked) > label:hover, /* hover current star */
+    .rating:not(:checked) > label:hover ~ label { color: #FFD700;  } /* hover previous stars in list */
+
+    .rating > input:checked + label:hover, /* hover current star when changing rating */
+    .rating > input:checked ~ label:hover,
+    .rating > label:hover ~ input:checked ~ label, /* lighten current selection */
+    .rating > input:checked ~ label:hover ~ label { color: #FFED85;  } 
+</style>
+
+
     <div class="container padd-top">
         <div class="row">
             <aside class="col-md-3">
                 <div class="card">
                     <article class="filter-group">
-                        <div class="px-4 pt-4">
-                            <h5 class="title">Filter</h5>
-                        </div>
                         <div class="accordion accordion-flush" id="accordionFlushExample">
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="flush-headingOne">
@@ -132,6 +176,18 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="px-4 py-3">
+                                <fieldset class="rating pb-2">
+                                    <input type="radio" onclick="filter(this)" id="star5" name="rating" value="5" /><label class = "full" for="star5" title="Awesome - 5 stars"></label>
+                                    <input type="radio" onclick="filter(this)" id="star4" name="rating" value="4" /><label class = "full" for="star4" title="Pretty good - 4 stars"></label>
+                                    <input type="radio" onclick="filter(this)" id="star3" name="rating" value="3" /><label class = "full" for="star3" title="Meh - 3 stars"></label>
+                                    <input type="radio" onclick="filter(this)" id="star2" name="rating" value="2" /><label class = "full" for="star2" title="Kinda bad - 2 stars"></label>
+                                    <input type="radio" onclick="filter(this)" id="star1" name="rating" value="1" /><label class = "full" for="star1" title="Sucks big time - 1 star"></label>
+                                </fieldset>
+                            </div>
+                            <div class="px-4 py-3">
+                                <input type="range" id="cowbell" name="cowbell" min="0" max="100" value="90" step="10" />
+                            </div>
                         </div>
                     </article>
                 </div> 
@@ -173,9 +229,7 @@
                         
                     
                 </div>
-                
                 <% if (totalSize > limit) { %>
-                
                     <nav aria-label="Page navigation example mt-3">
                         <ul class="pagination justify-content-center">
                         <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
@@ -203,6 +257,13 @@
     <% function serializeQuery(query) { %>
     <% return Object.keys(query).map(key => key + '=' + encodeURIComponent(query[key])).join('&'); %>
     <% } %>
+
+
+<script>
+    function filter(btn){
+        alert(btn.value)
+    }
+</script>
 
 
 <%- include("includes/footer") %>

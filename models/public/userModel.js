@@ -2,6 +2,21 @@
 const mongoose = require("mongoose")
 
 
+const walletTransactionSchema = new mongoose.Schema({
+    amount :{
+        type : Number,
+    },
+    TransactionType : {
+        type : String   //  debit / credit
+    },
+    orderId : {
+        type : mongoose.Schema.Types.ObjectId
+    },
+    time : {
+        type : Date
+    }
+});
+
 const addressSchema = new mongoose.Schema({
     fullName : {
         type : String,
@@ -81,14 +96,14 @@ const userSchema = new  mongoose.Schema({
         required : true
     },
     wallet: {
-        balance: {
-            type: Number,
-            default: 0 
-        },
-        lastUpdated: {
-            type: Date
-        }
-    }
+        type : Number,
+        required : true,
+        default : 0
+    },
+    walletTransactions : {
+        type : [walletTransactionSchema],
+        required : true
+     }
 })
 
 //define Model

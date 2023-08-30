@@ -1,4 +1,5 @@
 const Cart = require("../../models/public/cartModel");
+const Foods = require('../../models/admin/foodModel')
 const mongoose = require("mongoose")
 
 //get cart total
@@ -79,8 +80,6 @@ const showCart = async (req, res) => {
     } else {
         const cart = await getCartItems(userId)
         const cartTotal = await getCartTotal(userId);
-        // console.log(cart)
-        // return
         res.render("public/cart", { cart, cartTotal });
       }
   } catch (error) {
@@ -114,14 +113,20 @@ const deleteCartItem = async (req, res) => {
 //add to cart
 const addToCart = async (req, res) => {
     try {
+      console.log(req.body)
+
       if(!req.session.isauth){
         return  res.status(404).json({status : "no-user", msg : "User not Found"})
       }
       const userId = new mongoose.Types.ObjectId(req.session.isauth)
       const foodId = req.body._id;
       const foodPrice = req.body.discPrice;
-      const foodLimit = req.body.foodLimit;
+      const totalStock = req.body.totalStock;
       
+      const CheckStock = await Foods.find({_id : new mongoose.Types.ObjectId(foodId)}, {totalStoke : 1})
+      if(CheckStock[0].totalStoke < 1){
+        return res.status(404).json({status : "error", msg : "Out of Stock"})
+      }
       const findUser = await Cart.findOne({userId})
       if(!findUser){
         const newUser = new Cart({
@@ -144,16 +149,15 @@ const addToCart = async (req, res) => {
           {$match : {'items.foodId' : new mongoose.Types.ObjectId(foodId)}},
           {$project : {'items.quantity' : 1} }
         ])
-        if(foodLimit <= foodQuantity[0].items.quantity){
-          return res.status(400).json({status : "error", msg : "Food Limit Reached"})
-        }else{
           await Cart.updateOne(
             { userId: req.session.isauth, 'items.foodId': foodId },
             { $inc: { 'items.$.quantity': 1 , "items.$.total" : foodPrice} }  
           );
-        }
+          await Foods.updateOne({_id : new mongoose.Types.ObjectId(foodId)}, {$inc : {totalStoke : -1}})
+       
       }else{
         await Cart.updateOne({userId : req.session.isauth}, { $push: { items: {foodId : foodId, quantity : 1, total : foodPrice} } });
+        await Foods.updateOne({_id : new mongoose.Types.ObjectId(foodId)}, {$inc : {totalStoke : -1}})
         const cart = await Cart.findOne({ userId: req.session.isauth });
         if (cart) {
             return res.status(200).json({status : "success", length : cart.items.length, msg : 'food added to cart successfully'})
@@ -167,7 +171,8 @@ const addToCart = async (req, res) => {
 
 const updateCartByQuantity = async (req, res) => {
   try {
-    let { foodId, foodPrice, qty, stat} = req.body;
+    let { foodId, foodPrice, qty, stat, stock} = req.body;
+    console.log(foodId, foodPrice, qty, stat, stock)
     const foodIdAsObjectId = new mongoose.Types.ObjectId(foodId);
     const userId = new mongoose.Types.ObjectId(req.session.isauth);
 
@@ -190,18 +195,43 @@ const updateCartByQuantity = async (req, res) => {
     const result = await Cart.updateOne(
       { userId: userId, "items.foodId": foodIdAsObjectId },
       { $inc : { "items.$.quantity": stat, "items.$.total" : foodPrice}},
-      {new : true});
+      {new : true})
 
+    const changeStock = await Foods.updateOne({_id : foodIdAsObjectId}, {$inc : {totalStoke : stock}})
+
+    if (changeStock.nModified === 0) {
+      return res.status(400).json({ status: "error", msg: "unable to change the stock" });
+    }
     if (result.nModified === 0) {
       return res.status(400).json({ status: "error", msg: "document not found" });
     }
 
-    const updatedItem = await Cart.findOne(
-      { userId: userId, "items.foodId": foodIdAsObjectId },
-      { "items.$": 1, _id : 0 }
-    );
+    const cartData = await Cart.aggregate([
+      {
+        $match: { userId, "items.foodId": foodIdAsObjectId }
+      },
+      {
+        $addFields: {
+          foodItems: {
+            $filter: {
+              input: "$items",
+              as: "item",
+              cond: { $eq: ["$$item.foodId", foodIdAsObjectId] }
+            }
+          }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+            foodId: { $arrayElemAt: ["$foodItems.foodId", 0] },
+            quantity: { $arrayElemAt: ["$foodItems.quantity", 0] },
+            total: { $arrayElemAt: ["$foodItems.total", 0] }
+        }
+      }
+    ]);
     const subTotal = await getCartTotal(req.session.isauth)
-    res.json({ status: "success", msg: "Cart updated successfully", items: updatedItem.items, subTotal });
+    res.json({ status: "success", msg: "Cart updated successfully", items: cartData, subTotal });
 
   } catch (error) {
     res.status(500).json({ status: "error", msg: error.message });

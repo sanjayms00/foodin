@@ -9,55 +9,19 @@
 					<div class="col-12">
 						<div class="swiper sliderFeaturedPosts">
 							<div class="swiper-wrapper">
-								<div class="swiper-slide">
-									<a href="#" class="img-bg d-flex align-items-end"
-										style="background-image: url('assets/img/post-slide-1.jpg');">
-										<div class="img-bg-inner">
-											<h2>Savor the Flavors of Nature</h2>
-											<p>Explore a world of gastronomic wonders with our handpicked collection of farm-fresh ingredients and artisanal recipes. Elevate your culinary journey and embrace the rich tapestry of flavors found in nature's finest offerings.</p>
-										</div>
-									</a>
-								</div>
 
-								<div class="swiper-slide">
-									<a href="#" class="img-bg d-flex align-items-end"
-										style="background-image: url('assets/img/post-slide-2.jpg');">
-										<div class="img-bg-inner">
-											<h2>Unleash Your Inner Chef</h2>
-											<p>Embark on a culinary adventure like never before! Discover a treasure trove of cooking tips, hacks, and delectable recipes curated to make you the master of your kitchen domain. Unleash your creativity and let the culinary magic unfold!</p>
-										</div>
-									</a>
-								</div>
-
-								<div class="swiper-slide">
-									<a href="#" class="img-bg d-flex align-items-end"
-										style="background-image: url('assets/img/post-slide-3.jpg');">
-										<div class="img-bg-inner">
-											<h2>Feast with Friends & Family</h2>
-											<p>Strengthen bonds and create lasting memories over a shared table. Our handcrafted recipes, designed for groups big and small, ensure that every meal becomes a heartwarming gathering filled with laughter, love, and, of course, scrumptious delights.</p>
-										</div>
-									</a>
-								</div>
-
-								<div class="swiper-slide">
-									<a href="#" class="img-bg d-flex align-items-end"
-										style="background-image: url('assets/img/post-slide-4.jpg');">
-										<div class="img-bg-inner">
-											<h2>From Garden to Plate</h2>
-											<p>Taste the difference that locally-sourced, organic produce makes. Indulge in a symphony of colors and flavors as we bring you the finest ingredients straight from the garden to your plate. Elevate your dining experience with our nature-inspired delicacies.</p>
-										</div>
-									</a>
-								</div>
-
-								<div class="swiper-slide">
-									<a href="#" class="img-bg d-flex align-items-end"
-										style="background-image: url('assets/img/post-slide-5.jpg');">
-										<div class="img-bg-inner">
-											<h2>Eating Healthy, Tasting Happiness</h2>
-											<p>Let food be thy medicine! Discover a world of wholesome, nutrient-packed recipes that nourish your body and uplift your spirit. Our commitment to a healthy and happy you is showcased in every mouthwatering dish we serve. Embrace wellness with every delectable choice!</p>
-										</div>
-									</a>
-								</div>
+								<% banner.forEach(element => { %>
+									<div class="swiper-slide">
+										<a href="<%= element.url %>" class="img-bg d-flex align-items-end"
+											style="background-image: url('/banner/<%= element.image %>');">
+											<div class="img-bg-inner">
+												<h2><%= element.heading %></h2>
+												<p><%= element.description %></p>
+											</div>
+										</a>
+									</div>
+								<% }) %>
+								
 							</div>
 							<div class="custom-swiper-button-next">
 								<span class="bi-chevron-right"></span>
@@ -73,7 +37,7 @@
 			</div>
 		</section><!-- End Hero Slider Section -->
 
-		<div class="container p-0 text-center my-3 pt-5 mt-5">
+		<div class="container-fluid p-0 text-center my-3 pt-5 mt-5">
 			<div class="row mx-auto my-auto justify-content-center">
 				<div class="col-md-12">
 					<h3>
@@ -81,7 +45,7 @@
 					</h3>
 					<hr>
 				</div>
-				<div id="recipeCarousel" class="carousel slide" data-bs-ride="carousel">
+				<div id="recipeCarousel" class="carousel slide px-0" data-bs-ride="carousel">
 					<div class="carousel-inner" role="listbox">
 						<%  if (locals.food) { 
 							let first = true

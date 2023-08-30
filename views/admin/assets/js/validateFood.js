@@ -15,7 +15,7 @@ function foodValidate(){
     const categories = document.getElementsByName("categories")[0];
     const foodType = document.getElementsByName("foodType")[0];
     const orgPrice = document.getElementsByName("orgPrice")[0];
-    const qtyLimit = document.getElementsByName("qtyLimit")[0];
+    const totalStoke = document.getElementsByName("totalStoke")[0];
     const discPrice = document.getElementsByName("discPrice")[0];
     const foodDescription = document.getElementsByName("foodDescription")[0];
     const foodIngredients = document.getElementsByName("foodIngredients")[0];
@@ -43,11 +43,11 @@ function foodValidate(){
         foodName.focus();
         return false;
     }
-    if (qtyLimit.value.trim() === "") {
-        const qtyLimitLabel = document.getElementById("qtyLimitLabel")
-        qtyLimitLabel.innerHTML = "Food Limit Required"
-        qtyLimitLabel.style.color = "red"
-        qtyLimit.focus();
+    if (totalStoke.value.trim() === "") {
+        const totalStokeLabel = document.getElementById("totalStokeLabel")
+        totalStokeLabel.innerHTML = "Total Stoke Required"
+        totalStokeLabel.style.color = "red"
+        totalStoke.focus();
         return false;
     }
     if (orgPrice.value.trim() === "") {

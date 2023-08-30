@@ -3,9 +3,9 @@ const mongoose = require('mongoose')
 const Users = require("../../models/public/userModel")
 const Cart = require("../../models/public/cartModel");
 const Orders = require("../../models/admin/ordersModel")
+const Coupon = require('../../models/admin/couponModel')
 const PaymentHelper = require("../../helper/paymentHelper")
 const orderHelper = require("../../helper/orderHelper")
-
 
 
 
@@ -99,13 +99,22 @@ const checkout = async (req,res)=>{
         const cartTotal = await getcartTotal(userId)
         const cartItems = await getcartItems(userId)
         const defAddress = await getDefAddress(user.defaultAddress, userId) 
+        const amount = cartTotal[0].subTotal
+        const coupons = await Coupon.find(
+          {
+            minPurchase: { $lte: amount },
+            maxAmount: { $gte: amount },
+            validity: { $gte: amount },
+            status: true
+        });
+        console.log(amount , coupons)
+
         if(cartItems.length < 1){
           res.render("public/errorPage", {status : "eroor", msg : "No items in the Cart"})
         }else if(cartTotal < 1){
           res.render("public/errorPage", {status : "eroor", msg : "No items in the Cart"})
         }
-        
-        res.render("public/checkOut", {subTotal : cartTotal, user, cartItems, defAddress})
+        res.render("public/checkOut", {subTotal : cartTotal, user, cartItems, defAddress, coupons})
     } catch (error) {
       res.render("public/errorPage", {status : "eroor", msg : "No items in the Cart"})
     }
@@ -151,11 +160,11 @@ const authCheckout = async (req,res)=>{
             paymentOption,
             walletAmount
           }
-          const saveOrder = orderHelper.makeOrder(data)
+          const saveOrder = await orderHelper.makeOrder(data)
           const deleteCart = orderHelper.emptyCart(userId)
-          const updateWallet = orderHelper.updateWallet(userId, walletAmount)
-          Promise.all([saveOrder, deleteCart, updateWallet]).then(async (values)=>{
-            const razorpayOrder = await PaymentHelper.generateRazorPay(values[0]._id, totalPrice)
+          const updateWallet = orderHelper.updateWallet(userId, walletAmount, saveOrder)
+          Promise.all([deleteCart, updateWallet]).then(async (values)=>{
+            const razorpayOrder = await PaymentHelper.generateRazorPay(saveOrder, totalPrice)
             // console.log(razorpayOrder)
             return res.status(200).json({status : "success", msg : "Order Placed", paymentMethod : paymentOption, razorpayOrder  })  
           })
@@ -170,10 +179,10 @@ const authCheckout = async (req,res)=>{
             paymentOption,
             walletAmount
           }
-          const saveOrder = orderHelper.makeOrder(data)
+          const saveOrder = await orderHelper.makeOrder(data)
           const deleteCart = orderHelper.emptyCart(userId)
-          const updateWallet = orderHelper.updateWallet(userId, walletAmount)
-          Promise.all([saveOrder, deleteCart, updateWallet]).then((values)=>{
+          const updateWallet = orderHelper.updateWallet(userId, walletAmount, saveOrder)
+          Promise.all([deleteCart, updateWallet]).then((values)=>{
             return res.status(200).json({status : "success", msg : "Order Placed", paymentMethod : paymentOption })
           })
         }else{

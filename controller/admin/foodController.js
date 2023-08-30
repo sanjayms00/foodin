@@ -4,14 +4,20 @@ const sharp = require("sharp")
 const fs = require("fs")
 const path = require('path')
 const { v4: uuidv4 } = require('uuid');
-const { rejects } = require("assert")
+
 
 const showFood = async (req,res)=>{
     try {
-        const foodData = await Foods.find({}).sort({ createdAt: -1 })
-        res.status(200).render("admin/food/index", { data : foodData })
+        const page = parseInt(req.query.page) || 1
+        const limit = 10
+        const skip = (page - 1) * limit
+        const totalSize = await Foods.find({status : true}).count()
+        const totalPages = Math.ceil(totalSize / limit)
+        //main query for pagination
+        const foodData = await Foods.find({}).sort({_id : -1}).skip(skip).limit(limit)
+        res.status(200).render("admin/food/index", { data : foodData, totalPages, totalSize, limit, currentPage : page, skip })
     } catch (error) {
-        console.log(error.message)
+        res.status(500).render('pubic/errorPage', {msg : "issue loading the page"})
     }
 }
 
@@ -39,12 +45,7 @@ const editFood = async (req,res)=>{
 
 const saveFood = async (req, res) => {
     try {
-      const {
-        foodName, categories, foodType, orgPrice, discPrice, foodDescription, foodIngredients, qtyLimit} = req.body;
-  
-      if (!(foodName && categories && foodType && orgPrice && discPrice && foodDescription && foodIngredients && qtyLimit)) {
-        return res.status(400).json({ status: "error", msg: "Fill all fields" });
-      }
+      const {foodName, categories, foodType, orgPrice, discPrice, foodDescription, foodIngredients, totalStoke} = req.body;
       const slug = foodName.trim().split(" ").join('-').toLowerCase();
       const checkFood = await Foods.findOne({ slug: slug });
       if (checkFood) {
@@ -82,7 +83,7 @@ const saveFood = async (req, res) => {
         orgPrice: orgPrice,
         discPrice: discPrice,
         slug: slug,
-        foodLimit: qtyLimit,
+        totalStoke: totalStoke,
         category: categories,
         type: foodType,
         description: foodDescription,
@@ -132,11 +133,21 @@ function saveData(foodName, foodId, newFileName, prevImage, categories, foodType
 
 const updateFood = async (req, res) => {
   try {
-    const {prevSlug, foodName, croppedImage, foodId, prevImage, categories, foodType, orgPrice, discPrice, foodDescription, foodIngredients} = req.body
+    const {
+      prevSlug, 
+      foodName, 
+      totalStoke,  
+      croppedImage, 
+      foodId, 
+      prevImage, 
+      categories, 
+      foodType, 
+      orgPrice, 
+      discPrice, 
+      foodDescription, 
+      foodIngredients} = req.body
        
-    if(!(foodId || prevImage || foodName || categories || foodType || orgPrice || discPrice || foodDescription || foodIngredients)){
-        return res.status(400).json({status : "error", msg : "fill all fields"})
-    }
+   console.log(foodName)
     const slug = foodName.trim().split(" ").join('-').toLocaleLowerCase()
     
     if(slug !== prevSlug){
@@ -181,7 +192,7 @@ const updateFood = async (req, res) => {
       if (fs.existsSync(prevImagePath)) {
           // Delete the file
           fs.unlinkSync(prevImagePath);
-          console.log(`Image ${prevImage} deleted successfully.`);
+          //console.log(`Image ${prevImage} deleted successfully.`);
       } else {
           return res.status(404).json({status : "error", msg : 'Image not found'});
       }
@@ -191,6 +202,7 @@ const updateFood = async (req, res) => {
         foodName: foodName,
         orgPrice: orgPrice,
         discPrice: discPrice,
+        totalStoke: totalStoke,
         slug : slug,
         category: categories,
         type: foodType,
@@ -198,7 +210,7 @@ const updateFood = async (req, res) => {
         ingredients : foodIngredients,
         createdAt : new Date()
     };
-    console.log("upload...")
+
     const saveData = await Foods.updateOne({ _id: foodId},{$set : updateFood})
     if (!saveData) {
     return res.status(500).json({ msg: "Food updation failed" });
@@ -209,11 +221,6 @@ const updateFood = async (req, res) => {
     res.status(500).json({ status: "error", msg: "Food creation failed" });
   }
 }
-
-
-
-
-
 
 const deleteFood = async (req,res)=>{
     try {
@@ -226,8 +233,6 @@ const deleteFood = async (req,res)=>{
         console.log(error.message)
     }
 }
-
-
 
 const foodStatus = async (req, res)=>{
     try {

@@ -26,7 +26,7 @@
                       <h6 class="fw-semibold mb-0">Type</h6>
                     </th>
                     <th class="border-bottom-0">
-                      <h6 class="fw-semibold mb-0">Food Limit</h6>
+                      <h6 class="fw-semibold mb-0">Total Stoke</h6>
                     </th>
                     <th class="border-bottom-0">
                       <h6 class="fw-semibold mb-0">Orginal Price</h6>
@@ -51,7 +51,7 @@
                 
                 <tbody>
                   <% if(locals.data){ 
-                    let i = 1;
+                    let i = skip + 1;
                     data.forEach((item)=>{
                   %>
                   <tr>
@@ -75,7 +75,7 @@
                         <h6 class="fw-semibold mb-1"><%= (item.type === 1) ? "Veg" : "Non Veg" %></h6>
                       </td>
                       <td class="border-bottom-0">
-                        <h6 class="fw-semibold mb-1"><%= item.foodLimit %></h6>
+                        <h6 class="fw-semibold mb-1"><%= item.totalStoke %></h6>
                       </td>
                       <td class="border-bottom-0">
                         <h6 class="fw-semibold mb-1"><%= item.orgPrice %></h6>
@@ -194,6 +194,27 @@
                   </tr>
                 </tfoot>
               </table>
+              <% if (totalSize > limit) { %>
+                <nav aria-label="Page navigation example mt-3">
+                    <ul class="pagination justify-content-center">
+                    <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+                        <a class="page-link" href="<%= currentPage > 1 ? '/admin/food?page=' + (currentPage - 1) : '#' %>" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <% for (let i = 1; i <= totalPages; i++) { %>
+                        <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                        <a class="page-link" href="/admin/food?page=<%= i %>"><%= i %></a>
+                        </li>
+                    <% } %>
+                    <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                        <a class="page-link" href="<%= currentPage < totalPages ? '/admin/food?page=' + (currentPage + 1) : '#' %>" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                    </ul>
+                </nav>
+              <% } %>
             </div>
           </div>
         </div>

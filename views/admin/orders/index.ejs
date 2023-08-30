@@ -11,7 +11,6 @@
           <div class="card-body p-0">
             <div class="table-responsive">
               <% if(locals.data.length > 0){ %>
-
               <table class="table text-nowrap mb-0 align-middle">
                 <thead class="text-dark fs-4 text-center">
                   <tr>
@@ -66,7 +65,7 @@
                       </button>
                     </th>
                     <th class="border-bottom-0">
-                      <%=  `${item.user.firstName} ${item.user.lastName}` %></h6>
+                      <h6 class="fw-semibold mb-0"><%=  `${item.firstName} ${item.lastName}` %></h6>
                     </th>
                     <th class="border-bottom-0">
                       <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#timeModal<%= i %>">

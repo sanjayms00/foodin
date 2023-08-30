@@ -6,8 +6,13 @@ const session = require("express-session")
 const mongoDBSession = require("connect-mongodb-session")(session)
 
 const multer = require("multer")
-const storage = multer.memoryStorage();
-const uploads = multer({storage})
+const uploads = multer({ 
+    storage: multer.memoryStorage(),
+    limits: {
+      fieldSize: 10 * 1024 * 1024, 
+      // Increase the limit to 10MB (adjust as needed)
+    }
+  });
 
 const store = mongoDBSession({
     uri : process.env.DATABSE_URL,
@@ -28,7 +33,11 @@ const adminConfigController = require("../../controller/admin/adminConfigControl
 const userController = require("../../controller/admin/userController")
 const foodController = require("../../controller/admin/foodController")
 const categoryController = require("../../controller/admin/categoryController")
+const couponController = require("../../controller/admin/couponController")
 const ordersController = require("../../controller/admin/ordersController")
+const bannerController = require('../../controller/admin/bannerController')
+
+
 
 const adminMiddleware = require("../../middleware/admin/adminMiddleware")
 
@@ -40,13 +49,27 @@ adminRoute.get("/login",adminConfigController.login)
 adminRoute.post("/auth",adminConfigController.auth)
 adminRoute.get("/auth",adminConfigController.login)
 adminRoute.get("/logout",adminConfigController.logout)
+
 //dashboard routes
 adminRoute.get("/dashboard", adminMiddleware.adminSessionCheck, dashboardController.dashboard)
 adminRoute.get("/sales-report", adminMiddleware.adminSessionCheck, dashboardController.showSalesDataGet)
 adminRoute.get("/get-sale-data", adminMiddleware.adminSessionCheck, dashboardController.getSaleData)
+adminRoute.get("/export", adminMiddleware.adminSessionCheck, dashboardController.exportData)
+
 //user routes
 adminRoute.get("/users", adminMiddleware.adminSessionCheck, userController.showusers)
 adminRoute.post("/userStatus", adminMiddleware.adminSessionCheck, userController.userStatus)
+
+//banner routes
+adminRoute.get("/banner", adminMiddleware.adminSessionCheck, bannerController.showBanner)
+adminRoute.get("/create-banner", adminMiddleware.adminSessionCheck, bannerController.createBanner)
+adminRoute.get("/edit-banner", adminMiddleware.adminSessionCheck, bannerController.editBanner)
+adminRoute.post("/save-banner",adminMiddleware.adminSessionCheck, uploads.single('file_photo'), bannerController.saveBanner)
+adminRoute.post("/update-banner", adminMiddleware.adminSessionCheck, uploads.single('file_photo'), bannerController.updateBanner)
+adminRoute.delete("/delete-banner", adminMiddleware.adminSessionCheck, bannerController.deleteBanner)
+adminRoute.patch("/banner-status", adminMiddleware.adminSessionCheck, bannerController.changeStatus)
+adminRoute.patch("/banner-position", adminMiddleware.adminSessionCheck, bannerController.changePosition)
+
 //food routes
 adminRoute.get("/food", adminMiddleware.adminSessionCheck, foodController.showFood)
 adminRoute.get("/createFood",adminMiddleware.adminSessionCheck, foodController.createFood)
@@ -64,6 +87,16 @@ adminRoute.get("/editCategory",adminMiddleware.adminSessionCheck, categoryContro
 adminRoute.post("/updatecategory",adminMiddleware.adminSessionCheck, categoryController.updateCategory)
 adminRoute.delete("/deleteCategory",adminMiddleware.adminSessionCheck, categoryController.deleteCategory)
 adminRoute.post("/categoryStatus",adminMiddleware.adminSessionCheck, categoryController.categoryStatus)
+
+//Coupon routes
+adminRoute.get("/coupons", adminMiddleware.adminSessionCheck, couponController.showcoupon)
+adminRoute.get("/createcoupon",adminMiddleware.adminSessionCheck, couponController.createcoupon)
+adminRoute.post("/savecoupon",adminMiddleware.adminSessionCheck, couponController.savecoupon)
+adminRoute.get("/editcoupon",adminMiddleware.adminSessionCheck, couponController.editcoupon)
+adminRoute.put("/updatecoupon",adminMiddleware.adminSessionCheck, couponController.updatecoupon)
+adminRoute.delete("/deletecoupon",adminMiddleware.adminSessionCheck, couponController.deletecoupon)
+adminRoute.post("/couponStatus",adminMiddleware.adminSessionCheck, couponController.couponStatus)
+
 
 //order routes
 adminRoute.get("/orders", adminMiddleware.adminSessionCheck, ordersController.showOrders)

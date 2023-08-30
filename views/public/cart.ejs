@@ -62,7 +62,7 @@
                                         <div class="form-outline">
                                             <input id="<%= element.carted._id %>" min="1" name="quantity" value="<%= element.quantity %>" type="number" class="form-control item-quantity" style="width: 75px;" readonly/>
                                             <input name="foodId" value="<%= element.carted._id %>" type="hidden" class="form-control"/>
-                                            <input name="foodLimit" value="<%= element.carted.foodLimit %>" type="hidden" class="form-control"/>
+                                            <input name="totalStock" value="<%= element.carted.totalStoke %>" type="hidden" class="form-control" class="totalStock"/>
                                             <input name="foodPrice" value="<%= element.carted.discPrice %>" type="hidden" class="form-control"/>
                                         </div>
                                         <button class="btn btn-primary ms-2 cart-btn" onclick="increment(this)">

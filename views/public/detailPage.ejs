@@ -33,6 +33,11 @@
                         <p>
                             <%= locals.data.ingredients %>
                         </p>
+                        <% if (locals.data.totalStoke < 5 && locals.data.totalStoke > 0) { %>
+                            <p class="text-danger">Hurry Up, Only <span class="stock"><%= locals.data.totalStoke %></span> left</p>
+                        <% }else if(locals.data.totalStoke <= 0){ %>
+                            <p class="text-danger">Out of Stock</p>
+                        <% }%>
                         <button id="addToCart" onclick="addToCart(`<%= JSON.stringify(data) %>`, `<%= isAuthenticated %>`) " class="btn btn-warning w-25 fs-5 rounded-2">Add to Cart</button>
                 </div>
             </div>
@@ -43,7 +48,7 @@
                 </div>
             </div>
             <!-- Content Row-->
-            <!-- <div class="row gx-4 gx-lg-5">
+            <div class="row gx-4 gx-lg-5">
                 <div class="col-md-4 mb-5">
                     <div class="card h-100">
                         <div class="card-body">
@@ -75,7 +80,7 @@
                         <div class="card-footer"><a class="btn btn-primary btn-sm" href="#!">More Info</a></div>
                     </div>
                 </div>
-            </div> -->
+            </div>
         </div>
     </div>
 

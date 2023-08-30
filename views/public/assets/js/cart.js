@@ -10,7 +10,7 @@ async function addToCart(foodData, auth){
             }
             }).showToast();
             setTimeout(()=>{
-                window.location = "http://localhost:3000/login"
+                location.href = "/login"
             },1000)
     }else if(auth === "true"){
         try {
@@ -65,6 +65,9 @@ async function addToCart(foodData, auth){
                         background: "linear-gradient(to right, #ff0000, #dd2a7f)",
                     }
                     }).showToast();
+                    setTimeout(()=>{
+                        btn.innerText = "Add to Cart"
+                    },500)
             }
         }catch (error) {
             Toastify({

@@ -25,8 +25,8 @@ const foodSchema = new  mongoose.Schema({
         type : String,
         required : true
     },
-    foodLimit : {
-        type : String,
+    totalStoke : {
+        type : Number,
         required : true
     },
     type : {
@@ -45,6 +45,12 @@ const foodSchema = new  mongoose.Schema({
         type : Boolean,
         required : true
     },
+    rating: [
+        {
+          userId: { type: mongoose.Schema.Types.ObjectId, },
+          value: { type: Number, required: true, min: 1, max: 5 }
+        }
+      ],
     createdAt : {
         type : Date,
         required : true

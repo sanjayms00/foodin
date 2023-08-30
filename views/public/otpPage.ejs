@@ -10,9 +10,6 @@
 	  <div class="row justify-content-center w-100">
 		<div class="col-md-8 col-lg-6 col-xxl-3">
 		  <div class="card mb-0">
-			<div class="alert d-none" role="alert" id="alertResult">
-				<%= locals.msg %>
-			</div>
 			<div class="card-body">
 			  <h1 class="text-center pt-2">Verify</h1>
 			  <form class="login_form" method="POST" id="otpValidateForm">			
@@ -21,7 +18,10 @@
 					<input type="text" class="form-control border-secondary" id="otp" name="otp" placeholder="OTP">				
 				</div>
 				<button class="btn btn-warning w-100 py-8 fs-4 mb-4 rounded-2">Verify OTP</button>
-				<p><a href="">Resend OTP</a></p>
+				<p class="text-center" id="counter">60</p>
+				<div id="buttonContainer" class="text-center">
+					
+				</div>
 			  </form>
 			</div>
 		  </div>
@@ -32,6 +32,66 @@
 </div>
 
 <script>
+	function counter(count) {
+		const counterElement = document.getElementById('counter');
+
+		if (count >= 0) {
+			counterElement.textContent = count;
+			setTimeout(function() {
+				counter(count - 1);
+			}, 1000);
+		} else {
+			// Resend OTP button
+			const button = document.createElement('button');
+			button.textContent = 'Resend OTP';
+			button.type = 'button'
+			button.className = 'btn border-0'; 
+
+			// Add a click event listener to the button
+			button.addEventListener('click', async () => {
+				button.innerHTML = "Resending OTP"
+				//resend otp
+				const mobileNumber = '<%= mobile %>'
+				const response = await fetch('/validateNumber', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({ mobileNumber })
+				});
+			
+				const data = await response.json();
+				// alert(JSON.stringify(data)); 
+				if (data.status === 'success') { 
+					Toastify({
+						text: 'OTP Send',
+						className: "info",
+						style: {
+							background: "linear-gradient(to right, #0b7303, #24c9a3)",
+						}
+						}).showToast();
+				} else {
+					Toastify({
+						text: 'something went wrong',
+						className: "info",
+						style: {
+							background: "linear-gradient(to right, #ff0000, #dd2a7f)",
+						}
+						}).showToast();
+				}
+			});
+
+			// Append the button to the container
+			counterElement.style.display = 'none';
+			const buttonContainer = document.getElementById('buttonContainer');
+			buttonContainer.appendChild(button);
+		}
+	}
+	window.onload = function(){
+		counter(60)
+	}
+
+
 	document.getElementById('otpValidateForm').addEventListener('submit', async (event) => {
 		event.preventDefault();
 		
@@ -53,23 +113,32 @@
 			const alertDiv = document.getElementById('alertResult');
 			
 			if (data.status === 'success') { 
-				alertDiv.classList.remove('alert-danger');
-				alertDiv.classList.add('alert-success');
-				alertDiv.classList.remove('d-none');
-				alertDiv.innerText = data.msg;
+				Toastify({
+					text: data.msg,
+					className: "info",
+					style: {
+						background: "linear-gradient(to right, #0b7303, #24c9a3)",
+					}
+					}).showToast();
 				//page load
-				window.location.href = "/";
+				location.href = "/";
 			} else {
-				alertDiv.classList.remove('alert-success');
-				alertDiv.classList.add('alert-danger');
-				alertDiv.classList.remove('d-none');
-				alertDiv.innerText = data.msg;
+				Toastify({
+					text: data.msg,
+					className: "info",
+					style: {
+						background: "linear-gradient(to right, #ff0000, #dd2a7f)",
+					}
+					}).showToast();
 			}
 		}catch (error) {
-			const alertDiv = document.getElementById('alertResult')
-			alertDiv.classList.add("alert-danger")
-			alertDiv.classList.remove("d-none")
-			alertDiv.innerText = 'An error occurred. Please try again later.';
+			Toastify({
+				text: data.msg,
+				className: "info",
+				style: {
+					background: "linear-gradient(to right, #ff0000, #dd2a7f)",
+				}
+				}).showToast();
 		}
 	});
 

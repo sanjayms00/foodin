@@ -34,10 +34,40 @@
                                 <div class="py-3 col-sm-12">
                                     <div class="rounded p-2" style="background-color: #d3ea66;">
                                         <% if (item.status === 'prepared' || item.status === 'delivered') { %>
-                                            <button type="button" class="btn btn-danger float-end" disabled>Cancel Order</button>
+                                            <button type="button" class="btn btn-danger float-end m-1" disabled>Cancel Order</button>
                                         <% }else{ %>
-                                        <button type="button" class="btn btn-danger float-end" onclick="cancelOrder('<%= item._id %>')">Cancel Order</button>
+                                        <button type="button" class="btn btn-danger float-end m-1" onclick="cancelOrder('<%= item._id %>')">Cancel Order</button>
                                         <% } %>
+                                        <button type="button" class="btn btn-primary float-end m-1" data-bs-toggle="modal" data-bs-target="#reviewModal<%= i %>">
+                                            Add Review
+                                        </button>
+                                        <div class="modal fade" id="reviewModal<%= i %>" tabindex="-1" aria-labelledby="addressModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header bg-secondary text-light">
+                                                    <h5 class="modal-title" id="addressModalLabel">Add review</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <% item.items.forEach((element)=>{ %>
+                                                            <h6 class="mb-0 px-3">
+                                                                <span ><%= element.carted.foodName %></span>
+                                                                <span class="float-end">
+                                                                    <fieldset class="rating pb-2">
+                                                                        <input type="radio" onclick="filter(this)" id="star5" name="rating" value="5" /><label class = "full" for="star5" title="Awesome - 5 stars"></label>
+                                                                        <input type="radio" onclick="filter(this)" id="star4" name="rating" value="4" /><label class = "full" for="star4" title="Pretty good - 4 stars"></label>
+                                                                        <input type="radio" onclick="filter(this)" id="star3" name="rating" value="3" /><label class = "full" for="star3" title="Meh - 3 stars"></label>
+                                                                        <input type="radio" onclick="filter(this)" id="star2" name="rating" value="2" /><label class = "full" for="star2" title="Kinda bad - 2 stars"></label>
+                                                                        <input type="radio" onclick="filter(this)" id="star1" name="rating" value="1" /><label class = "full" for="star1" title="Sucks big time - 1 star"></label>
+                                                                    </fieldset>
+                                                                </span>
+                                                            </h6>
+                                                            <hr>
+                                                        <% }) %>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div> 
                                         <p class="mb-0 px-3">Order Id : <%= item._id %></p>
                                         <p class="mb-0 px-3">Payment Method : <%= item.paymentMethod %></p>
                                         <p class="mb-0 px-3">Payment Status : <%= item.paymentStatus %></p>
@@ -63,6 +93,10 @@
         </div>
     </section>
 
+   
+
+
+
     <script>
   function cancelOrder(orderId) {
     Swal.fire({
@@ -72,7 +106,7 @@
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, cancel it!'
+        confirmButtonText: 'Yes, Cancel it!'
         }).then(async (result) => {
         if (result.isConfirmed) {
             const data = { id:  orderId};
@@ -88,7 +122,7 @@
             const result = await response.json()
             if(result.status === "success"){
                 Swal.fire(
-                    'Deleted!',
+                    'Canceled!',
                      result.msg,
                     'success'
                     )

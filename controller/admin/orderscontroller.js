@@ -4,9 +4,36 @@ const mongoose = require("mongoose")
 
 const showOrders = async (req,res)=>{
     try {
-        const orders = (await Orders.find({}).populate('user').sort({_id : -1})
-        .exec());
-        // console.log(JSON.stringify(orders[0].items));
+        // const orders = (await Orders.find({}).populate('user').sort({_id : -1})
+        // .exec());
+        const orders = await Orders.aggregate([
+            {$lookup : {
+                from : 'users',
+                localField : 'user',
+                foreignField : '_id',
+                as : 'orderData'
+            }},
+            {
+                $unwind: '$orderData'
+            },
+            {
+                $project: {
+                  _id: 1,
+                  items: 1,
+                  user: 1,
+                  address: 1,
+                  time: 1,
+                  status: 1,
+                  paymentStatus: 1,
+                  paymentMethod: 1,
+                  walletAmount: 1,
+                  subTotal: 1,
+                  firstName: '$orderData.firstName', 
+                  lastName: '$orderData.lastName',   
+                }
+            },
+            {$sort : {_id : -1}}
+        ]) 
         res.status(200).render("admin/orders/index", {data : orders})
     } catch (error) {
         console.log(error.message)

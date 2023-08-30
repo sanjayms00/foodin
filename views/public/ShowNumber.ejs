@@ -51,23 +51,32 @@
 			const alertDiv = document.getElementById('alertResult');
 			
 			if (data.status === 'success') { 
-				alertDiv.classList.remove('alert-danger');
-				alertDiv.classList.add('alert-success');
-				alertDiv.classList.remove('d-none');
-				alertDiv.innerText = data.msg;
+				Toastify({
+					text: data.msg,
+					className: "info",
+					style: {
+						background: "linear-gradient(to right, #0b7303, #24c9a3)",
+					}
+					}).showToast();
 				//page load
 				window.location.href = `/verifyOtp?userMobileNumber=${mobileNumber}`;
 			} else {
-				alertDiv.classList.remove('alert-success');
-				alertDiv.classList.add('alert-danger');
-				alertDiv.classList.remove('d-none');
-				alertDiv.innerText = data.msg;
+				Toastify({
+					text: data.msg,
+					className: "info",
+					style: {
+						background: "linear-gradient(to right, #ff0000, #dd2a7f)",
+					}
+					}).showToast();
 			}
 		}catch (error) {
-			const alertDiv = document.getElementById('alertResult')
-			alertDiv.classList.add("alert-danger")
-			alertDiv.classList.remove("d-none")
-			alertDiv.innerText = 'An error occurred. Please try again later.';
+			Toastify({
+				text: data.msg,
+				className: "info",
+				style: {
+					background: "linear-gradient(to right, #ff0000, #dd2a7f)",
+				}
+				}).showToast();
 		}
 	});
 

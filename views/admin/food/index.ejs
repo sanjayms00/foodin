@@ -96,13 +96,9 @@
                       <td class="border-bottom-0">
                         <h6 class="fw-semibold mb-1">
                           <% if (!item.status) { %>
-                            <a href="/admin/foodStatus/<%= item._id %>-true">
-                              <button type="button" class="btn btn-danger w-100">In Active</button>
-                            </a>
+                              <button type="button" class="btn btn-danger w-100" onclick="changeStatus('<%= item._id %>', 'true')">Inactive</button>
                           <% } else { %> 
-                            <a href="/admin/foodStatus/<%= item._id %>-false">
-                              <button type="button" class="btn btn-success w-100">Active</button>
-                            </a>
+                              <button type="button" class="btn btn-success w-100" onclick="changeStatus('<%= item._id %>', 'false')">Active</button>
                           <% } %>
                           </h6>
                       </td>
@@ -129,6 +125,7 @@
                       </div>
                     </div>
                   </div>
+                  
                   <div class="modal fade" id="foodModalIngredients<%= i %>" tabindex="-1" aria-labelledby="foodModal" aria-hidden="true">
                     <div class="modal-dialog">
                       <div class="modal-content">
@@ -221,3 +218,48 @@
       </div>
     </div>
   </div>
+
+<script>
+  async function changeStatus(id, status){
+    try {
+      const response = await fetch('/admin/foodStatus', {
+        method: "PATCH", 
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({id, status}),
+      })
+      
+      const data = await response.json();
+      if(data.status = 'success'){
+        Toastify({
+            text: data.msg,
+            className: "info",
+            style: {
+                background: "linear-gradient(to right, #0b7303, #24c9a3)",
+            }
+        }).showToast();
+        setTimeout(()=>{
+            location.reload()
+        },800)
+      }
+      else{
+        Toastify({
+          text: data.msg,
+          className: "info",
+          style: {
+              background: "linear-gradient(to right, #ff0000, #dd2a7f)",
+          }
+        }).showToast();
+      }
+    } catch (error) {
+      Toastify({
+        text: error.message,
+        className: "info",
+        style: {
+            background: "linear-gradient(to right, #ff0000, #dd2a7f)",
+        }
+      }).showToast();
+    }
+  }
+</script>

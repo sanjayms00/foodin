@@ -169,7 +169,6 @@ document.getElementById('loginForm').addEventListener('submit', async (event)=>{
 //otp login
 document.getElementById('mobileNumberValidateForm').addEventListener('submit', async (event) => {
     event.preventDefault();
-
     if(validateMobileNumber()){
         const formData = new FormData(event.target);
         const mobileNumber = formData.get('mobileNumber');

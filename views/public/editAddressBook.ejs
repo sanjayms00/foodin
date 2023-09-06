@@ -89,8 +89,8 @@
             })
             const data = await response.json();
             if (data.status === 'success') {
-                alert(data.msg);
-                window.location = "http://localhost:3000/address-book";
+                // alert(data.msg);
+                location.href = "/address-book";
             }else{
                 alert(data.msg);
             }  

@@ -16,14 +16,15 @@
                             <hr>
                             <br>
                             <div class="row py-1">
-                                <div class="col-sm-3">
-                                    <p class="mb-0">Balance : </p>
+                                <div class="col-sm-2">
+                                    <h5 class="mb-0">Balance : </h5>
                                 </div>
-                                <div class="col-sm-9">
-                                    <p class="text-muted mb-0">₹ <%= locals.data[0].wallet %></p>
+                                <div class="col-sm-10">
+                                    <h5 class="text-success mb-0"><b>₹ <%= locals.data[0].wallet %></b></h5>
                                 </div>
                             </div>
                             <hr>
+                            <h6>Last few Transactions</h6>
                             <table class="table table-striped text-center">
                                 <thead>
                                   <tr>
@@ -36,26 +37,30 @@
                                 </thead>
                                 <tbody>
                                     <% 
-                                        let i = 1; 
-                                        locals.data[0].walletTransactions.forEach(element => { 
+                                        if(locals.data[0].walletTransactions.length > 0){
+                                            const length = locals.data[0].walletTransactions.length-1
+                                            let k = 1
+                                            let stop = length > 10 ? length-10 : 0
+                                            for(let i= length; i>= stop; i--){
                                     %>
                                         <tr>
-                                            <th scope="row"><%= i %></th>
-                                            <td><%= element.orderId %></td>
+                                            <th scope="row"><%= k %></th>
+                                            <td><%= locals.data[0].walletTransactions[i].orderId %></td>
                                             <td>
-                                                <%= element.time.toLocaleString("en-US", {day: "numeric", month: "short", year: "numeric"}) %> <br>
-                                                <%= element.time.toLocaleString("en-US", {hour: "numeric", minute: "numeric", second: "numeric", hour12: true}); %> 
+                                                <%= locals.data[0].walletTransactions[i].time.toLocaleString("en-US", {day: "numeric", month: "short", year: "numeric"}) %> <br>
+                                                <%= locals.data[0].walletTransactions[i].time.toLocaleString("en-US", {hour: "numeric", minute: "numeric", second: "numeric", hour12: true}); %> 
                                             </td>
-                                            <td><%= element.TransactionType %></td>
-                                            <% if (element.TransactionType === 'credit') { %>
-                                                <td class="text-success">+<%= element.amount %></td>
-                                            <% }else if(element.TransactionType === 'debit'){ %>
-                                                <td class="text-danger">-<%= element.amount %></td>
+                                            <td><%= locals.data[0].walletTransactions[i].TransactionType %></td>
+                                            <% if (locals.data[0].walletTransactions[i].TransactionType === 'credit') { %>
+                                                <td class="text-success">+<%= locals.data[0].walletTransactions[i].amount %></td>
+                                            <% }else if(locals.data[0].walletTransactions[i].TransactionType === 'debit'){ %>
+                                                <td class="text-danger">-<%= locals.data[0].walletTransactions[i].amount %></td>
                                             <% } %>
-                                            
-                                            
-                                        </tr>
-                                    <% i++ }) %>
+                                        </tr>   
+                                    <%
+                                            k++ }
+                                        } 
+                                    %>
                                 </tbody>
                               </table>
                         </div>

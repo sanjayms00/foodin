@@ -1,6 +1,5 @@
 
 async function addToCart(foodData, auth){
-    const btn = document.getElementById('addToCart');
     if(auth === 'false'){
         Toastify({
             text: "login to acccount",
@@ -13,8 +12,8 @@ async function addToCart(foodData, auth){
                 location.href = "/login"
             },1000)
     }else if(auth === "true"){
+        
         try {
-            btn.innerText = "Adding to cart..."
             const response = await fetch('/add-to-cart', {
             method: 'POST',
             headers: {

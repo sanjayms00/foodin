@@ -2,11 +2,23 @@ const Orders = require("../../models/admin/ordersModel")
 const orderHelper = require('../../helper/orderHelper')
 const mongoose = require("mongoose")
 
+//show order page
 const showOrders = async (req,res)=>{
     try {
-        // const orders = (await Orders.find({}).populate('user').sort({_id : -1})
-        // .exec());
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = currentDate.getMonth() + 1;
+        const currentDay = currentDate.getDate();
+        
         const orders = await Orders.aggregate([
+            {
+                $match : {
+                    time : {
+                        $gte: new Date(currentYear, currentMonth - 1, currentDay),
+                        $lt: new Date(currentYear, currentMonth - 1, currentDay + 1)
+                    }
+                }
+            },
             {$lookup : {
                 from : 'users',
                 localField : 'user',
@@ -40,6 +52,7 @@ const showOrders = async (req,res)=>{
     }
 }
 
+//cancel the order
 const cancelOrder = async (req, res) => {
     try {
         const orderId = new mongoose.Types.ObjectId(req.body.id)
@@ -55,6 +68,7 @@ const cancelOrder = async (req, res) => {
     }
 }
 
+//status change
 const changeStatus = async (req, res) => {
     try {
         // console.log(req.body.id)
@@ -77,10 +91,6 @@ const changeStatus = async (req, res) => {
         return res.status(400).json({status : "error", msg : error.message})
     }
 }
-
-
-
-
 
 //export all functions like objects
 module.exports = {

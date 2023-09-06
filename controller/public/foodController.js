@@ -7,8 +7,8 @@ const detail = async (req,res)=>{
             return res.status(400).render("public/detailPage", {msg : "no content to display"})
         }
         const foodData = await Food.findOne({slug : slug})
-        console.log(foodData)
-        res.render("public/detailPage", {data : foodData})
+        const relatedDishes = await Food.find({category : foodData.category})
+        res.render("public/detailPage", {data : foodData, related : relatedDishes})
     } catch (error) {
         console.log("error.message")
     }

@@ -52,7 +52,8 @@ function increment(btn) {
   const foodId = btn.parentElement.querySelector('input[name="foodId"]').getAttribute('value');
   const totalStock = btn.parentElement.querySelector('input[name="totalStock"]').getAttribute('value');
   let input = document.getElementById(foodId).value
-  if(totalStock <= 0){
+  input = parseInt(input)+1
+  if(totalStock < input){
     Toastify({
       text: "Out of Stock",
       className: "info",
@@ -63,7 +64,7 @@ function increment(btn) {
     return
   }
   
-  input = parseInt(input)+1
+  
 
   let foodPrice = btn.parentElement.querySelector('input[name="foodPrice"]').getAttribute('value');
   
@@ -76,7 +77,7 @@ function decrement(btn) {
   const foodId = btn.parentElement.querySelector('input[name="foodId"]').getAttribute('value');
   let input = document.getElementById(foodId).value
   input = parseInt(input)-1
-  if(input === 0){
+  if(input <= 0){
     Swal.fire({
       title: 'Are you sure?',
       text: "You won't be able to revert this!",
@@ -119,16 +120,15 @@ async function updateQtyInDb(btn, foodPrice, qty, foodId, stat, stock){
       body: JSON.stringify({foodId, foodPrice, qty, stat, stock})
     });
       const data = await response.json();
-      console.log(JSON.stringify(data.items))
       if(data.status === "success"){
         const input = btn.parentElement.querySelector('input[type="number"]');
-        console.log(input)
+        // console.log(input)
         input.value = data.items[0].quantity;
         const itemPrice = btn.parentElement.parentElement.querySelector('.total-price');
         itemPrice.innerText = data.items[0].total;
         document.getElementById('subTotal').innerText = data.subTotal[0].subTotal;
         const totalStock = btn.parentElement.querySelector('input[name="totalStock"]');
-        totalStock.value = data.items[0].totalStoke
+        totalStock.value = data.foodStock[0].totalStoke
       }else if(data.removed === true){
         Swal.fire(
           'Removed!',
@@ -142,6 +142,12 @@ async function updateQtyInDb(btn, foodPrice, qty, foodId, stat, stock){
         throw new Error(data.msg)
       }
   } catch (error) {
-    alert(error.message)
+      Toastify({
+          text: error.message,
+          className: "info",
+          style: {
+              background: "linear-gradient(to right, #ff0000, #dd2a7f)",
+          }
+        }).showToast();
   }
 }

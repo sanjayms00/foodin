@@ -7,6 +7,10 @@ const jwt = require("jsonwebtoken")
 const nodemailer = require('nodemailer');
 const mailgen = require("mailgen")
 const jwtsecretKey = process.env.JWTSECRETKEY;
+//get the twilio configuration
+const accountSid = process.env.ACCOUNTSID;
+const authToken = process.env.AUTHTOKEN;
+const verifySid = process.env.VERIFYSID;
 
 const client = require("twilio")(accountSid, authToken);
 const fromEmailId = process.env.EMAILID;
@@ -65,7 +69,7 @@ const verifyOtp = (req, res) => {
         const mobileNumber = req.query.userMobileNumber;
         res.render("public/otpPage", {mobile : mobileNumber})
     } catch (error) {
-        console.log(error.message)
+        res.status(500).render('public/errorPage', {msg : error.message})
     }
 }
 
@@ -86,7 +90,7 @@ const validateOtp = async (req, res) => {
             .then((verification_check) => {
                 console.log(verification_check.status)
                 if (verification_check.status === "approved") {
-                    console.log(verification_check);
+                    // console.log(verification_check);
                         req.session.isauth = getUser._id;
                         req.session.email = getUser.email;
                         req.session.isBlocked = getUser.blocked;

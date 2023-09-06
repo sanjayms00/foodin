@@ -4,7 +4,7 @@ const sharp = require("sharp")
 const fs = require("fs")
 const path = require('path')
 const { v4: uuidv4 } = require('uuid');
-
+const mongoose = require('mongoose')
 
 const showFood = async (req,res)=>{
     try {
@@ -236,17 +236,15 @@ const deleteFood = async (req,res)=>{
 
 const foodStatus = async (req, res)=>{
     try {
-        const foodStatus = req.params.status
-        const foodStat = foodStatus.split("-")
-        const [foodId, status] = foodStat
-        const updateStatus = await Foods.updateOne({_id : foodId}, {$set : {status : status === "true"}})
-        const foodData = await Foods.find({})
-        if(!updateStatus){
-            return res.status(400).render("admin/food", {data : foodData, status : "error", msg : "Status Updation Failed"})
-        }
-        res.status(200).render("admin/food", {data : foodData, status : "success", msg : "Status Updated"})
+        const {id, status} = req.body
+        const foodId = new mongoose.Types.ObjectId(id)
+        await Foods.updateOne({_id : foodId }, {$set : {status : status === "true"}})
+        .then((response)=>{
+          res.status(200).json({status : "success", msg : "Status Updated"})
+        })
+        
     } catch (error) {
-        console.log(error.message)
+      res.status(500).json({status : "error", msg : error.message})
     }
 }
 

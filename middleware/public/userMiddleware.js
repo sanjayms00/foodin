@@ -60,10 +60,13 @@ const loginCheck = (req,res,next)=>{
     }
 }
 
+
+
+
 module.exports = {
     isloggedIn,
     sessionCheck,
     loginCheck,
     isBlocked,
-    checkUserBlocked
+    checkUserBlocked,
 }

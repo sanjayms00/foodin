@@ -56,6 +56,9 @@ const userSchema = new  mongoose.Schema({
         type : String,
         required : true
     },
+    usedCoupons : {
+        type : Array
+    },
     lastName : {
         type : String,
         required : true
@@ -71,6 +74,9 @@ const userSchema = new  mongoose.Schema({
     password : {
         type : String,
         required : true
+    },
+    usedCoupons : {
+        type : Array
     },
     image : {
         type : String

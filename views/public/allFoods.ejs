@@ -185,9 +185,7 @@
                                     <input type="radio" onclick="filter(this)" id="star1" name="rating" value="1" /><label class = "full" for="star1" title="Sucks big time - 1 star"></label>
                                 </fieldset>
                             </div>
-                            <div class="px-4 py-3">
-                                <input type="range" id="cowbell" name="cowbell" min="0" max="100" value="90" step="10" />
-                            </div>
+                            
                         </div>
                     </article>
                 </div> 
@@ -216,6 +214,10 @@
                                 </a>
                                 <div class="p-2">
                                     <small class="text-secondary"><%= item.type === 1 ? "Veg" : "Non-Veg" %> &nbsp;<i class="bi bi-circle-fill text-<%= item.type === 1 ? "success" : "danger" %>"></i></small>
+                                    <div class="float-end fs-6">
+													<i title="added to cart" class="bi text-danger bi-bag p-1 fs-5" id="addToCart" onclick="addToCart(`<%= JSON.stringify(item) %>`, `<%= isAuthenticated %>`) "></i>
+													<i title="add to wishlist" class="bi text-danger bi-heart p-1 fs-5"></i>
+												</div>
                                     <h2 style="height: 50px; padding-top: 10px;" class=""><a href="/foodDetail/<%= item.slug %>"><%= item.foodName %></a></h2>
                                     <a href="/foodDetail/<%= item.slug %>"><button type="button" class="btn btn-danger float-end">Show Details</button></a>
                                     <h2 class="pt-2"><a href="/foodDetail/" class="text-success"><b>₹ <%= item.discPrice %></b></a>&nbsp;&nbsp;<small class="text-secondary"><del>₹ <%= item.orgPrice %></del></small></h2>
@@ -260,10 +262,11 @@
 
 
 <script>
-    function filter(btn){
+    function filter(btn, id){
         alert(btn.value)
     }
 </script>
 
+<script src="../assets/js/cart.js"></script>
 
 <%- include("includes/footer") %>

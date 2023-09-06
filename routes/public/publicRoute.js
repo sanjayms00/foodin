@@ -21,9 +21,6 @@ publicRoute.use(session({
 }))
 
 
-
-
-
 // get controllers
 const homeController = require("../../controller/public/homeController")
 const configController = require("../../controller/public/configController");
@@ -83,8 +80,7 @@ publicRoute.get("/orders", userMiddleWare.isBlocked, orderController.currentOrde
 publicRoute.get("/order-history", userMiddleWare.isBlocked, orderController.orderHistory)
 publicRoute.get("/canceled-orders", userMiddleWare.isBlocked, orderController.canceledOrders)
 publicRoute.delete("/cancel-order", userMiddleWare.isBlocked, orderController.cancelOrder)
-
-//order tacking routes
+publicRoute.patch("/rate-food", userMiddleWare.isBlocked, orderController.rating)
 publicRoute.get("/track-order", userMiddleWare.isBlocked, addressController.trackOrder)
 
 //order tacking routes
@@ -101,14 +97,17 @@ publicRoute.patch("/update-cart-data", userMiddleWare.isBlocked, cartController.
 publicRoute.get("/checkout",userMiddleWare.isBlocked, checkoutController.checkout)
 publicRoute.post("/authCheckout",userMiddleWare.isBlocked,  checkoutController.authCheckout)
 publicRoute.post("/success",userMiddleWare.isBlocked,  checkoutController.success)
-publicRoute.get("/search-result", homeController.search)
 
+//search route
+publicRoute.get("/search-result", homeController.search)
 
 //Payment Routes
 publicRoute.post("/verify-payment",userMiddleWare.isBlocked, checkoutController.verifyPayment)
 publicRoute.get("/success",userMiddleWare.isBlocked, checkoutController.success)
 publicRoute.get("/failed",userMiddleWare.isBlocked, checkoutController.failed)
 
+//invoice route
+publicRoute.get("/generate-pdf/:orderId",userMiddleWare.isBlocked, orderController.downloadInvoice)
 
 
 

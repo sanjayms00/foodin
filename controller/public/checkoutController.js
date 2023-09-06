@@ -1,92 +1,13 @@
 
 const mongoose = require('mongoose')
 const Users = require("../../models/public/userModel")
-const Cart = require("../../models/public/cartModel");
 const Orders = require("../../models/admin/ordersModel")
 const Coupon = require('../../models/admin/couponModel')
 const PaymentHelper = require("../../helper/paymentHelper")
 const orderHelper = require("../../helper/orderHelper")
-
-
-
-//find cart Total
-async function getcartTotal(userId){
-  const cart = await Cart.aggregate([
-    {
-      $match: { userId: userId }
-    },
-    {
-      $unwind: "$items"
-    },
-    {
-      $lookup: {
-        from: "foods",
-        localField: "items.foodId",
-        foreignField: "_id",
-        as: "carted"
-      }
-    },
-    {
-      $project: {
-        item: "$items.foodId",
-        quantity: "$items.quantity",
-        total: "$items.total",
-        carted: { $arrayElemAt: ["$carted", 0] }
-      }
-    },
-    {
-      $group: {
-        _id : null,
-        subTotal: { $sum: { $multiply: ["$quantity", "$carted.discPrice"] } }
-      }
-    }
-  ]);
-  return cart
-}
-
-//find cart items
-async function getcartItems(userId){
-  const cart = await Cart.aggregate([
-    {
-      $match: { userId: userId }
-    },
-    {
-      $unwind: "$items"
-    },
-    {
-      $lookup: {
-        from: "foods",
-        localField: "items.foodId",
-        foreignField: "_id",
-        as: "carted"
-      }
-    },
-    {
-      $project: {
-        item: "$items.foodId",
-        quantity: "$items.quantity",
-        total: "$items.total",
-        carted: { $arrayElemAt: ["$carted", 0] }
-      }
-    }
-  ]);
-  return cart
-}
-
-//find deafault adderss
-async function getDefAddress(addressId, userId){
-  try{
-    const address = await Users.aggregate([
-      {$match : {_id : userId }},
-      {$unwind : '$addresses'},
-      {$match : {"addresses._id" : addressId}},
-      {$project : {addresses : 1}}
-  ])
-  return address[0].addresses
-  }catch(err){
-    return err.message
-  }
-}
+const cartHelper = require("../../helper/cartHelper")
+const addressHelper = require("../../helper/addressHelper")
+const foodHelper = require("../../helper/foodHelper")
 
 //load checkout page
 const checkout = async (req,res)=>{
@@ -96,19 +17,24 @@ const checkout = async (req,res)=>{
             return
         }
         const user = await Users.findOne({_id : userId})
-        const cartTotal = await getcartTotal(userId)
-        const cartItems = await getcartItems(userId)
-        const defAddress = await getDefAddress(user.defaultAddress, userId) 
+        const cartTotal = await cartHelper.getcartTotal(userId)
+        const cartItems = await cartHelper.getcartItems(userId)
+        const defAddress = await addressHelper.getDefAddress(user.defaultAddress, userId) 
         const amount = cartTotal[0].subTotal
+        //get used coupons from user
+        const getUsedCoupons = await Users.findOne({_id : userId}, {usedCoupons : 1, _id : 0})
+        
         const coupons = await Coupon.find(
-          {
+          {  
+            couponName : {$nin : getUsedCoupons.usedCoupons},
             minPurchase: { $lte: amount },
             maxAmount: { $gte: amount },
-            validity: { $gte: amount },
+            validity: { $gte: new Date()},
             status: true
         });
-        console.log(amount , coupons)
 
+        // console.log(amount , coupons)
+        // console.log(cartTotal, cartItems, defAddress)
         if(cartItems.length < 1){
           res.render("public/errorPage", {status : "eroor", msg : "No items in the Cart"})
         }else if(cartTotal < 1){
@@ -116,7 +42,7 @@ const checkout = async (req,res)=>{
         }
         res.render("public/checkOut", {subTotal : cartTotal, user, cartItems, defAddress, coupons})
     } catch (error) {
-      res.render("public/errorPage", {status : "eroor", msg : "No items in the Cart"})
+      res.render("public/errorPage", {status : "eroor", msg : error.message})
     }
     
 }
@@ -124,73 +50,103 @@ const checkout = async (req,res)=>{
 const authCheckout = async (req,res)=>{
     try {
       const userId = new mongoose.Types.ObjectId(req.session.isauth);
-      let { address, cartItems, price, totalPrice, paymentOption } = req.body
-      let walletAmount = 0
-      if(req.body.walletAmount){
-        walletAmount = req.body.walletAmount
-      }
-      if(!cartItems.length){
-        return res.status(400).json({status : "eroor", msg : "No items in the Cart"})
-      }
-      if(!address){
-        return res.status(404).json({status : "eroor", msg : "Address Not Found"})
-      }
-      cartItems = JSON.parse(cartItems)
-        if(paymentOption === 'cod'){
-          const data = {
-            cartItems,
-            userId,
-            address,
-            totalPrice,
-            paymentOption
-          }
-          const saveOrder = orderHelper.makeOrder(data)
-          const deleteCart = orderHelper.emptyCart(userId)
-          Promise.all([saveOrder, deleteCart]).then((values)=>{
-            return res.status(200).json({status : "success", msg : "Order Placed", paymentMethod : paymentOption })
-          })
+      let { address, cartItems, price, totalPrice, paymentOption, discount, discountedPrice, couponCode } = req.body
+      // console.log(address, cartItems, price, totalPrice, paymentOption, discount, discountedPrice, couponCode)
+      // return
+      //check the stock
+      const checkStock = foodHelper.checkStock(cartItems)
+      const changeStock = foodHelper.changeStock(cartItems)
+      //order if stock is available
+      Promise.all([checkStock, changeStock])
+      .then(async ()=>{
+        let walletAmount = 0
+        if(req.body.walletAmount){
+          walletAmount = req.body.walletAmount
         }
-        else if(paymentOption === 'onlinePay')
-        { 
-          const data = {
-            cartItems,
-            userId,
-            address,
-            totalPrice,
-            paymentOption,
-            walletAmount
-          }
-          const saveOrder = await orderHelper.makeOrder(data)
-          const deleteCart = orderHelper.emptyCart(userId)
-          const updateWallet = orderHelper.updateWallet(userId, walletAmount, saveOrder)
-          Promise.all([deleteCart, updateWallet]).then(async (values)=>{
-            const razorpayOrder = await PaymentHelper.generateRazorPay(saveOrder, totalPrice)
-            // console.log(razorpayOrder)
-            return res.status(200).json({status : "success", msg : "Order Placed", paymentMethod : paymentOption, razorpayOrder  })  
-          })
+        if(!cartItems.length){
+          return res.status(400).json({status : "error", msg : "No items in the Cart"})
         }
-        else if(paymentOption === 'wallet')
-        {
-          const data = {
-            cartItems,
-            userId,
-            address,
-            totalPrice,
-            paymentOption,
-            walletAmount
-          }
-          const saveOrder = await orderHelper.makeOrder(data)
-          const deleteCart = orderHelper.emptyCart(userId)
-          const updateWallet = orderHelper.updateWallet(userId, walletAmount, saveOrder)
-          Promise.all([deleteCart, updateWallet]).then((values)=>{
-            return res.status(200).json({status : "success", msg : "Order Placed", paymentMethod : paymentOption })
-          })
-        }else{
-          return res.status(500).json({status : "eroor", msg : "Invalid Payment Option"})
+        if(!address){
+          return res.status(404).json({status : "error", msg : "Address Not Found"})
         }
-
+        cartItems = JSON.parse(cartItems)
+          if(paymentOption === 'cod'){
+            const data = {
+              cartItems,
+              userId,
+              address,
+              totalPrice,
+              paymentOption,
+              price
+            }
+            console.log(data)
+            if(discount && discountedPrice && couponCode)
+            {
+              data.discount = discount;
+              data.discountedPrice = discountedPrice;
+              data.couponCode = couponCode;
+            }
+            const saveOrder = orderHelper.makeOrder(data)
+            const deleteCart = orderHelper.emptyCart(userId)
+            Promise.all([saveOrder, deleteCart]).then((values)=>{
+              return res.status(200).json({status : "success", msg : "Order Placed", paymentMethod : paymentOption })
+            })
+          }
+          else if(paymentOption === 'onlinePay')
+          { 
+            const data = {
+              cartItems,
+              userId,
+              address,
+              totalPrice,
+              paymentOption,
+              walletAmount,
+              price
+            }
+            if(discount && discountedPrice && couponCode)
+            {
+              data.discount = discount;
+              data.discountedPrice = discountedPrice;
+              data.couponCode = couponCode;
+            }
+            const saveOrder = await orderHelper.makeOrder(data)
+            const deleteCart = orderHelper.emptyCart(userId)
+            const updateWallet = orderHelper.updateWallet(userId, walletAmount, saveOrder)
+            Promise.all([deleteCart, updateWallet]).then(async (values)=>{
+              const razorpayOrder = await PaymentHelper.generateRazorPay(saveOrder, totalPrice)
+              // console.log(razorpayOrder)
+              return res.status(200).json({status : "success", msg : "Order Placed", paymentMethod : paymentOption, razorpayOrder  })  
+            })
+          }
+          else if(paymentOption === 'wallet')
+          {
+            const data = {
+              cartItems,
+              userId,
+              address,
+              totalPrice,
+              paymentOption,
+              walletAmount,
+              price
+            }
+            if(discount && discountedPrice && couponCode)
+            {
+              data.discount = discount;
+              data.discountedPrice = discountedPrice;
+              data.couponCode = couponCode;
+            }
+            const saveOrder = await orderHelper.makeOrder(data)
+            const deleteCart = orderHelper.emptyCart(userId)
+            const updateWallet = orderHelper.updateWallet(userId, walletAmount, saveOrder)
+            Promise.all([deleteCart, updateWallet]).then((values)=>{
+              return res.status(200).json({status : "success", msg : "Order Placed", paymentMethod : paymentOption })
+            })
+          }else{
+            return res.status(500).json({status : "error", msg : "Invalid Payment Option"})
+          }
+      })
     } catch (error) {
-      return res.status(500).json({status : "eroor", msg : error.message})
+      return res.status(500).json({status : "error", msg : error.message})
     }
 }
 

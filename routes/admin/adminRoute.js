@@ -1,3 +1,4 @@
+
 require("dotenv").config()
 const express = require("express")
 const adminRoute = express.Router()
@@ -54,7 +55,6 @@ adminRoute.get("/logout",adminConfigController.logout)
 adminRoute.get("/dashboard", adminMiddleware.adminSessionCheck, dashboardController.dashboard)
 adminRoute.get("/sales-report", adminMiddleware.adminSessionCheck, dashboardController.showSalesDataGet)
 adminRoute.get("/get-sale-data", adminMiddleware.adminSessionCheck, dashboardController.getSaleData)
-adminRoute.get("/export", adminMiddleware.adminSessionCheck, dashboardController.exportData)
 
 //user routes
 adminRoute.get("/users", adminMiddleware.adminSessionCheck, userController.showusers)
@@ -77,7 +77,7 @@ adminRoute.post("/save-food", uploads.single('file_photo'), foodController.saveF
 adminRoute.post("/updateFood", uploads.single('file_photo'), foodController.updateFood)
 adminRoute.get("/editFood",adminMiddleware.adminSessionCheck, foodController.editFood)
 adminRoute.get("/deleteFood",adminMiddleware.adminSessionCheck, foodController.deleteFood)
-adminRoute.get("/foodStatus/:status", adminMiddleware.adminSessionCheck, foodController.foodStatus)
+adminRoute.patch("/foodStatus", adminMiddleware.adminSessionCheck, foodController.foodStatus)
 
 //category routes
 adminRoute.get("/category", adminMiddleware.adminSessionCheck, categoryController.showCategory)

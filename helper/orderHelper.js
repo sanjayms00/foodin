@@ -2,7 +2,7 @@ const Users = require("../models/public/userModel")
 const Orders = require("../models/admin/ordersModel")
 const Cart = require('../models/public/cartModel')
 const mongoose = require('mongoose')
-
+const orders = require('../models/admin/ordersModel')
 
 
 //cancel order and refund for online payment
@@ -28,7 +28,7 @@ const cancelOrder = (orderId) =>{
                 orderId: orderId,
                 time: new Date()
             };
-            console.log(values[1].paymentMethod )
+            // console.log(values[1].paymentMethod )
             if(values[1].paymentMethod === 'onlinePay'){
                 //console.log('total : ', totalRefund)
                 await Users.updateOne({_id : user}, 
@@ -41,8 +41,7 @@ const cancelOrder = (orderId) =>{
                 })
             }else if(values[1].paymentMethod === 'wallet'){
                 // console.log('total : ', totalRefund)
-                await Users.updateOne(
-                    {_id : user}, 
+                await Users.updateOne({_id : user}, 
                     {
                         $inc: { wallet : totalRefund},
                         $push: { walletTransactions : transaction },
@@ -67,6 +66,7 @@ const makeOrder = (data) => {
         paymentStatus = 'recieved'
     }
     return new Promise(async (resolve, reject)=>{
+
         const orderDetails = {
             items : data.cartItems,
             user : data.userId,
@@ -76,15 +76,20 @@ const makeOrder = (data) => {
             subTotal : data.totalPrice,
             paymentStatus : paymentStatus,
             paymentMethod : data.paymentOption,
-            walletAmount : 0
-        }
-        if(data.walletAmount){
-            orderDetails.walletAmount = data.walletAmount
+            walletAmount : 0,
+            price : data.price,
+            discount : data.discount ? data.discount : data.discount,
+            discountedPrice : data.discountedPrice ? data.discountedPrice : '',
+            couponCode : data.couponCode ? data.couponCode : '',
+            walletAmount : data.walletAmount ? data.walletAmount : '',
         }
         const orderData = new Orders(orderDetails);
-    
+        //save the order
         try {
             const response = await orderData.save();
+            await Users.updateOne({_id : data.userId}, {
+                $push : {usedCoupons : data.couponCode}
+            })
             resolve(response._id);
         } 
         catch (err) {
@@ -133,6 +138,21 @@ const emptyCart = (userId) => {
 // }
 
 
+const findInvoiceOrder  = (orderId, userId) => {
+    try {
+      return new Promise(async (resolve, reject) => {
+        await orders.find({_id : new mongoose.Types.ObjectId(orderId), user : new mongoose.Types.ObjectId(userId)})
+        .then((response) => {
+          resolve(response)
+        });
+      });
+    } catch (error) {
+      res.render("public/errorPage", {msg : error.message})
+    }
+}
+
+
+
 const updateWallet = (userId, walletAmount, orderId) => {
     return new Promise(async (resolve, reject) => {
         const transaction = {
@@ -176,5 +196,6 @@ module.exports = {
     cancelOrder,
     makeOrder,
     emptyCart,
-    updateWallet
+    updateWallet,
+    findInvoiceOrder
 }

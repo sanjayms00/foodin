@@ -1,17 +1,6 @@
-/**
-* Template Name: ZenBlog
-* Updated: May 30 2023 with Bootstrap v5.3.0
-* Template URL: https://bootstrapmade.com/zenblog-bootstrap-blog-template/
-* Author: BootstrapMade.com
-* License: https:///bootstrapmade.com/license/
-*/
 
-/**
-* Check out variables.css for easy customization of colors, typography, and other repetitive properties
-*/
-/*--------------------------------------------------------------
-# General
---------------------------------------------------------------*/
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian&display=swap');
+
 :root {
   scroll-behavior: smooth;
 }
@@ -34,7 +23,7 @@ a {
   text-decoration: none;
 }
 .padd-top{
-  padding: 150px 0 70px 0;
+  padding: 130px 0 70px 0;
 }
 
 .header-color {
@@ -52,6 +41,11 @@ a:hover {
 
 .profile-section{
   padding: 80px 15px;
+}
+
+p{
+  font-family: 'Noto Sans Georgian', sans-serif;
+  font-size: 14px;
 }
 
 
@@ -153,14 +147,21 @@ section {
 # Header
 --------------------------------------------------------------*/
 .header {
-  height: 90px;
+  height: 100px;
   transition: all 0.5s;
   z-index: 997;
-  background: #f2f2f2;
+  background: #ffcf60;
+}
+.dropdown-toggle{
+  background-color: #ffcf60;
 }
 
 .header.sticked {
-  height: 70px;
+  height: 90px;
+}
+
+#search{
+  width: 500px;
 }
 
 .header .logo img {
@@ -323,7 +324,7 @@ section {
   }
 
   .navbar .dropdown ul a {
-    padding: 10px 20px;
+    padding: 5px 20px;
     font-size: 15px;
     text-transform: none;
     font-weight: 400;

@@ -6,14 +6,15 @@
         <div class="col-md-8">
           <h4 class="mb-3">Delivery Address*</h4>
           <div class="form-floating">
-            <% if (Object.keys(locals.defAddress).length===0 || defAddress.fullName===undefined ) { %>
+            <% if (defAddress.length === 0 || defAddress[0].addresses === undefined ) { %>
               <textarea class="form-control" id="floatingAddress" name="address" style="height: 150px"
                 placeholder="Delivery Address..." readonly required></textarea>
               <label for="floatingAddress" id="floatingAddressId">Address</label>
               <% }else{ %>
+                
                 <textarea class="form-control" id="floatingAddress" name="address" style="height: 150px"
                   placeholder="Address" readonly
-                  required><%= `${defAddress.fullName}, \n${defAddress.addressLine},  ${defAddress.pinCode},  ${defAddress.city},  ${defAddress.state}, \n${defAddress.mobileNumber}, \n${defAddress.addressType}  ` %></textarea>
+                  required><%= `${defAddress[0].addresses.fullName}, \n${defAddress[0].addresses.addressLine},  ${defAddress[0].addresses.pinCode},  ${defAddress[0].addresses.city},  ${defAddress[0].addresses.state}, \n${defAddress[0].addresses.mobileNumber}, \n${defAddress[0].addresses.addressType}  ` %></textarea>
                 <label for="floatingAddress" id="floatingAddressId">Address</label>
                 <% } %>
           </div>
@@ -39,17 +40,18 @@
 
           <div class="row">
             <h4 class="mb-3">Current Orders</h4>
+            
             <input type="hidden" name="cartItems" value="<%= JSON.stringify(cartItems) %>" readonly>
             <% cartItems.forEach(element=> { %>
               <div class="col-md-6 mb-4">
                 <div class="bg-white p-3 d-flex align-items-center">
-                  <img src="food/<%= element.carted.image ? element.carted.image : "" %>"
-                    alt="<%= element.carted.foodName %>" class="img-fluid mr-3" style="max-width: 100px;">
+                  <img src="food/<%= element.carted[0].image ? element.carted[0].image : "" %>"
+                    alt="<%= element.carted[0].foodName %>" class="img-fluid mr-3" style="max-width: 100px;">
                   <div class="mx-3">
                     <p class="mb-2">
-                      <%= element.carted.foodName %>.
+                      <%= element.carted[0].foodName %>.
                     </p>
-                    <span><b>₹<%= element.carted.discPrice %></b></span>
+                    <span><b>₹<%= element.carted[0].discPrice %></b></span>
                     <span class="mx-4"><b>
                         <%= element.quantity %>
                       </b></span>
@@ -77,11 +79,12 @@
                 <div class="text-success">
                   <h6 class="my-0">Coupon discount</h6>
                   <small id="couponCode"></small>
+                  <input type="hidden" id="couponCodeInput" value="">
                 </div>
                 <span class="text-success"><b id="discountPercentage">0</b>%</span>
                 <span class="text-success">₹ <b id="discTotal">0</b></span>
-                <input type="hidden" name="discount" id="discount" value="0" readonly>
-                <input type="hidden" name="discountedPrice" id="discountedPrice" value="0" readonly>
+                <input type="hidden" name="discount" id="discount" value="" readonly>
+                <input type="hidden" name="discountedPrice" id="discountedPrice" value="" readonly>
               </li>
             <li class="list-group-item d-flex justify-content-between bg-light py-3">
               <div class="text-success">
@@ -121,8 +124,6 @@
                 </p>
               </li>
             <% } %>
-              
-            
           </ul>
           <button type="submit" id="checkout-btn" class="btn btn-primary btn-lg btn-block w-100" type="button">Place Order</button>
         </div>
@@ -185,7 +186,6 @@
               <div class="col-md-12">
                 <!-- Radio buttons for addresses -->
                 <div class="list-group">
-                  
                   <% 
                     if(coupons.length > 0){
                     let active = true 
@@ -235,8 +235,7 @@
       </div>
     </div>
   </div>
-
-
+  <!-- address modal -->
   <div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="addressModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -307,6 +306,7 @@
     const form = document.getElementById("checkOutForm")
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
+  
       if (checkOut()) {
         const formData = {
           address: form.address.value,
@@ -315,17 +315,30 @@
           totalPrice: form.totalPrice.value,
           paymentOption: form.paymentOption.value,
         };
+
         //add wallet amount
         if(form.wallAmount.value > 0){
           formData.walletAmount = form.wallAmount.value
         }
+        if(form.discount.value){
+          formData.discount = form.discount.value
+        }
+        if(form.discountedPrice.value){
+          formData.discountedPrice = form.discountedPrice.value
+        }
+        if(form.couponCodeInput.value){
+          formData.couponCode = form.couponCodeInput.value
+        }
 
-        if(formData.paymentOption === 'wallet' && formData.walletAmount < 1){
+        console.log(formData.paymentOption, formData.walletAmount)
+
+
+        if(formData.paymentOption === 'wallet' && formData.walletAmount === undefined){
           Toastify({
               text: "Please Use the Wallet",
               className: "info",
               style: {
-                background: "linear-gradient(to right, #00b09b, #96c93d)",
+                background: "linear-gradient(to right, #8f0d53, #df3333)",
               }
             }).showToast();
           showWallet()
@@ -508,6 +521,7 @@
       const couponDiscount = link.querySelector('.discount').innerHTML
       const code = link.querySelector('.code').innerHTML;
       document.getElementById('couponCode').innerHTML = code
+      document.getElementById('couponCodeInput').value = code
 
       // Update the displayed discount
       const discountField = document.getElementById('discountPercentage');
@@ -529,7 +543,6 @@
 
       document.getElementById('discTotal').innerHTML = totalValue
       document.getElementById('totalPrice').value = totalValue
-
 
       // Update hidden input field for discount
       const discountInput = document.getElementById('discount');

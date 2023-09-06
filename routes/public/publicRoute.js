@@ -31,6 +31,7 @@ const orderController = require("../../controller/public/orderController")
 const cartController = require("../../controller/public/cartContoller")
 const checkoutController = require("../../controller/public/checkoutController")
 const walletController = require("../../controller/public/walletController")
+const wishlistController = require("../../controller/public/wishlistController")
 
 //include middleware
 const userMiddleWare = require("../../middleware/public/userMiddleware")
@@ -91,6 +92,12 @@ publicRoute.post("/add-to-cart", userMiddleWare.checkUserBlocked, cartController
 publicRoute.post("/delete-cart-item", userMiddleWare.isBlocked, cartController.deleteCartItem)
 publicRoute.get("/cart", userMiddleWare.isBlocked, cartController.showCart)
 publicRoute.patch("/update-cart-data", userMiddleWare.isBlocked, cartController.updateCartByQuantity)
+
+//wishlist routes
+publicRoute.get("/wishlist", userMiddleWare.isBlocked, wishlistController.loadWishlist)
+// publicRoute.post("/delete-cart-item", userMiddleWare.isBlocked, cartController.deleteCartItem)
+// publicRoute.get("/cart", userMiddleWare.isBlocked, cartController.showCart)
+// publicRoute.patch("/update-cart-data", userMiddleWare.isBlocked, cartController.updateCartByQuantity)
 
 
 //checkout Routes

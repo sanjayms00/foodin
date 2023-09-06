@@ -116,9 +116,9 @@
               <a href="/cart" class="mx-3"><i class="bi bi-bag-fill fs-6"></i>&nbsp;Cart&nbsp;<span class="badge bg-danger" id="cartCounter"><%= locals.CartLength ? locals.CartLength : "" %></span></a>
             
             
-              <a href="/cart" class="mx-3"><i class="bi bi-heart-fill fs-6"></i>&nbsp;wishlist&nbsp;<span class="badge bg-danger" id="cartCounter"><%= locals.CartLength ? locals.CartLength : "" %></span></a>
+              <a href="/wishlist" class="mx-3"><i class="bi bi-heart-fill fs-6"></i>&nbsp;wishlist&nbsp;<span class="badge bg-danger" id="cartCounter"><%= locals.CartLength ? locals.CartLength : "" %></span></a>
            
-           
+            <div class="navbar">
               <% if (!isAuthenticated) { %>
                 <a href="/login" class="mx-3"><span class="bi bi-person-circle"></span>&nbsp; Login</a>
                 <% } else { %>
@@ -142,8 +142,8 @@
                       <li><a class="dropdown-item" href="/logout">logout</a></li>
                     </ul>
                   </div>
-                  <% } %>
-            
+                <% } %>
+              </div>
         </div>
       </div>
       
